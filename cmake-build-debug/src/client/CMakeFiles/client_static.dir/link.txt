@@ -1,0 +1,2 @@
+/usr/bin/ar qc libclient_static.a  CMakeFiles/client_static.dir/client/Exemple.cpp.o
+/usr/bin/ranlib libclient_static.a

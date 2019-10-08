@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project (plt)
+project (plt C CXX)
 
 # CMP0074 policy enable find_* to use <PackageName>_ROOT variables to find
 # packages.

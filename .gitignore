@@ -3,5 +3,6 @@ build
 bin
 nbproject
 .idea
-/cmake-build-debug/run_test.sh
-/cmake-build-debug/*
+/cmake-build-debug/
+src/*/*.h
+src/*/*/*.h

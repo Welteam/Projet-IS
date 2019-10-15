@@ -3,10 +3,6 @@
 #include <state.h>
 #include "Cordinate.h"
 
-#define X_MAX 1000
-#define X_STEP 20
-#define Y_MAX 500
-#define Y_STEP 20
 
 using namespace std;
 using namespace state;
@@ -36,6 +32,14 @@ int main(int argc,char* argv[])
         i++;
 
     }*/
+
+    Weapon weapon{};
+    weapon.setDirection(static_cast<DirectionType>(3));
+    cout << weapon.getDirection() << endl;
+
+    Sniper sniper;
+    cout << sniper.getDirection() << endl;
+
 
 
     sf::Window window(sf::VideoMode(800, 600), "My window");

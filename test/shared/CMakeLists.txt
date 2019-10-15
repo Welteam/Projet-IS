@@ -2,6 +2,9 @@
 add_custom_test(shared_dummy)
 add_custom_test(weapon)
 add_custom_test(game_object)
+add_custom_test(world)
+add_custom_test(tower)
+add_custom_test(sniper)
 
 # vim: set sw=2 sts=2 et:
 

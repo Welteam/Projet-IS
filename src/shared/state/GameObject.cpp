@@ -18,5 +18,15 @@ namespace state {
     void GameObject::setY(int y) {
         this->y = y;
     }
+
+    GameObject::GameObject(int x, int y) {
+        this->x = x;
+        this->y = y;
+    }
+
+    GameObject::GameObject() {
+        this->x = 0;
+        this->y = 0;
+    }
 }
 

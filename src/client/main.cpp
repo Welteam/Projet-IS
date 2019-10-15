@@ -1,24 +1,42 @@
 #include <iostream>
-
-// Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
-
-void testSFML() {
-    sf::Texture texture;
-}
-
-// Fin test SFML
-
 #include <state.h>
+#include "Cordinate.h"
+
+#define X_MAX 1000
+#define X_STEP 20
+#define Y_MAX 500
+#define Y_STEP 20
 
 using namespace std;
 using namespace state;
+
+
+
 
 int main(int argc,char* argv[])
 {
     
 
     cout << "It works !" << endl;
+
+    /*Node player;
+    player.x = 50 / X_STEP;
+    player.y = 200 / Y_STEP;
+
+    Node destination;
+    destination.x = 600 / X_STEP;
+    destination.y = 300 / Y_STEP;
+    int i = 1;
+    vector<int> obstacles(1250, 0);
+
+    for (Node node : Cordinate::aStar(player, destination, obstacles)) {
+        //Your code here
+        cout << " noeud " << i << " : x = "<< node.x << " y = " << node.y << endl;
+        i++;
+
+    }*/
+
 
     sf::Window window(sf::VideoMode(800, 600), "My window");
 

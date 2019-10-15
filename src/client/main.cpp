@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <state.h>
-#include "Cordinate.h"
+//#include "Cordinate.h"
 
 
 using namespace std;

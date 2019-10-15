@@ -7,6 +7,9 @@ add_custom_test(tower)
 add_custom_test(sniper)
 add_custom_test(shotgun)
 add_custom_test(apparition_area)
+add_custom_test(player)
+add_custom_test(assault_rifle)
+
 
 # vim: set sw=2 sts=2 et:
 

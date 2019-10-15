@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
     { // GET & SET tiles
         state::World world;
         BOOST_CHECK_EQUAL(world.getTiles().at(0), 0);
-        weapon.setPm(5);
+        world.setPm(5);
         BOOST_CHECK_EQUAL(weapon.getPm(), 5);
     }
 }

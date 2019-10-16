@@ -8,7 +8,7 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
 
 BOOST_AUTO_TEST_CASE(TestExemple)
 {
-  {
+  /*{
     client::Exemple ex {};
     BOOST_CHECK_EQUAL(ex.x, 0);
     ex.setX(21);
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(TestExemple)
     ex.setX(21);
     BOOST_CHECK_LE(ex.x, 32); // Less thamake
     BOOST_CHECK_GT(ex.x, 11); // Greater than equl
-  }
+  }*/
 
 }
 

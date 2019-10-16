@@ -2,12 +2,10 @@
 
 namespace state {
 
-    World::World() {
-
-    }
+    World::World() = default;
 
     World::World(std::string fileName) {
-
+        this->xStep = 32;
     }
 
     std::vector<TileType> World::getTiles() {

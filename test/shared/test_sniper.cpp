@@ -1,6 +1,7 @@
 #include "../../src/shared/state.h"
 
 #include <boost/test/unit_test.hpp>
+#include <state/Sniper.h>
 
 BOOST_AUTO_TEST_CASE(TestStaticAssert)
 {

@@ -9,13 +9,13 @@ namespace state{
 
     }
 
-    GameState::GameState(std::string fileName) : turn{0}, player1{Player()}, player2{Player()}{
-        this->world = World(std::move(fileName));
-    }
-
-    void GameState::saveWorld() {
+    GameState::GameState(std::string fileName) : turn{0}, world{World(std::move(fileName))}, player1{Player()}, player2{Player()}{
 
     }
+
+    /*void GameState::saveWorld() {
+
+    }*/
 
     int GameState::getTurn() {
         return this->turn;

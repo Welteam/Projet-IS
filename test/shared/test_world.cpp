@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(TestWorldConctructorFile)
     BOOST_CHECK_EQUAL(world.getSpawnTowers1().size(), 1);
     BOOST_CHECK_EQUAL(world.getSpawnTowers2().size(), 1);
     BOOST_CHECK_EQUAL(world.getSpawnApparitionAreas1().size(), 1);
-    BOOST_CHECK_EQUAL(world.getSpawnApparitionAreas1().size(), 1);
+    BOOST_CHECK_EQUAL(world.getSpawnApparitionAreas2().size(), 1);
 }
 
 /* vim: set sw=2 sts=2 et : */

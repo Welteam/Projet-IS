@@ -190,10 +190,6 @@ namespace state {
         return this->yStep;
     }
 
-    std::vector<GameObject> World::drawPattern(Character character, GameObject destination) {
-        return std::vector<GameObject>();
-    }
-
     std::vector<Character> World::getSpawnUnits1() {
         return this->spawnUnits1;
     }

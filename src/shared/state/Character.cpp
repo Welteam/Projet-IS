@@ -3,7 +3,7 @@
 namespace state {
 
 
-    Character::Character() : GameObject(), lp(100) {
+    Character::Character() : GameObject(), lp{100}, characterState{CharacterState::IDLE} {
 
     }
 
@@ -21,11 +21,11 @@ namespace state {
     }
 
     CharacterState Character::getCharacterState() {
-        return MOVING;
+        return this->characterState;
     }
 
     void Character::setCharacterState(CharacterState characterState) {
-
+        this->characterState = characterState;
     }
 
     /*const Weapon &Character::getWeapon() const {

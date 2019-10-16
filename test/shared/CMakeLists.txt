@@ -11,5 +11,6 @@ add_custom_test(player)
 add_custom_test(assault_rifle)
 add_custom_test(game_state)
 add_custom_test(bazooka)
+add_custom_test(character)
 # vim: set sw=2 sts=2 et:
 

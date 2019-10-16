@@ -10,9 +10,6 @@ int main(int argc,char* argv[])
 {
     cout << "It works !" << endl;
 
-    Player player;
-    cout << player.getUnits().empty() << endl;
-
     /*Node player;
     player.x = 50 / X_STEP;
     player.y = 200 / Y_STEP;
@@ -29,14 +26,6 @@ int main(int argc,char* argv[])
         i++;
 
     }*/
-
-    Weapon weapon{};
-    weapon.setDirection(static_cast<DirectionType>(3));
-    //cout << weapon.getDirection() << endl;
-
-    Sniper sniper{};
-    cout << sniper.getDirection() << endl;
-
 
 
     sf::Window window(sf::VideoMode(800, 600), "My window");

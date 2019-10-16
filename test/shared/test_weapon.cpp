@@ -38,21 +38,13 @@ BOOST_AUTO_TEST_CASE(TestWeaponGettersSettersConstrutor)
         BOOST_CHECK_EQUAL(weapon.getDamageAreaMax(), 5);
     }
 
-    { // GET & SET Direction
-        state::Weapon weapon;
-        BOOST_CHECK_EQUAL(weapon.getDirection(), 0);
-        weapon.setDirection(static_cast<state::DirectionType>(4));
-        BOOST_CHECK_EQUAL(weapon.getDirection(), 4);
-    }
-
-    { // GET & SET Direction
-        state::Weapon weapon{5, 50, 0, 5, 5, static_cast<state::DirectionType>(4)};
+    { // Constructor
+        state::Weapon weapon{5, 50, 0, 5, 5};
         BOOST_CHECK_EQUAL(weapon.getPm(), 5);
         BOOST_CHECK_EQUAL(weapon.getDamage(), 50);
         BOOST_CHECK_EQUAL(weapon.getRangeMin(), 0);
         BOOST_CHECK_EQUAL(weapon.getRangeMax(), 5);
         BOOST_CHECK_EQUAL(weapon.getDamageAreaMax(), 5);
-        BOOST_CHECK_EQUAL(weapon.getDirection(), 4);
     }
 
 

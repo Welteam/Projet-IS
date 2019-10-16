@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(TestSniperGettersSettersConstrutors2)
         state::Sniper sniper;
         BOOST_CHECK_EQUAL(sniper.getRangeMax(), 50);
         BOOST_CHECK_EQUAL(sniper.getDamageAreaMax(), 0);
-        BOOST_CHECK_EQUAL(sniper.getDirection(), 0);
+        BOOST_CHECK_EQUAL(sniper.getDirection(), state::DirectionType::FULL);
     }
 }
 

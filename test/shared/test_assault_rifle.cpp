@@ -10,20 +10,20 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
 BOOST_AUTO_TEST_CASE(TestSniperGettersSettersConstrutors)
 {
     { // Constructor whith parameters
-        state::AssaultRifle sniper;
-        BOOST_CHECK_EQUAL(sniper.getPm(), 5);
-        BOOST_CHECK_EQUAL(sniper.getDamage(), 10);
-        BOOST_CHECK_EQUAL(sniper.getRangeMin(), 1);
+        state::AssaultRifle assaultRifle;
+        BOOST_CHECK_EQUAL(assaultRifle.getPm(), 5);
+        BOOST_CHECK_EQUAL(assaultRifle.getDamage(), 10);
+        BOOST_CHECK_EQUAL(assaultRifle.getRangeMin(), 1);
     }
 }
 
 BOOST_AUTO_TEST_CASE(TestSniperGettersSettersConstrutors2)
 {
-    { // Constructor whith parameters
+    { // Constructor with parameters
         state::AssaultRifle assaultRifle;
         BOOST_CHECK_EQUAL(assaultRifle.getRangeMax(), 5);
         BOOST_CHECK_EQUAL(assaultRifle.getDamageAreaMax(), 0);
-        BOOST_CHECK_EQUAL(assaultRifle.getDirection(), 0);
+        BOOST_CHECK_EQUAL(assaultRifle.getDirection(), state::DirectionType::FULL);
     }
 }
 

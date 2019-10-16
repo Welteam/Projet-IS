@@ -3,17 +3,16 @@
 
 namespace state {
 
-    Weapon::Weapon() : direction(0), pm(0), damage(0), rangeMin(0), rangeMax(0), damageAreaMax(0) {
-        direction = new DirectionType();
+    Weapon::Weapon() : pm(0), damage(0), rangeMin(0), rangeMax(0), damageAreaMax(0) {
+
     }
 
-    Weapon::Weapon(int pm, int damage, int rangeMin, int rangeMax, int damageAreaMax, DirectionType direction) {
+    Weapon::Weapon(int pm, int damage, int rangeMin, int rangeMax, int damageAreaMax) {
         this->pm = pm;
         this->damage = damage;
         this->rangeMin = rangeMin;
         this->rangeMax = rangeMax;
         this->damageAreaMax = damageAreaMax;
-        *this->direction = direction;
     }
 
     int Weapon::getPm() {
@@ -50,14 +49,6 @@ namespace state {
 
     void Weapon::setDamageAreaMax(int damageAreaMax) {
         this->damageAreaMax = damageAreaMax;
-    }
-
-    DirectionType Weapon::getDirection() const {
-        return *this->direction;
-    }
-
-    void Weapon::setDirection(DirectionType direction) {
-        *this->direction = direction;
     }
 
 }

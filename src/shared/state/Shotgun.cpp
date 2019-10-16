@@ -2,10 +2,13 @@
 
 namespace state {
 
-    Shotgun::Shotgun() : Weapon(7, 60, 1, 5, 2, static_cast<DirectionType>(2)){
+    Shotgun::Shotgun() : Weapon(7, 60, 1, 5, 2){
 
     }
 
+    int Shotgun::getDirection() {
+        return DirectionType::CROSS;
+    }
 
 }
 

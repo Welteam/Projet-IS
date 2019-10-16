@@ -50,10 +50,10 @@ namespace state{
     }
 
     /*const Player &GameState::getActivePlayer() const {
-        return <#initializer#>;
-    }*/
+        return *this->activePlayer;
+    }
 
     void GameState::setActivePlayer(const Player &activePlayer) {
-
-    }
+        *this->activePlayer = activePlayer;
+    }*/
 }

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <state.h>
 #include <sstream>
+#include "render/TileMap.cpp"
 //#include "Cordinate.h"
 
 using namespace std;
@@ -9,9 +10,7 @@ using namespace state;
 
 int main(int argc,char* argv[])
 {
-    cout << "It works !" << endl;
-
-    std::string mapWorld = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,"
+    string mapWorld = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,"
                            "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2,"
                            "0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2,"
                            "0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2,"
@@ -33,44 +32,74 @@ int main(int argc,char* argv[])
                            "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,:"
                            "1, 2, 3, 7, 1, 17, 3, 12,/ 7, 10,/ 0, 0,:"
                            "1, 5, 3, 9, 4, 17, 1, 12,/ 9, 10,/ 0, 19,:";
+    // on crée la fenêtre
+    sf::RenderWindow window(sf::VideoMode(320, 320), "Tilemap");
 
-    /*Node player;
-    player.x = 50 / X_STEP;
-    player.y = 200 / Y_STEP;
-
-    Node destination;
-    destination.x = 600 / X_STEP;
-    destination.y = 300 / Y_STEP;
-    int i = 1;
-    vector<int> obstacles(1250, 0);
-
-    for (Node node : Cordinate::aStar(player, destination, obstacles)) {
-        //Your code here
-        cout << " noeud " << i << " : x = "<< node.x << " y = " << node.y << endl;
-        i++;
-
-    }*/
-
+    // on crée la tilemap avec le niveau précédemment défini
     World world{mapWorld};
+    vector<TileType> input = world.getTiles();
+    int arr[input.size()];
+    std::copy(input.begin(), input.end(), arr);
+
+    TileMap map;
+    if (!map.load("res/tiles2.png", sf::Vector2u(16, 16), arr, 20, 20))
+        return -1;
+
+    sf::Texture texture;
+    if (!texture.loadFromFile("res/unity_right.png"))
+    {
+        // erreur...
+    }
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+    sprite.setPosition(sf::Vector2f(0.f, 0.f)); // position absolue
 
 
-
-
-
-    sf::Window window(sf::VideoMode(800, 600), "My window");
-
-    // run the program as long as the window is open
+    // on fait tourner la boucle principale
     while (window.isOpen())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
+        // on gère les évènements
         sf::Event event;
         while (window.pollEvent(event))
         {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
+            if(event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::KeyPressed)
+            {
+                switch(event.key.code){
+                    case sf::Keyboard::Left:
+                        std::cout << "the left key was pressed" << std::endl;
+                        sprite.move(sf::Vector2f(-16.f, 0.f)); // décalage relatif à la position actuelle
+                        break;
+                    case sf::Keyboard::Right:
+                        std::cout << "the right key was pressed" << std::endl;
+                        sprite.move(sf::Vector2f(16.f, 0.f)); // décalage relatif à la position actuelle
+                        break;
+                    case sf::Keyboard::Up:
+                        std::cout << "the up key was pressed" << std::endl;
+                        sprite.move(sf::Vector2f(0.f, -16.f)); // décalage relatif à la position actuelle
+                        break;
+                    case sf::Keyboard::Down:
+                        std::cout << "the down key was pressed" << std::endl;
+                        sprite.move(sf::Vector2f(0.f, 16.f)); // décalage relatif à la position actuelle
+                        break;
+                    default:
+                        std::cout << "Other key was pressed" << std::endl;
+                        break;
+                }
+            }
         }
+
+        // on dessine le niveau
+        window.clear();
+        window.draw(map);
+        window.draw(sprite);
+        window.display();
+
+
+
     }
+
 
     return 0;
 }

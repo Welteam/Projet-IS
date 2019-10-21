@@ -174,20 +174,12 @@ namespace state {
         return this->tiles;
     }
 
-    int World::getXMax() {
+    int World::getXMax() const {
         return this->xMax;
     }
 
-    int World::getXStep() {
-        return this->xStep;
-    }
-
-    int World::getYMax() {
+    int World::getYMax() const {
         return this->yMax;
-    }
-
-    int World::getYStep() {
-        return this->yStep;
     }
 
     std::vector<Character> World::getSpawnUnits1() {

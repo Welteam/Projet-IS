@@ -13,9 +13,9 @@ namespace state{
 
     }
 
-    /*void GameState::saveWorld() {
+    void GameState::saveWorld() {
 
-    }*/
+    }
 
     int GameState::getTurn() {
         return this->turn;
@@ -23,14 +23,6 @@ namespace state{
 
     void GameState::setTurn(int turn) {
         this->turn = turn;
-    }
-
-    World GameState::getWorld() {
-        return this->world;
-    }
-
-    void GameState::setWorld(World world) {
-        this->world = std::move(world);
     }
 
     Player GameState::getPlayer1() {
@@ -49,11 +41,19 @@ namespace state{
         this->player2 = std::move(player2);
     }
 
-    /*const Player &GameState::getActivePlayer() const {
-        return *this->activePlayer;
+    const Player &GameState::getActivePlayer() const {
+        return this->activePlayer;
     }
 
     void GameState::setActivePlayer(const Player &activePlayer) {
-        *this->activePlayer = activePlayer;
-    }*/
+        this->activePlayer = activePlayer;
+    }
+
+    const World &GameState::getWorld() const {
+        return this->world;
+    }
+
+    void GameState::setWorld(const World &world) {
+        this->world = world;
+    }
 }

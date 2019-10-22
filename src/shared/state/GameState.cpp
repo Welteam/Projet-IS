@@ -55,5 +55,6 @@ namespace state{
 
     void GameState::setWorld(const World &world) {
         this->world = world;
+        this->notifyObservers(StateEvent{ALLCHANGED}, *this);
     }
 }

@@ -3,7 +3,7 @@
 #include <state.h>
 #include <sstream>
 #include "render.h"
-//#include "Cordinate.h"
+// #include "Cordinate.h"
 
 using namespace std;
 using namespace state;
@@ -39,17 +39,20 @@ int main(int argc,char* argv[])
     GameState gameState{};
 
     // 2. & 3. Open Window SFML & instancier Scene
-    shared_ptr<Scene> scene{};
+    // Set up the render
+    sf::RenderWindow window(sf::VideoMode(640, 640), "Tilemap");
+    shared_ptr<Scene> scene;
+    scene.reset(new Scene(window));
+    cout << scene.get() << endl;
 
     // 4. Register Scene -> GameState
-    //gameState.registerObserver(scene.get());
+    gameState.registerObserver(scene.get());
 
     // 5. Charger la carte World dans GameState
-    World world{mapWorld};
-    gameState.setWorld(world);
+    gameState.setWorld(World{mapWorld});
 
     // 6. Appel GameState::notify(EventID event, void* tileSet);
-    //gameState.notifyObservers()
+    //gameState.notifyObservers(StateEvent{ALLCHANGED}, gameState);
 
     // on crée la fenêtre
     /*sf::RenderWindow window(sf::VideoMode(640, 640), "Tilemap");

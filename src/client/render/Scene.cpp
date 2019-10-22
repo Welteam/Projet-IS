@@ -1,8 +1,9 @@
 #include "Scene.h"
+#include <iostream>
 
 namespace render {
 
-    Scene::Scene(std::shared_ptr<engine::Engine> engine, std::string tileSetPath, unsigned int playerTarId) {
+    Scene::Scene(sf::RenderWindow &window) {
 
     }
 
@@ -18,8 +19,10 @@ namespace render {
 
     }
 
-
-    void Scene::stateChanged(const state::StateEvent &e) {
-
+    void Scene::stateChanged (const state::StateEvent &e, state::GameState &gameState){
+        std::cout<< "Hey je suis Scene Observer: " << std::endl;
     }
+
+
+
 }

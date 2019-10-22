@@ -6,7 +6,7 @@ namespace state {
 
     }
 
-    int Shotgun::getDirection() {
+    int Shotgun::getDirection() const {
         return DirectionType::CROSS;
     }
 

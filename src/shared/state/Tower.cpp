@@ -10,7 +10,7 @@ namespace state {
         this->lp = lp;
     }
 
-    int Tower::getLp() {
+    int Tower::getLp() const {
         return this->lp;
     }
 

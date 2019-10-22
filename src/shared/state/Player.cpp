@@ -16,19 +16,19 @@ namespace state{
 
     }
 
-    int Player::getId() {
+    int Player::getId() const {
         return this->id;
     }
 
-    std::vector<Character> Player::getUnits() {
+    std::vector<Character> Player::getUnits() const {
         return this->units;
     }
 
-    std::vector<Tower> Player::getTowers() {
+    std::vector<Tower> Player::getTowers() const {
         return this->towers;
     }
 
-    std::vector<ApparitionArea> Player::getApparitionAreas() {
+    std::vector<ApparitionArea> Player::getApparitionAreas() const {
         return this->apparitionAreas;
     }
 

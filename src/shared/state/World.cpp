@@ -73,7 +73,7 @@ namespace state {
             while (sUnits1.peek() == ',' || sUnits1.peek() == ' ')
                 sUnits1.ignore();
         }
-        for(int i = 0; i < units1Pos.size(); i += 2){
+        for(uint i = 0; i < units1Pos.size(); i += 2){
             Character character;
             character.setX(units1Pos[i]);
             character.setY(units1Pos[i+1]);
@@ -88,7 +88,7 @@ namespace state {
             while (sTowers1.peek() == ',' || sTowers1.peek() == ' ')
                 sTowers1.ignore();
         }
-        for(int i = 0; i < towers1Pos.size(); i += 2){
+        for(uint i = 0; i < towers1Pos.size(); i += 2){
             Tower tower;
             tower.setX(towers1Pos[i]);
             tower.setY(towers1Pos[i+1]);
@@ -103,7 +103,7 @@ namespace state {
             while (sApparitionAreas1.peek() == ',' || sApparitionAreas1.peek() == ' ')
                 sApparitionAreas1.ignore();
         }
-        for(int i = 0; i < apparitionAreas1Pos.size(); i += 2){
+        for(uint i = 0; i < apparitionAreas1Pos.size(); i += 2){
             ApparitionArea apparitionArea;
             apparitionArea.setX(apparitionAreas1Pos[i]);
             apparitionArea.setY(apparitionAreas1Pos[i+1]);
@@ -129,7 +129,7 @@ namespace state {
             while (sUnits2.peek() == ',' || sUnits2.peek() == ' ')
                 sUnits2.ignore();
         }
-        for(int i = 0; i < units2Pos.size(); i += 2){
+        for(uint i = 0; i < units2Pos.size(); i += 2){
             Character character;
             character.setX(units2Pos[i]);
             character.setY(units2Pos[i+1]);
@@ -144,7 +144,7 @@ namespace state {
             while (sTowers2.peek() == ',' || sTowers2.peek() == ' ')
                 sTowers2.ignore();
         }
-        for(int i = 0; i < towers2Pos.size(); i += 2){
+        for(uint i = 0; i < towers2Pos.size(); i += 2){
             Tower tower;
             tower.setX(towers2Pos[i]);
             tower.setY(towers2Pos[i+1]);
@@ -159,7 +159,7 @@ namespace state {
             while (sApparitionAreas2.peek() == ',' || sApparitionAreas2.peek() == ' ')
                 sApparitionAreas2.ignore();
         }
-        for(int i = 0; i < apparitionAreas2Pos.size(); i += 2){
+        for(uint i = 0; i < apparitionAreas2Pos.size(); i += 2){
             ApparitionArea apparitionArea;
             apparitionArea.setX(apparitionAreas2Pos[i]);
             apparitionArea.setY(apparitionAreas2Pos[i+1]);
@@ -170,7 +170,7 @@ namespace state {
     }
 
 
-    std::vector<TileType> World::getTiles() {
+    std::vector<TileType> World::getTiles() const {
         return this->tiles;
     }
 
@@ -182,27 +182,27 @@ namespace state {
         return this->yMax;
     }
 
-    std::vector<Character> World::getSpawnUnits1() {
+    std::vector<Character> World::getSpawnUnits1() const {
         return this->spawnUnits1;
     }
 
-    std::vector<Character> World::getSpawnUnits2() {
+    std::vector<Character> World::getSpawnUnits2() const {
         return this->spawnUnits2;
     }
 
-    std::vector<Tower> World::getSpawnTowers1() {
+    std::vector<Tower> World::getSpawnTowers1() const {
         return this->spawnTowers1;
     }
 
-    std::vector<Tower> World::getSpawnTowers2() {
+    std::vector<Tower> World::getSpawnTowers2() const {
         return this->spawnTowers2;
     }
 
-    std::vector<ApparitionArea> World::getSpawnApparitionAreas1() {
+    std::vector<ApparitionArea> World::getSpawnApparitionAreas1() const {
         return this->spawnApparitionAreas1;
     }
 
-    std::vector<ApparitionArea> World::getSpawnApparitionAreas2() {
+    std::vector<ApparitionArea> World::getSpawnApparitionAreas2() const {
         return this->spawnApparitionAreas2;
     }
 

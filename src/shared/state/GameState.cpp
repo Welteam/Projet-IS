@@ -5,11 +5,11 @@
 
 namespace state{
 
-    GameState::GameState() : turn{0}, world{World()}, player1{Player()}, player2{Player()}{
+    GameState::GameState() : world{World()}, turn{0}, player1{Player()}, player2{Player()}{
 
     }
 
-    GameState::GameState(std::string fileName) : turn{0}, world{World(std::move(fileName))}, player1{Player()}, player2{Player()}{
+    GameState::GameState(std::string fileName) : world{World(std::move(fileName))}, turn{0}, player1{Player()}, player2{Player()}{
 
     }
 
@@ -17,7 +17,7 @@ namespace state{
 
     }
 
-    int GameState::getTurn() {
+    int GameState::getTurn() const {
         return this->turn;
     }
 
@@ -25,7 +25,7 @@ namespace state{
         this->turn = turn;
     }
 
-    Player GameState::getPlayer1() {
+    Player GameState::getPlayer1() const {
         return this->player1;
     }
 
@@ -33,7 +33,7 @@ namespace state{
         this->player1 = std::move(player1);
     }
 
-    Player GameState::getPlayer2() {
+    Player GameState::getPlayer2() const {
         return this->player2;
     }
 

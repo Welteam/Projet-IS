@@ -6,7 +6,7 @@ namespace state {
 
     }
 
-    int Sniper::getDirection() {
+    int Sniper::getDirection() const {
         return DirectionType::FULL;
     }
 

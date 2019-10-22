@@ -11,7 +11,7 @@ namespace state {
         this->lp = lp;
     }
 
-    int Character::getLp() {
+    int Character::getLp() const {
         return this->lp;
     }
 

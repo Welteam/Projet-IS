@@ -15,7 +15,7 @@ namespace state {
         this->damageAreaMax = damageAreaMax;
     }
 
-    int Weapon::getPm() {
+    int Weapon::getPm() const {
         return this->pm;
     }
 
@@ -23,7 +23,7 @@ namespace state {
         this->pm = pm;
     }
 
-    int Weapon::getDamage() {
+    int Weapon::getDamage() const {
         return this->damage;
     }
 
@@ -31,11 +31,11 @@ namespace state {
         this->damage = damage;
     }
 
-    int Weapon::getRangeMin() {
+    int Weapon::getRangeMin() const {
         return this->rangeMin;
     }
 
-    int Weapon::getRangeMax() {
+    int Weapon::getRangeMax() const {
         return this->rangeMax;
     }
 
@@ -43,7 +43,7 @@ namespace state {
         this->rangeMax = rangeMax;
     }
 
-    int Weapon::getDamageAreaMax() {
+    int Weapon::getDamageAreaMax() const {
         return this->damageAreaMax;
     }
 

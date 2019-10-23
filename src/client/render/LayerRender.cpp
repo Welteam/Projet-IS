@@ -1,10 +1,8 @@
-#include <SFML/Graphics.hpp>
+#include "LayerRender.h"
 
-class TileMap : public sf::Drawable, public sf::Transformable
-{
-public:
+namespace render {
 
-    bool load(const std::string& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height)
+    bool LayerRender::load(const std::string& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height)
     {
         // on charge la texture du tileset
         if (!m_tileset.loadFromFile(tileset))
@@ -44,9 +42,7 @@ public:
         return true;
     }
 
-private:
-
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    void LayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         // on applique la transformation
         states.transform *= getTransform();
@@ -57,8 +53,5 @@ private:
         // et on dessine enfin le tableau de vertex
         target.draw(m_vertices, states);
     }
-
-    sf::VertexArray m_vertices;
-    sf::Texture m_tileset;
-};
+}
 

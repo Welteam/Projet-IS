@@ -1,6 +1,5 @@
 
 #include "GameState.h"
-
 #include <utility>
 
 namespace state{
@@ -23,6 +22,7 @@ namespace state{
 
     void GameState::setTurn(int turn) {
         this->turn = turn;
+        this->notifyObservers(StateEvent{TURN}, *this);
     }
 
     Player GameState::getPlayer1() const {
@@ -31,6 +31,7 @@ namespace state{
 
     void GameState::setPlayer1(Player player1) {
         this->player1 = std::move(player1);
+        this->notifyObservers(StateEvent{PLAYER1}, *this);
     }
 
     Player GameState::getPlayer2() const {
@@ -39,6 +40,7 @@ namespace state{
 
     void GameState::setPlayer2(Player player2) {
         this->player2 = std::move(player2);
+        this->notifyObservers(StateEvent{PLAYER2}, *this);
     }
 
     const Player &GameState::getActivePlayer() const {
@@ -47,6 +49,7 @@ namespace state{
 
     void GameState::setActivePlayer(const Player &activePlayer) {
         this->activePlayer = activePlayer;
+        this->notifyObservers(StateEvent{ACTIVEPLAYER}, *this);
     }
 
     const World &GameState::getWorld() const {
@@ -55,6 +58,6 @@ namespace state{
 
     void GameState::setWorld(const World &world) {
         this->world = world;
-        this->notifyObservers(StateEvent{ALLCHANGED}, *this);
+        this->notifyObservers(StateEvent{WORLD}, *this);
     }
 }

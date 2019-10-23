@@ -33,6 +33,7 @@ namespace state {
         std::vector<int> apparitionAreas2Pos;
         std::vector<ApparitionArea> apparitionAreas2;
         std::stringstream ss(str);
+        std::vector<int> xY;
 
 
 
@@ -166,6 +167,16 @@ namespace state {
             apparitionAreas2.push_back(apparitionArea);
         }
         this->spawnApparitionAreas2 = apparitionAreas2;
+
+        // Transform string X Y into variable
+        std::stringstream sXY(elements.at(3));
+        for (int i = 0; sXY >> i;) {
+            xY.push_back(static_cast<TileType>(i));
+            while (sXY.peek() == ',' || sXY.peek() == ' ')
+                sXY.ignore();
+        }
+        this->xMax = xY.at(0);
+        this->yMax = xY.at(1);
 
     }
 

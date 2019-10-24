@@ -53,11 +53,18 @@ int main(int argc,char* argv[])
     World world{mapWorld};
     gameState.setWorld(world);
 
+    // 6. Charger players dans GameState
+    Player player1{1, world.getSpawnUnits1(), world.getSpawnTowers1(), world.getSpawnApparitionAreas1()};
+    Player player2{2, world.getSpawnUnits2(), world.getSpawnTowers2(), world.getSpawnApparitionAreas2()};
+    gameState.setPlayer1(player1);
+    gameState.setPlayer2(player2);
+
     while (window.isOpen()) {
         // TODO 1.0 : Gestion des événements
         handleInputs(window);
     }
-
+    window.clear();
+    window.display();
     return 0;
 }
 

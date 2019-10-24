@@ -15,7 +15,7 @@ namespace render {
             std::vector<state::TileType> input = world.getTiles();
             int arr[input.size()];
             std::copy(input.begin(), input.end(), arr);
-            if (!map.load("res/tiles2.png", sf::Vector2u(16, 16), arr, world.getXMax(), world.getYMax()))
+            if (!map.load("../res/tiles2.png", sf::Vector2u(16, 16), arr, world.getXMax(), world.getYMax()))
                 std::cout << "Cannot load map" << std::endl;
             window.clear();
             window.draw(map);
@@ -29,19 +29,19 @@ namespace render {
         sf::Texture textureApparitionAreas;
         std::vector<sf::Sprite> sprites;
         if(player.getId() == 1) {
-            if (!textureUnits.loadFromFile("res/unity_red_right.png"))
-                std::cout << "Cannot load Texture : res/unity_red_right.png" << std::endl;
-            if (!textureTowers.loadFromFile("res/tower_red.png"))
-                std::cout << "Cannot load Texture : res/tower_red.png" << std::endl;
-            if (!textureApparitionAreas.loadFromFile("res/aa_red.png"))
-                std::cout << "Cannot load Texture : res/aa_red.png" << std::endl;
+            if (!textureUnits.loadFromFile("../res/unity_red_right.png"))
+                std::cout << "Cannot load Texture : ../res/unity_red_right.png" << std::endl;
+            if (!textureTowers.loadFromFile("../res/tower_red.png"))
+                std::cout << "Cannot load Texture : ../res/tower_red.png" << std::endl;
+            if (!textureApparitionAreas.loadFromFile("../res/aa_red.png"))
+                std::cout << "Cannot load Texture : ../res/aa_red.png" << std::endl;
         } else {
-            if (!textureUnits.loadFromFile("res/unity_blue_left.png"))
-                std::cout << "Cannot load Texture : res/unity_blue_left.png" << std::endl;
-            if (!textureTowers.loadFromFile("res/tower_blue.png"))
-                std::cout << "Cannot load Texture : res/tower_blue.png" << std::endl;
-            if (!textureApparitionAreas.loadFromFile("res/aa_blue.png"))
-                std::cout << "Cannot load Texture : res/aa_blue.png" << std::endl;
+            if (!textureUnits.loadFromFile("../res/unity_blue_left.png"))
+                std::cout << "Cannot load Texture : ../res/unity_blue_left.png" << std::endl;
+            if (!textureTowers.loadFromFile("../res/tower_blue.png"))
+                std::cout << "Cannot load Texture : ../res/tower_blue.png" << std::endl;
+            if (!textureApparitionAreas.loadFromFile("../res/aa_blue.png"))
+                std::cout << "Cannot load Texture : ../res/aa_blue.png" << std::endl;
         }
         for(state::Character character :  player.getUnits()){
             sf::Sprite unit;

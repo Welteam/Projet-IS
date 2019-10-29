@@ -5,7 +5,7 @@
 
 namespace render {
 
-    Scene::Scene(sf::RenderWindow &window) : window(window) {
+    Scene::Scene(sf::RenderWindow &window, sf::View &view) : window(window), view(view) {
 
     }
 
@@ -17,55 +17,61 @@ namespace render {
             std::copy(input.begin(), input.end(), arr);
             if (!map.load("../res/tiles2.png", sf::Vector2u(16, 16), arr, world.getXMax(), world.getYMax()))
                 std::cout << "Cannot load map" << std::endl;
-            window.clear();
-            window.draw(map);
-            window.display();
+            this->worldRender = map;
+            updateAll();
         }
     }
 
     void Scene::updatePlayers(state::Player player) {
-        sf::Texture textureUnits;
-        sf::Texture textureTowers;
-        sf::Texture textureApparitionAreas;
-        std::vector<sf::Sprite> sprites;
-        if(player.getId() == 1) {
-            if (!textureUnits.loadFromFile("../res/unity_red_right.png"))
-                std::cout << "Cannot load Texture : ../res/unity_red_right.png" << std::endl;
-            if (!textureTowers.loadFromFile("../res/tower_red.png"))
-                std::cout << "Cannot load Texture : ../res/tower_red.png" << std::endl;
-            if (!textureApparitionAreas.loadFromFile("../res/aa_red.png"))
-                std::cout << "Cannot load Texture : ../res/aa_red.png" << std::endl;
-        } else {
-            if (!textureUnits.loadFromFile("../res/unity_blue_left.png"))
-                std::cout << "Cannot load Texture : ../res/unity_blue_left.png" << std::endl;
-            if (!textureTowers.loadFromFile("../res/tower_blue.png"))
-                std::cout << "Cannot load Texture : ../res/tower_blue.png" << std::endl;
-            if (!textureApparitionAreas.loadFromFile("../res/aa_blue.png"))
-                std::cout << "Cannot load Texture : ../res/aa_blue.png" << std::endl;
-        }
-        for(state::Character character :  player.getUnits()){
-            sf::Sprite unit;
-            unit.setTexture(textureUnits);
-            unit.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20)); // position absolue
-            sprites.push_back(unit);
-        }
-        for(state::Tower towerFromPlayer :  player.getTowers()){
-            sf::Sprite tower;
-            tower.setTexture(textureTowers);
-            tower.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20)); // position absolue
-            sprites.push_back(tower);
-        }
-        for(state::ApparitionArea apparitionAreaFromPlayer :  player.getApparitionAreas()){
-            sf::Sprite apparitionArea;
-            apparitionArea.setTexture(textureApparitionAreas);
-            apparitionArea.setPosition(sf::Vector2f(apparitionAreaFromPlayer.getX() * 320 / 20, apparitionAreaFromPlayer.getY() * 320 / 20)); // position absolue
-            sprites.push_back(apparitionArea);
-        }
-        for(auto sprite : sprites)
-            window.draw(sprite);
-        window.display();
+        if(isWindowAvailable(window)){
+            // on charge la texture du tileset
+            if (!unitsRed.loadFromFile("../res/units_red.png"))
+                std::cout << "Cannot load Texture : ../res/units_red.png" << std::endl;
+            if (!unitsBlue.loadFromFile("../res/units_blue.png"))
+                std::cout << "Cannot load Texture : ../res/units_blue.png" << std::endl;
+            std::vector<sf::Sprite> sprites;
 
-
+            for(state::Character character :  player.getUnits()){
+                sf::Sprite unit;
+                if(player.getId()== 1) {
+                    unit.setTexture(unitsRed);
+                } else {
+                    unit.setTexture(unitsBlue);
+                }
+                unit.setTextureRect(sf::IntRect(0, 0, 16, 16));
+                unit.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20)); // position absolue
+                sprites.push_back(unit);
+            }
+            for(state::Tower towerFromPlayer :  player.getTowers()){
+                sf::Sprite tower;
+                if(player.getId()== 1) {
+                    tower.setTexture(unitsRed);
+                } else {
+                    tower.setTexture(unitsBlue);
+                }
+                tower.setTextureRect(sf::IntRect(0, 64, 16, 16));
+                tower.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20)); // position absolue
+                sprites.push_back(tower);
+            }
+            for(state::ApparitionArea apparitionAreaFromPlayer :  player.getApparitionAreas()){
+                sf::Sprite apparitionArea;
+                if(player.getId()== 1) {
+                    apparitionArea.setTexture(unitsRed);
+                } else {
+                    apparitionArea.setTexture(unitsBlue);
+                }
+                apparitionArea.setTextureRect(sf::IntRect(16, 64, 16, 16));
+                apparitionArea.setPosition(sf::Vector2f(apparitionAreaFromPlayer.getX() * 320 / 20, apparitionAreaFromPlayer.getY() * 320 / 20)); // position absolue
+                sprites.push_back(apparitionArea);
+            }
+            if(player.getId() == 1) {
+                this->player1Render = sprites;
+            }
+            else {
+                this->player2Render = sprites;
+            }
+            updateAll();
+        }
     }
 
     void Scene::stateChanged (const state::StateEvent &e, state::GameState &gameState){
@@ -103,6 +109,40 @@ namespace render {
             return false;
         }
         return true;
+    }
+
+    void Scene::updateAll() {
+        if(isWindowAvailable(window)){
+            window.clear();
+            float xView;
+            float yView;
+            float widthView;
+            float heightView;
+            if(window.getSize().x > window.getSize().y){
+                xView = 0.5f*(1.f-(1.f*window.getSize().y)/(1.0f*window.getSize().x));
+                yView = 0.0f;
+                widthView = (1.f*window.getSize().y)/(1.0f*window.getSize().x);
+                heightView = 1.0f;
+            } else if(window.getSize().x < window.getSize().y){
+                xView = 0.0f;
+                yView = 0.5f*(1.f-(1.f*window.getSize().x)/(1.f*window.getSize().y));
+                widthView = 1.0f;
+                heightView = (1.f*window.getSize().x)/(1.f*window.getSize().y);
+            } else {
+                xView = 0.0f;
+                yView = 0.0f;
+                widthView = 1.0f;
+                heightView = 1.0f;
+            }
+            view.setViewport(sf::FloatRect(xView, yView, widthView, heightView));
+            window.setView(view);
+            window.draw(this->worldRender);
+            for(auto sprite : this->player1Render)
+                window.draw(sprite);
+            for(auto sprite : this->player2Render)
+                window.draw(sprite);
+            window.display();
+        }
     }
 
 }

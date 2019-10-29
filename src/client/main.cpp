@@ -7,6 +7,7 @@ using namespace std;
 using namespace state;
 using namespace render;
 
+shared_ptr<Scene> scene;
 void handleInputs(sf::RenderWindow &window);
 
 int main(int argc,char* argv[])
@@ -40,11 +41,13 @@ int main(int argc,char* argv[])
     GameState gameState{};
 
     // 2. Create Window SFML
-    sf::RenderWindow window(sf::VideoMode(320, 320), "ZCOM");
+    sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM");
+    // on crée une vue
+    //sf::View view(window.getView().getCenter(), sf::Vector2f((float)320, (float)320));
+    sf::View view(sf::FloatRect(0,0,320,320));
 
     // 3. Intanciate Scene
-    shared_ptr<Scene> scene;
-    scene.reset(new Scene(window));
+    scene.reset(new Scene(window, view));
 
     // 4. Register Scene -> GameState
     gameState.registerObserver(scene.get());
@@ -63,8 +66,6 @@ int main(int argc,char* argv[])
         // TODO 1.0 : Gestion des événements
         handleInputs(window);
     }
-    window.clear();
-    window.display();
     return 0;
 }
 
@@ -72,20 +73,55 @@ int main(int argc,char* argv[])
 
 void handleInputs(sf::RenderWindow &window){
     sf::Event event;
-    // TODO 1.1 : Gestion deplacement souris
-
-    // TODO 1.2 : Gestion clic gauche souris
-
-    // TODO 1.3 : Gestion clic droit souris
-
-    // TODO 1.4 : Gestion clic molette
-
-    // TODO 1.5 : Gestion déplacement molette
-
-    // TODO 2.0 : Gestion touches clavier
-    while (window.pollEvent(event)) {
-        if(event.type == sf::Event::Closed)
-            window.close();
+    while (window.pollEvent(event))
+    {
+        switch (event.type)
+        {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::LostFocus:
+                break;
+            case sf::Event::GainedFocus:
+                break;
+            case sf::Event::TextEntered:
+                break;
+            case sf::Event::KeyPressed:
+                break;
+            case sf::Event::KeyReleased:
+                break;
+            case sf::Event::MouseWheelMoved:
+                break;
+            case sf::Event::MouseWheelScrolled:
+                break;
+            case sf::Event::MouseButtonPressed:
+                if (event.mouseButton.button == sf::Mouse::Right)
+                {
+                    std::cout << "the right button was pressed" << std::endl;
+                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
+                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+                }
+                break;
+            case sf::Event::MouseButtonReleased:
+                break;
+            case sf::Event::MouseMoved:
+                std::cout << "new mouse x: " << event.mouseMove.x << std::endl;
+                std::cout << "new mouse y: " << event.mouseMove.y << std::endl;
+                break;
+            case sf::Event::MouseEntered:
+                std::cout << "the mouse cursor has entered the window" << std::endl;
+                break;
+            case sf::Event::MouseLeft:
+                std::cout << "the mouse cursor has left the window" << std::endl;
+                break;
+            case sf::Event::SensorChanged:
+                break;
+            case sf::Event::Count:
+                break;
+            default:
+                scene.get()->updateAll();
+                break;
+        }
     }
 
   }

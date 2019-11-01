@@ -3,12 +3,13 @@
 
 namespace state {
 
-    Weapon::Weapon() : level{0}, pm{0}, damage{0}, rangeMin{0}, rangeMax{0}, damageAreaMax{0}, direction{DirectionType::FULL} {
+    Weapon::Weapon() : level{0}, lpMax{100}, pm{5}, damage{30}, rangeMin{0}, rangeMax{5}, damageAreaMax{0}, direction{DirectionType::FULL} {
 
     }
 
-    Weapon::Weapon(int level,int pm, int damage, int rangeMin, int rangeMax, int damageAreaMax, DirectionType direction) {
+    Weapon::Weapon(int level,int lpMax, int pm, int damage, int rangeMin, int rangeMax, int damageAreaMax, DirectionType direction) {
         this->level = level;
+        this->lpMax = lpMax;
         this->pm = pm;
         this->damage = damage;
         this->rangeMin = rangeMin;
@@ -66,6 +67,7 @@ namespace state {
         switch(currentLevel){
             case 0:
                 this->level = 1; // Shotgun
+                this->lpMax = 120;
                 this->pm = 5;
                 this->damage = 60;
                 this->rangeMin = 0;
@@ -75,6 +77,7 @@ namespace state {
                 break;
             case 1:
                 this->level = 2; // Sniper
+                this->lpMax = 140;
                 this->pm = 4;
                 this->damage = 40;
                 this->rangeMin = 0;
@@ -84,6 +87,7 @@ namespace state {
                 break;
             case 2:
                 this->level = 3; // Bazooka
+                this->lpMax = 160;
                 this->pm = 4;
                 this->damage = 50;
                 this->rangeMin = 3;
@@ -93,6 +97,10 @@ namespace state {
                 break;
         }
 
+    }
+
+    int Weapon::getLpMax() const {
+        return this->lpMax;
     }
 
 

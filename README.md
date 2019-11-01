@@ -1,6 +1,6 @@
 # Projet-IS
 
-## Installation
+## Installation
 
 ```bash
 git clone https://github.com/Welteam/Projet-IS.git

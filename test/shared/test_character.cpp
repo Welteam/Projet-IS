@@ -23,6 +23,23 @@ BOOST_AUTO_TEST_CASE(TestGameObject)
   }
 
   {
+    state::Character character {};
+    state::Weapon weapon {};
+    BOOST_CHECK_EQUAL(character.getWeapon().getLevel(), 0);
+    weapon.levelUp();
+    character.setWeapon(weapon);
+    BOOST_CHECK_EQUAL(character.getWeapon().getLevel(), 1);
+  }
+
+  {
+    state::Character character {};
+    character.setLp(110);
+    character.levelUp();
+    BOOST_CHECK_EQUAL(character.getWeapon().getLevel(), 1);
+    BOOST_CHECK_EQUAL(character.getLp(), 120);
+  }
+
+  {
     state::Character character {5, 5, 75};
     BOOST_CHECK_EQUAL(character.getX(), 5);
     BOOST_CHECK_EQUAL(character.getY(), 5);

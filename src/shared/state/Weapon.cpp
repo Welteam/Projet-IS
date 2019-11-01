@@ -3,6 +3,8 @@
 
 namespace state {
 
+    // TODO: Remove setters and add setLevel method
+
     Weapon::Weapon() : level{0}, lpMax{100}, pm{5}, damage{30}, rangeMin{0}, rangeMax{5}, damageAreaMax{0}, direction{DirectionType::FULL} {
 
     }

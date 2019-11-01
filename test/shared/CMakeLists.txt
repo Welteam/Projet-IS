@@ -8,5 +8,6 @@ add_custom_test(apparition_area)
 add_custom_test(player)
 add_custom_test(game_state)
 add_custom_test(character)
+add_custom_test(state_event)
 # vim: set sw=2 sts=2 et:
 

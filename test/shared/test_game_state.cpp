@@ -38,6 +38,10 @@ BOOST_AUTO_TEST_CASE(TestGameObject)
       gameState.setPlayer2(player2);
       BOOST_CHECK_EQUAL(gameState.getPlayer1().getId(), 1);
       BOOST_CHECK_EQUAL(gameState.getPlayer2().getId(), 2);
+      gameState.setActivePlayer(player1);
+      BOOST_CHECK_EQUAL(gameState.getActivePlayer().getId(), 1);
+      gameState.setActivePlayer(player2);
+      BOOST_CHECK_EQUAL(gameState.getActivePlayer().getId(), 2);
   }
 
   {

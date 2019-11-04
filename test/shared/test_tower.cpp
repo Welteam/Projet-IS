@@ -11,9 +11,9 @@ BOOST_AUTO_TEST_CASE(TestTowerGettersSettersConstrutors)
 {
     { // GET & SET lp, Empty constructor
        state::Tower tower;
-       BOOST_CHECK_EQUAL(tower.getLp(), 100);
-       tower.setLp(350);
-       BOOST_CHECK_EQUAL(tower.getLp(), 350);
+       BOOST_CHECK_EQUAL(tower.getHp(), 100);
+       tower.setHp(350);
+       BOOST_CHECK_EQUAL(tower.getHp(), 350);
     }
 
     { // GET & SET coordinate x & y, Empty constructor
@@ -27,10 +27,18 @@ BOOST_AUTO_TEST_CASE(TestTowerGettersSettersConstrutors)
     }
 
     { // Constructor whith parameters
-        state::Tower tower{200, 60, 120};
-        BOOST_CHECK_EQUAL(tower.getLp(), 200);
-        BOOST_CHECK_EQUAL(tower.getX(), 60);
-        BOOST_CHECK_EQUAL(tower.getY(), 120);
+        state::Tower tower{10, 5};
+        BOOST_CHECK_EQUAL(tower.getX(), 10);
+        BOOST_CHECK_EQUAL(tower.getY(), 5);
+        BOOST_CHECK_EQUAL(tower.getHp(), 100);
+    }
+
+    { // Constructor whith parameters
+        state::Tower tower{10, 5, 120};
+        BOOST_CHECK_EQUAL(tower.getX(), 10);
+        BOOST_CHECK_EQUAL(tower.getY(), 5);
+        BOOST_CHECK_EQUAL(tower.getHp(), 120);
+
     }
 }
 

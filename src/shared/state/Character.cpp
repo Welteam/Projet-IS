@@ -3,21 +3,24 @@
 namespace state {
 
 
-    Character::Character() : GameObject(), weapon{Weapon()}, lp{100} {
+    Character::Character() : GameObject(), weapon{Weapon()} {
+
+    }
+
+    Character::Character(int x, int y) : GameObject(x, y) {
 
     }
 
     // TODO: set weapon's level
-    Character::Character(int x, int y, int lp) :GameObject(x, y), weapon{Weapon()} {
-        this->lp = lp;
+    Character::Character(int x, int y, int hp) : GameObject(x, y), weapon{Weapon()}, hp{hp} {
     }
 
-    int Character::getLp() const {
-        return this->lp;
+    int Character::getHp() const {
+        return this->hp;
     }
 
-    void Character::setLp(int lifePoints) {
-        this->lp = lifePoints;
+    void Character::setHp(int hp) {
+        this->hp = hp;
     }
 
     const Weapon &Character::getWeapon() const {
@@ -30,8 +33,10 @@ namespace state {
 
     void Character::levelUp() {
         this->weapon.levelUp();
-        this->lp += 20;
-        if (this->lp > weapon.getLpMax())
-            this->lp = weapon.getLpMax();
+        this->hp += 20;
+        if (this->hp > weapon.getLpMax())
+            this->hp = weapon.getLpMax();
     }
+
+
 }

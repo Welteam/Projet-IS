@@ -18,9 +18,9 @@ BOOST_AUTO_TEST_CASE(TestGameObject)
 
   {
     state::Character character {};
-    BOOST_CHECK_EQUAL(character.getLp(), 100);
-    character.setLp(50);
-    BOOST_CHECK_EQUAL(character.getLp(), 50);
+    BOOST_CHECK_EQUAL(character.getHp(), 100);
+    character.setHp(50);
+    BOOST_CHECK_EQUAL(character.getHp(), 50);
   }
 
 }

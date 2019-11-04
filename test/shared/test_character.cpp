@@ -17,9 +17,9 @@ BOOST_AUTO_TEST_CASE(TestGameObject)
 
   {
     state::Character character {};
-    BOOST_CHECK_EQUAL(character.getLp(), 100);
-    character.setLp(50);
-    BOOST_CHECK_EQUAL(character.getLp(), 50);
+    BOOST_CHECK_EQUAL(character.getHp(), 100);
+    character.setHp(50);
+    BOOST_CHECK_EQUAL(character.getHp(), 50);
   }
 
   {
@@ -33,17 +33,24 @@ BOOST_AUTO_TEST_CASE(TestGameObject)
 
   {
     state::Character character {};
-    character.setLp(110);
+    character.setHp(110);
     character.levelUp();
     BOOST_CHECK_EQUAL(character.getWeapon().getLevel(), 1);
-    BOOST_CHECK_EQUAL(character.getLp(), 120);
+    BOOST_CHECK_EQUAL(character.getHp(), 120);
+  }
+
+  {
+      state::Character character {5, 5};
+      BOOST_CHECK_EQUAL(character.getX(), 5);
+      BOOST_CHECK_EQUAL(character.getY(), 5);
+      BOOST_CHECK_EQUAL(character.getHp(), 100);
   }
 
   {
     state::Character character {5, 5, 75};
     BOOST_CHECK_EQUAL(character.getX(), 5);
     BOOST_CHECK_EQUAL(character.getY(), 5);
-    BOOST_CHECK_EQUAL(character.getLp(), 75);
+    BOOST_CHECK_EQUAL(character.getHp(), 75);
   }
 
 }

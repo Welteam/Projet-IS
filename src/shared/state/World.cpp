@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <streambuf>
+#include <functional>
 
 namespace state {
 
@@ -28,12 +29,6 @@ namespace state {
         std::vector<std::string> elements;
         std::vector<std::string> player1Elements;
         std::vector<std::string> player2Elements;
-        std::vector<int> units1Pos;
-        std::vector<int> towers1Pos;
-        std::vector<int> apparitionAreas1Pos;
-        std::vector<int> units2Pos;
-        std::vector<int> towers2Pos;
-        std::vector<int> apparitionAreas2Pos;
         std::stringstream ss(str);
         std::vector<int> xY;
 
@@ -62,49 +57,7 @@ namespace state {
             player1Elements.push_back(substr);
         }
 
-        // Transform units string into object
-        std::stringstream sUnits1(player1Elements.at(0));
-        for (int i = 0; sUnits1 >> i;) {
-            units1Pos.push_back(i);
-            while (sUnits1.peek() == ',' || sUnits1.peek() == ' ')
-                sUnits1.ignore();
-        }
-        for(uint i = 0; i < units1Pos.size(); i += 2){
-            Character character;
-            character.setX(units1Pos[i]);
-            character.setY(units1Pos[i+1]);
-            spawnUnits1.push_back(character);
-        }
-
-        // Transform towers string into object
-        std::stringstream sTowers1(player1Elements.at(1));
-        for (int i = 0; sTowers1 >> i;) {
-            towers1Pos.push_back(i);
-            while (sTowers1.peek() == ',' || sTowers1.peek() == ' ')
-                sTowers1.ignore();
-        }
-        for(uint i = 0; i < towers1Pos.size(); i += 2){
-            Tower tower;
-            tower.setX(towers1Pos[i]);
-            tower.setY(towers1Pos[i+1]);
-            spawnTowers1.push_back(tower);
-        }
-
-        // Transform apparition areas string into object
-        std::stringstream sApparitionAreas1(player1Elements.at(2));
-        for (int i = 0; sApparitionAreas1 >> i;) {
-            apparitionAreas1Pos.push_back(i);
-            while (sApparitionAreas1.peek() == ',' || sApparitionAreas1.peek() == ' ')
-                sApparitionAreas1.ignore();
-        }
-        for(uint i = 0; i < apparitionAreas1Pos.size(); i += 2){
-            ApparitionArea apparitionArea;
-            apparitionArea.setX(apparitionAreas1Pos[i]);
-            apparitionArea.setY(apparitionAreas1Pos[i+1]);
-            spawnApparitionAreas1.push_back(apparitionArea);
-        }
-
-        // Transform string player 1 into units, towers, apparitionAreas
+        // Transform string player 2 into units, towers, apparitionAreas
         std::stringstream sPlayer2(elements.at(2));
         while(sPlayer2.good())
         {
@@ -114,46 +67,28 @@ namespace state {
         }
 
         // Transform units string into object
-        std::stringstream sUnits2(player2Elements.at(0));
-        for (int i = 0; sUnits2 >> i;) {
-            units2Pos.push_back(i);
-            while (sUnits2.peek() == ',' || sUnits2.peek() == ' ')
-                sUnits2.ignore();
-        }
-        for(uint i = 0; i < units2Pos.size(); i += 2){
-            Character character;
-            character.setX(units2Pos[i]);
-            character.setY(units2Pos[i+1]);
-            spawnUnits2.push_back(character);
-        }
+        for(auto gameObject : transformStringToPlayersObject(player1Elements.at(0), Character{}))
+            spawnUnits1.push_back(Character{gameObject.getX(), gameObject.getY()});
 
         // Transform towers string into object
-        std::stringstream sTowers2(player2Elements.at(1));
-        for (int i = 0; sTowers2 >> i;) {
-            towers2Pos.push_back(i);
-            while (sTowers2.peek() == ',' || sTowers2.peek() == ' ')
-                sTowers2.ignore();
-        }
-        for(uint i = 0; i < towers2Pos.size(); i += 2){
-            Tower tower;
-            tower.setX(towers2Pos[i]);
-            tower.setY(towers2Pos[i+1]);
-            spawnTowers2.push_back(tower);
-        }
+        for(auto gameObject : transformStringToPlayersObject(player1Elements.at(1), Tower{}))
+            spawnTowers1.push_back(Tower{gameObject.getX(), gameObject.getY()});
 
         // Transform apparition areas string into object
-        std::stringstream sApparitionAreas2(player2Elements.at(2));
-        for (int i = 0; sApparitionAreas2 >> i;) {
-            apparitionAreas2Pos.push_back(i);
-            while (sApparitionAreas2.peek() == ',' || sApparitionAreas2.peek() == ' ')
-                sApparitionAreas2.ignore();
-        }
-        for(uint i = 0; i < apparitionAreas2Pos.size(); i += 2){
-            ApparitionArea apparitionArea;
-            apparitionArea.setX(apparitionAreas2Pos[i]);
-            apparitionArea.setY(apparitionAreas2Pos[i+1]);
-            spawnApparitionAreas2.push_back(apparitionArea);
-        }
+        for(auto gameObject : transformStringToPlayersObject(player1Elements.at(2), ApparitionArea{}))
+            spawnApparitionAreas1.push_back(ApparitionArea{gameObject.getX(), gameObject.getY()});
+
+        // Transform units string into object
+        for(auto gameObject : transformStringToPlayersObject(player2Elements.at(0), Character{}))
+            spawnUnits2.push_back(Character{gameObject.getX(), gameObject.getY()});
+
+        // Transform towers string into object
+        for(auto gameObject : transformStringToPlayersObject(player2Elements.at(1), Tower{}))
+            spawnTowers2.push_back(Tower{gameObject.getX(), gameObject.getY()});
+
+        // Transform apparition areas string into object
+        for(auto gameObject : transformStringToPlayersObject(player2Elements.at(2), ApparitionArea{}))
+            spawnApparitionAreas2.push_back(ApparitionArea{gameObject.getX(), gameObject.getY()});
 
         // Transform string X Y into variable
         std::stringstream sXY(elements.at(3));
@@ -202,6 +137,28 @@ namespace state {
     std::vector<ApparitionArea> World::getSpawnApparitionAreas2() const {
         return this->spawnApparitionAreas2;
     }
+
+    std::vector<GameObject> World::transformStringToPlayersObject(std::string strGameObject, GameObject gameObject){
+        // Transform units string into object
+        std::vector<int> gameObjectPos;
+        std::stringstream ss(strGameObject);
+        std::vector<GameObject> gameObjects;
+
+        for (int i = 0; ss >> i;) {
+            gameObjectPos.push_back(i);
+            while (ss.peek() == ',' || ss.peek() == ' ')
+                ss.ignore();
+        }
+        for(uint i = 0; i < gameObjectPos.size(); i += 2){
+            gameObject.setX(gameObjectPos[i]);
+            gameObject.setY(gameObjectPos[i + 1]);
+            gameObjects.push_back(gameObject);
+        }
+        return gameObjects;
+    }
+
+
+
 
 }
 

@@ -36,6 +36,16 @@ BOOST_AUTO_TEST_CASE(TestWorldConctructorFile)
     BOOST_CHECK_EQUAL(world.getSpawnApparitionAreas2().size(), 1);
 }
 
+BOOST_AUTO_TEST_CASE(TestWorldException)
+{
+    // __FILE__ is accessible, no exception expected
+    BOOST_REQUIRE_NO_THROW("../../../res/map.txt");
+
+    // ".. __FILE__" does not exist, API says std::exception, and implementation
+    // raises std::runtime_error child of std::exception
+    BOOST_CHECK_THROW( state::World world{"../map.txt"}, std::exception );
+}
+
 
 /* vim: set sw=2 sts=2 et : */
 

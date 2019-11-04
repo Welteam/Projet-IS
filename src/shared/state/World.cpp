@@ -15,38 +15,27 @@ namespace state {
     World::World(std::string fileName) {
 
         std::ifstream t(fileName);
-        if(!t.good()) {
+        if(!t.good())
             throw std::runtime_error("Cannot find file to load map");
-        }
-        std::string str;
 
+        std::string str;
         t.seekg(0, std::ios::end);
         str.reserve(t.tellg());
         t.seekg(0, std::ios::beg);
-
         str.assign((std::istreambuf_iterator<char>(t)),
                    std::istreambuf_iterator<char>());
 
         std::vector<std::string> elements;
         std::vector<std::string> player1Elements;
         std::vector<std::string> player2Elements;
-        std::vector<TileType> tiles;
         std::vector<int> units1Pos;
-        std::vector<Character> units1;
         std::vector<int> towers1Pos;
-        std::vector<Tower> towers1;
         std::vector<int> apparitionAreas1Pos;
-        std::vector<ApparitionArea> apparitionAreas1;
         std::vector<int> units2Pos;
-        std::vector<Character> units2;
         std::vector<int> towers2Pos;
-        std::vector<Tower> towers2;
         std::vector<int> apparitionAreas2Pos;
-        std::vector<ApparitionArea> apparitionAreas2;
         std::stringstream ss(str);
         std::vector<int> xY;
-
-
 
         // Separate data to build World and Players
         while(ss.good())
@@ -56,8 +45,6 @@ namespace state {
             elements.push_back(substr );
         }
 
-
-
         // Transform string tiles into vector<TileType>
         std::stringstream sTiles(elements.at(0));
         for (int i = 0; sTiles >> i;) {
@@ -65,9 +52,6 @@ namespace state {
             while (sTiles.peek() == ',' || sTiles.peek() == ' ')
                 sTiles.ignore();
         }
-        this->tiles = tiles;
-
-
 
         // Transform string player 1 into units, towers, apparitionAreas
         std::stringstream sPlayer1(elements.at(1));
@@ -89,9 +73,8 @@ namespace state {
             Character character;
             character.setX(units1Pos[i]);
             character.setY(units1Pos[i+1]);
-            units1.push_back(character);
+            spawnUnits1.push_back(character);
         }
-        this->spawnUnits1 = units1;
 
         // Transform towers string into object
         std::stringstream sTowers1(player1Elements.at(1));
@@ -104,9 +87,8 @@ namespace state {
             Tower tower;
             tower.setX(towers1Pos[i]);
             tower.setY(towers1Pos[i+1]);
-            towers1.push_back(tower);
+            spawnTowers1.push_back(tower);
         }
-        this->spawnTowers1 = towers1;
 
         // Transform apparition areas string into object
         std::stringstream sApparitionAreas1(player1Elements.at(2));
@@ -119,11 +101,8 @@ namespace state {
             ApparitionArea apparitionArea;
             apparitionArea.setX(apparitionAreas1Pos[i]);
             apparitionArea.setY(apparitionAreas1Pos[i+1]);
-            apparitionAreas1.push_back(apparitionArea);
+            spawnApparitionAreas1.push_back(apparitionArea);
         }
-        this->spawnApparitionAreas1 = apparitionAreas1;
-
-
 
         // Transform string player 1 into units, towers, apparitionAreas
         std::stringstream sPlayer2(elements.at(2));
@@ -145,9 +124,8 @@ namespace state {
             Character character;
             character.setX(units2Pos[i]);
             character.setY(units2Pos[i+1]);
-            units2.push_back(character);
+            spawnUnits2.push_back(character);
         }
-        this->spawnUnits2 = units2;
 
         // Transform towers string into object
         std::stringstream sTowers2(player2Elements.at(1));
@@ -160,9 +138,8 @@ namespace state {
             Tower tower;
             tower.setX(towers2Pos[i]);
             tower.setY(towers2Pos[i+1]);
-            towers2.push_back(tower);
+            spawnTowers2.push_back(tower);
         }
-        this->spawnTowers2 = towers2;
 
         // Transform apparition areas string into object
         std::stringstream sApparitionAreas2(player2Elements.at(2));
@@ -175,9 +152,8 @@ namespace state {
             ApparitionArea apparitionArea;
             apparitionArea.setX(apparitionAreas2Pos[i]);
             apparitionArea.setY(apparitionAreas2Pos[i+1]);
-            apparitionAreas2.push_back(apparitionArea);
+            spawnApparitionAreas2.push_back(apparitionArea);
         }
-        this->spawnApparitionAreas2 = apparitionAreas2;
 
         // Transform string X Y into variable
         std::stringstream sXY(elements.at(3));
@@ -190,7 +166,6 @@ namespace state {
         this->yMax = xY.at(1);
 
     }
-
 
     std::vector<TileType> World::getTiles() const {
         return this->tiles;
@@ -227,8 +202,6 @@ namespace state {
     std::vector<ApparitionArea> World::getSpawnApparitionAreas2() const {
         return this->spawnApparitionAreas2;
     }
-
-
 
 }
 

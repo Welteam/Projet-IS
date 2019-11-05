@@ -38,5 +38,13 @@ namespace state {
             this->hp = weapon.getLpMax();
     }
 
+    Orientation Character::getOrientation() {
+        return this->orientation;;
+    }
+
+    void Character::setOrientation(Orientation orientation) {
+        this->orientation = orientation;
+    }
+
 
 }

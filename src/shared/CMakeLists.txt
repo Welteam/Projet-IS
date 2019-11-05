@@ -12,6 +12,10 @@ file(GLOB_RECURSE shared_sources *.cpp)
 # Build the "shared" library and add required includes
 add_library(${lib_shared_target} STATIC ${shared_sources} state/ApparitionArea.cpp state/GameState.cpp)
 add_dependencies(${lib_shared_target} generate-headers)
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/
+        ${CMAKE_CURRENT_SOURCE_DIR}/../client/
+)
 target_include_directories(${lib_shared_target} INTERFACE
   ${CMAKE_CURRENT_SOURCE_DIR}
   )

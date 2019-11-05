@@ -2,7 +2,6 @@
 #include <iostream>
 #include "state/TileType.h"
 
-
 namespace render {
 
     Scene::Scene(sf::RenderWindow &window, sf::View &view) : window(window), view(view) {
@@ -74,6 +73,22 @@ namespace render {
         }
     }
 
+    void Scene::updateTrajectory(std::vector<engine::Node> nodes) {
+        if(isWindowAvailable(window)){
+            LayerRender trajectory;
+            std::vector<int> data(400, 0);
+            for(engine::Node node : nodes){
+                data[node.x + node.y*20] = 1;
+            }
+            int arr[400];
+            std::copy(data.begin(), data.end(), arr);
+            if (!trajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+                std::cout << "Cannot load map" << std::endl;
+            this->trajectory = trajectory;
+            updateAll();
+        }
+    }
+
     void Scene::stateChanged (const state::StateEvent &e, state::GameState &gameState){
         switch(e.getStateEventID()){
             case state::StateEventID::WORLD:
@@ -137,6 +152,7 @@ namespace render {
             view.setViewport(sf::FloatRect(xView, yView, widthView, heightView));
             window.setView(view);
             window.draw(this->worldRender);
+            window.draw(this->trajectory);
             for(auto sprite : this->player1Render)
                 window.draw(sprite);
             for(auto sprite : this->player2Render)

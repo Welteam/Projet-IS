@@ -76,7 +76,7 @@ int main(int argc,char* argv[])
             // 6. Charger players dans GameState
             gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
             gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
-            gameState.setActivePlayer(gameState.getPlayer1());
+            gameState.setActivePlayer(gameState.getPlayer2());
 
             // Create our engine
             shared_ptr<Engine> engine = make_shared<Engine>(gameState);
@@ -139,6 +139,48 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             scene->updateTrajectory(nodes);
                         }
                     } if(!foundUnit){
+                        if(engine->getSelectedUnit() != nullptr){
+                            engine::Node depart, destination;
+                            depart.x = engine->getSelectedUnit().get()->getX();
+                            depart.y = engine->getSelectedUnit().get()->getY();
+                            destination.x = x;
+                            destination.y = y;
+                            vector<GameObject> gameObjects;
+                            for(auto gameObject : engine->getGameState().getPlayer1().getUnits())
+                                gameObjects.push_back(gameObject);
+                            for(auto gameObject : engine->getGameState().getPlayer1().getTowers())
+                                gameObjects.push_back(gameObject);
+                            for(auto gameObject : engine->getGameState().getPlayer1().getApparitionAreas())
+                                gameObjects.push_back(gameObject);
+                            for(auto gameObject : engine->getGameState().getPlayer2().getUnits())
+                                gameObjects.push_back(gameObject);
+                            for(auto gameObject : engine->getGameState().getPlayer2().getTowers())
+                                gameObjects.push_back(gameObject);
+                            for(auto gameObject : engine->getGameState().getPlayer2().getApparitionAreas())
+                                gameObjects.push_back(gameObject);
+                            vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), gameObjects, engine->getSelectedUnit()->getWeapon().getPm());
+                            cout << "nodes " << nodes.at(nodes.size()-1).x << " et " << nodes.at(nodes.size()-1).y << endl;
+                            if(nodes.at(nodes.size()-1).x == x && nodes.at(nodes.size()-1).y == y){
+                                shared_ptr<Character> unitSelected = engine->getSelectedUnit();
+                                Player player = engine->getGameState().getActivePlayer();
+                                vector<Character> newUnits;
+                                for(auto unit : player.getUnits()){
+                                    if(unit.getX() == unitSelected->getX() && unit.getY() == unitSelected->getY()){
+                                        unit.setX(nodes.at(nodes.size()-1).x);
+                                        unit.setY(nodes.at(nodes.size()-1).y);
+                                    }
+                                    newUnits.push_back(unit);
+                                }
+                                player.setUnits(newUnits);
+                                if(player.getId() == 1){
+                                    engine->getGameState().setPlayer1(player);
+                                    engine->getGameState().setActivePlayer(engine->getGameState().getPlayer1());
+                                } else {
+                                    engine->getGameState().setPlayer2(player);
+                                    engine->getGameState().setActivePlayer(engine->getGameState().getPlayer2());
+                                }
+                            }
+                        }
                         engine->unselectedUnit();
                         scene->updateTrajectory(vector<Node>{});
                     }

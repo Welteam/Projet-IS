@@ -4,6 +4,7 @@
 #include "render.h"
 #include "engine.h"
 #include "engine/Cordinate.cpp"
+#include "engine/DisplayAttack.cpp"
 #include <cstring>
 
 using namespace std;
@@ -76,7 +77,7 @@ int main(int argc,char* argv[])
             // 6. Charger players dans GameState
             gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
             gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
-            gameState.setActivePlayer(gameState.getPlayer2());
+            gameState.setActivePlayer(gameState.getPlayer1());
 
             // Create our engine
             shared_ptr<Engine> engine = make_shared<Engine>(gameState);
@@ -127,17 +128,25 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                     int x = (event.mouseButton.x - (((1 - window.getView().getViewport().width)*window.getSize().x)/2))/(window.getView().getViewport().width*window.getSize().x)*20;
                     int y = (event.mouseButton.y - (((1 - window.getView().getViewport().height)*window.getSize().y)/2))/(window.getView().getViewport().height*window.getSize().y)*20;
                     bool foundUnit = false;
-                    for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
-                        if(unit.getX() == x && unit.getY() == y){
-                            foundUnit = true;
-                            engine->setSelectedUnit(make_shared<Character>(unit));
-                            engine::Node posUnit;
-                            posUnit.x = unit.getX();
-                            posUnit.y = unit.getY();
-                            vector<Node> nodes;
-                            nodes.push_back(posUnit);
-                            scene->updateTrajectory(nodes);
+                    if(engine->getSelectedUnit() != nullptr){
+                        if(engine->getSelectedUnit().get()->getX() == x && engine->getSelectedUnit().get()->getY() == y){
+                            scene->updateAttackField(DisplayAttack::createField(engine->getSelectedUnit().get(), engine->getGameState().getWorld()));
+                            scene->updateTrajectory(vector<Node>{});
                         }
+                    } else {
+                        for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
+                            if(unit.getX() == x && unit.getY() == y){
+                                foundUnit = true;
+                                engine->setSelectedUnit(make_shared<Character>(unit));
+                                engine::Node posUnit;
+                                posUnit.x = unit.getX();
+                                posUnit.y = unit.getY();
+                                vector<Node> nodes;
+                                nodes.push_back(posUnit);
+                                scene->updateTrajectory(nodes);
+                                scene->updateAttackField(vector<int>(400,0));
+                            }
+                    }
                     } if(!foundUnit){
                         if(engine->getSelectedUnit() != nullptr){
                             engine::Node depart, destination;
@@ -159,7 +168,6 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             for(auto gameObject : engine->getGameState().getPlayer2().getApparitionAreas())
                                 gameObjects.push_back(gameObject);
                             vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), gameObjects, engine->getSelectedUnit()->getWeapon().getPm());
-                            cout << "nodes " << nodes.at(nodes.size()-1).x << " et " << nodes.at(nodes.size()-1).y << endl;
                             if(nodes.at(nodes.size()-1).x == x && nodes.at(nodes.size()-1).y == y){
                                 shared_ptr<Character> unitSelected = engine->getSelectedUnit();
                                 Player player = engine->getGameState().getActivePlayer();
@@ -180,6 +188,8 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                                     engine->getGameState().setActivePlayer(engine->getGameState().getPlayer2());
                                 }
                             }
+                        } else {
+                            scene->updateAttackField(vector<int>(400,0));
                         }
                         engine->unselectedUnit();
                         scene->updateTrajectory(vector<Node>{});

@@ -28,29 +28,41 @@ namespace render {
                 std::cout << "Cannot load Texture : ../res/units_red.png" << std::endl;
             if (!unitsBlue.loadFromFile("../res/units_blue.png"))
                 std::cout << "Cannot load Texture : ../res/units_blue.png" << std::endl;
+            if (!lifeBar.loadFromFile("../res/units_red.png"))
+                std::cout << "Cannot load Texture : ../res/units_red.png" << std::endl;
             std::vector<sf::Sprite> sprites;
 
             for(state::Character character :  player.getUnits()){
                 sf::Sprite unit;
+                sf::Sprite life;
+                life.setTexture(lifeBar);
                 if(player.getId()== 1) {
                     unit.setTexture(unitsRed);
                 } else {
                     unit.setTexture(unitsBlue);
                 }
+                life.setTextureRect(sf::IntRect(0, 68, 16*(character.getHp()/character.getWeapon().getLpMax()), 2));
                 unit.setTextureRect(sf::IntRect(0, 0, 16, 16));
+                life.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20-4)); // position absolue
                 unit.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20)); // position absolue
                 sprites.push_back(unit);
+                sprites.push_back(life);
             }
             for(state::Tower towerFromPlayer :  player.getTowers()){
                 sf::Sprite tower;
+                sf::Sprite life;
+                life.setTexture(lifeBar);
                 if(player.getId()== 1) {
                     tower.setTexture(unitsRed);
                 } else {
                     tower.setTexture(unitsBlue);
                 }
+                life.setTextureRect(sf::IntRect(0, 68, 16*(towerFromPlayer.getHp()/100), 2));
                 tower.setTextureRect(sf::IntRect(0, 64, 16, 16));
+                life.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20-4)); // position absolue
                 tower.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20)); // position absolue
                 sprites.push_back(tower);
+                sprites.push_back(life);
             }
             for(state::ApparitionArea apparitionAreaFromPlayer :  player.getApparitionAreas()){
                 sf::Sprite apparitionArea;
@@ -85,6 +97,18 @@ namespace render {
             if (!trajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
                 std::cout << "Cannot load map" << std::endl;
             this->trajectory = trajectory;
+            updateAll();
+        }
+    }
+
+    void Scene::updateAttackField(std::vector<int> field) {
+        if(isWindowAvailable(window)){
+            LayerRender attackField;
+            int arr[field.size()];
+            std::copy(field.begin(), field.end(), arr);
+            if (!attackField.load("../res/attack_field.png", sf::Vector2u(16, 16), arr, 20, 20))
+                std::cout << "Cannot load map" << std::endl;
+            this->attackField = attackField;
             updateAll();
         }
     }
@@ -152,6 +176,7 @@ namespace render {
             view.setViewport(sf::FloatRect(xView, yView, widthView, heightView));
             window.setView(view);
             window.draw(this->worldRender);
+            window.draw(this->attackField);
             window.draw(this->trajectory);
             for(auto sprite : this->player1Render)
                 window.draw(sprite);

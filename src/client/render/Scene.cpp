@@ -43,7 +43,7 @@ namespace render {
                 }
                 std::cout << "taille bar vie px : " << 16.0*(static_cast<float >(character.getHp())/ static_cast<float >(character.getWeapon().getLpMax())) << std::endl;
                 life.setTextureRect(sf::IntRect(0, 72, 16.0*(static_cast<float >(character.getHp())/ static_cast<float >(character.getWeapon().getLpMax())), 2));
-                unit.setTextureRect(sf::IntRect(0, 0, 16, 16));
+                unit.setTextureRect(sf::IntRect(0+(16*(character.getOrientation())), 0+(16*(character.getWeapon().getLevel())), 16, 16));
                 life.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20-4)); // position absolue
                 unit.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20)); // position absolue
                 sprites.push_back(unit);

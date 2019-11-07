@@ -161,12 +161,31 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                                             }
                                             if(unit.getHp() > 0){
                                                 newUnits.push_back(unit);
+                                            } else {
+                                                Player playerAttacking = engine->getGameState().getPlayer2();
+                                                shared_ptr<Character> unitEvolve = engine->getSelectedUnit();
+                                                vector<Character> newAttackingUnits;
+                                                for(auto unitAttacking : engine->getGameState().getPlayer2().getUnits()) {
+                                                    if ((unitAttacking.getX() == unitEvolve.get()->getX() && unitAttacking.getY() == unitEvolve.get()->getY())) {
+                                                        unitAttacking.levelUp();
+                                                        if(unit.getX() < unitAttacking.getX()){
+                                                            unitAttacking.setOrientation(Orientation::WEST);
+                                                        } else {
+                                                            unitAttacking.setOrientation(Orientation::EST);
+                                                        }
+                                                    }
+                                                    newAttackingUnits.push_back(unitAttacking);
+                                                }
+                                                playerAttacking.setUnits(newAttackingUnits);
+                                                engine->getGameState().setPlayer2(playerAttacking);
+                                                engine->getGameState().setActivePlayer(engine->getGameState().getPlayer2());
                                             }
-                                        }
                                         player.setUnits(newUnits);
                                         engine->getGameState().setPlayer1(player);
+                                        }
                                     } else {
                                         Player player = engine->getGameState().getPlayer2();
+                                        Player playerAttacking = engine->getGameState().getPlayer1();
                                         vector<Character> newUnits;
                                         for(auto unit : engine->getGameState().getPlayer2().getUnits()){
                                             if((unit.getX() == x && unit.getY() == y)){
@@ -174,6 +193,24 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                                             }
                                             if(unit.getHp() > 0){
                                                 newUnits.push_back(unit);
+                                            } else {
+                                                Player playerAttacking = engine->getGameState().getPlayer1();
+                                                shared_ptr<Character> unitEvolve = engine->getSelectedUnit();
+                                                vector<Character> newAttackingUnits;
+                                                for(auto unitAttacking : engine->getGameState().getPlayer1().getUnits()) {
+                                                    if ((unitAttacking.getX() == unitEvolve.get()->getX() && unitAttacking.getY() == unitEvolve.get()->getY())) {
+                                                        unitAttacking.levelUp();
+                                                        if(unitAttacking.getX() < unitAttacking.getX()){
+                                                            unitAttacking.setOrientation(Orientation::WEST);
+                                                        } else {
+                                                            unitAttacking.setOrientation(Orientation::EST);
+                                                        }
+                                                    }
+                                                    newAttackingUnits.push_back(unitAttacking);
+                                                }
+                                                playerAttacking.setUnits(newAttackingUnits);
+                                                engine->getGameState().setPlayer1(playerAttacking);
+                                                engine->getGameState().setActivePlayer(engine->getGameState().getPlayer1());
                                             }
                                         }
                                         player.setUnits(newUnits);

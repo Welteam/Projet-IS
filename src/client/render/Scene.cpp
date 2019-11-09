@@ -61,6 +61,7 @@ namespace render {
                 tower.setTextureRect(sf::IntRect(0, 64, 16, 16));
                 life.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20-4)); // position absolue
                 tower.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20)); // position absolue
+                
                 sprites.push_back(tower);
                 sprites.push_back(life);
             }

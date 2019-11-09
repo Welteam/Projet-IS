@@ -24,7 +24,7 @@ namespace state {
         return this->pm;
     }
 
-    void Weapon::setPm(int pm) {
+    void Weapon::resetPm() {
         this->pm = pm;
     }
 

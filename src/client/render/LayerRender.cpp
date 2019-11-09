@@ -20,8 +20,8 @@ namespace render {
                 int tileNumber = tiles[i + j * width];
 
                 // on en déduit sa position dans la texture du tileset
-                int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
-                int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
+                auto tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
+                auto tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
 
                 // on récupère un pointeur vers le quad à définir dans le tableau de vertex
                 sf::Vertex* quad = &m_vertices[(i + j * width) * 4];

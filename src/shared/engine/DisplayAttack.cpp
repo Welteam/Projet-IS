@@ -37,7 +37,6 @@ public:
         return field;
     }
 
-
     static vector<int> createField(Character *unit, World world) {
         // Define principles variables
         int min = unit->getWeapon().getRangeMin();

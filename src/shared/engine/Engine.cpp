@@ -16,11 +16,21 @@ namespace engine {
     }
 
     void Engine::setSelectedUnit(std::shared_ptr<state::Character> selectedUnit) {
+        attackMode = false;
         this->selectedUnit = selectedUnit;
     }
 
     void Engine::unselectedUnit() {
         selectedUnit.reset();
+        attackMode = false;
+    }
+
+    bool Engine::getAttackMode() const {
+        return attackMode;
+    }
+
+    void Engine::setAttackMode(bool attackMode) {
+        this->attackMode = attackMode;
     }
 
 

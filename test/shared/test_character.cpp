@@ -47,10 +47,11 @@ BOOST_AUTO_TEST_CASE(TestGameObject)
   }
 
   {
-    state::Character character {5, 5, 75};
+    state::Character character {5, 5, 75, 15};
     BOOST_CHECK_EQUAL(character.getX(), 5);
     BOOST_CHECK_EQUAL(character.getY(), 5);
     BOOST_CHECK_EQUAL(character.getHp(), 75);
+    BOOST_CHECK_EQUAL(character.getPm(), 15);
   }
 
 }

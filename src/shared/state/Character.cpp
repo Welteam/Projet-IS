@@ -12,7 +12,7 @@ namespace state {
     }
 
     // TODO: set weapon's level
-    Character::Character(int x, int y, int hp) : GameObject(x, y), weapon{Weapon()}, hp{hp} {
+    Character::Character(int x, int y, int hp, int pm) : GameObject(x, y), weapon{Weapon()}, hp{hp}, pm{pm} {
     }
 
     int Character::getHp() const {
@@ -38,12 +38,16 @@ namespace state {
             this->hp = weapon.getLpMax();
     }
 
-    Orientation Character::getOrientation() {
-        return this->orientation;;
+    void Character::resetPm() {
+        this->pm = this->weapon.getPmMax();
     }
 
-    void Character::setOrientation(Orientation orientation) {
-        this->orientation = orientation;
+    void Character::usePm(int pm) {
+        this->pm -= pm;
+    }
+
+    int Character::getPm() const {
+        return this->pm;
     }
 
 

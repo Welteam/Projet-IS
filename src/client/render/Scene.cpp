@@ -41,7 +41,6 @@ namespace render {
                 } else {
                     unit.setTexture(unitsBlue);
                 }
-                std::cout << "taille bar vie px : " << 16.0*(static_cast<float >(character.getHp())/ static_cast<float >(character.getWeapon().getLpMax())) << std::endl;
                 life.setTextureRect(sf::IntRect(0, 72, 16.0*(static_cast<float >(character.getHp())/ static_cast<float >(character.getWeapon().getLpMax())), 2));
                 unit.setTextureRect(sf::IntRect(0+(16*(character.getOrientation())), 0+(16*(character.getWeapon().getLevel())), 16, 16));
                 life.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20-4)); // position absolue
@@ -58,7 +57,7 @@ namespace render {
                 } else {
                     tower.setTexture(unitsBlue);
                 }
-                life.setTextureRect(sf::IntRect(0, 72, 16*(towerFromPlayer.getHp()/100), 2));
+                life.setTextureRect(sf::IntRect(0, 72, 16.0*(static_cast<float >(towerFromPlayer.getHp())/100.0), 2));
                 tower.setTextureRect(sf::IntRect(0, 64, 16, 16));
                 life.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20-4)); // position absolue
                 tower.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20)); // position absolue

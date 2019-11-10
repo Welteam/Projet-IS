@@ -60,4 +60,21 @@ namespace state{
         this->world = world;
         this->notifyObservers(StateEvent{WORLD}, *this);
     }
+
+    std::vector<GameObject> GameState::getGameObjects() {
+        std::vector<GameObject> gameObjects;
+        for(auto gameObject : getPlayer1().getUnits())
+            gameObjects.push_back(gameObject);
+        for(auto gameObject : getPlayer1().getTowers())
+            gameObjects.push_back(gameObject);
+        for(auto gameObject : getPlayer1().getApparitionAreas())
+            gameObjects.push_back(gameObject);
+        for(auto gameObject : getPlayer2().getUnits())
+            gameObjects.push_back(gameObject);
+        for(auto gameObject : getPlayer2().getTowers())
+            gameObjects.push_back(gameObject);
+        for(auto gameObject : getPlayer2().getApparitionAreas())
+            gameObjects.push_back(gameObject);
+        return gameObjects;
+    }
 }

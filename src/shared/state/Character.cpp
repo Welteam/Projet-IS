@@ -50,5 +50,13 @@ namespace state {
         return this->pm;
     }
 
+    Orientation Character::getOrientation() {
+        return this->orientation;
+    }
+
+    void Character::setOrientation(Orientation orientation) {
+        this->orientation = orientation;
+    }
+
 
 }

@@ -5,7 +5,7 @@ namespace state {
 
     // TODO: Remove setters and add setLevel method
 
-    Weapon::Weapon() : level{0}, lpMax{100}, pmMax{5}, damage{30}, rangeMin{0}, rangeMax{5}, damageAreaMax{0}, direction{DirectionType::FULL} {
+    Weapon::Weapon() : level{0}, lpMax{100}, pmMax{5}, damage{30}, rangeMin{0}, rangeMax{8}, damageAreaMax{1}, direction{DirectionType::FULL} {
 
     }
 
@@ -57,7 +57,7 @@ namespace state {
                 this->damage = 60;
                 this->rangeMin = 0;
                 this->rangeMax = 3;
-                this->damageAreaMax = 0;
+                this->damageAreaMax = 2;
                 this->direction = DirectionType::CROSS;
                 break;
             case 1:
@@ -77,7 +77,7 @@ namespace state {
                 this->damage = 50;
                 this->rangeMin = 3;
                 this->rangeMax = 7;
-                this->damageAreaMax = 2;
+                this->damageAreaMax = 3;
                 this->direction = DirectionType::OCTOPUS;
                 break;
         }

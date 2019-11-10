@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include "state.h"
+#include "Node.h"
 
 
 using namespace std;
@@ -27,10 +28,12 @@ public:
         int posx = unit->getX() + x;
         int posy = unit->getY() + y;
         if(isValid(posx, posy, world)){
-            try {
-                field.at(posx + posy * world.getYMax()) = 1;
-            } catch (const exception &e) {
-                cout <<e.what() << endl;
+            if (abs(x) + abs(y) > min){
+                try {
+                    field.at(posx + posy * world.getYMax()) = 1;
+                } catch (const exception &e) {
+                    cout <<e.what() << endl;
+                }
             }
         }
         field.at(unit->getX() + unit->getY() * world.getYMax()) = 0;
@@ -71,5 +74,26 @@ public:
         }
         return field;
     }
+
+    static vector<engine::Node> createDamageArea(int mouseX, int mouseY, Character *unit, World world) {
+        // Define principles variables
+        int max = unit->getWeapon().getDamageAreaMax();
+        vector<engine::Node> damageArea;
+
+        for(int x = -max; x <= max; x++) {
+            for (int y = -max; y <= max; y++) {
+                if (abs(x) + abs(y) <= max) {
+                    int posx = mouseX + x;
+                    int posy = mouseY + y;
+                    if(isValid(posx, posy, world)){
+                        engine::Node node = {.x = posx, .y = posy};
+                        damageArea.push_back(node);
+                    }
+                }
+            }
+        }
+        return  damageArea;
+    }
+
 };
 

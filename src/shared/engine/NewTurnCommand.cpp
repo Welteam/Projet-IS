@@ -22,18 +22,79 @@ void NewTurnCommand::execute(GameState &gameState) {
     activePlayer.setUnits(newUnits);
     if(gameState.getActivePlayer().getId() == 1){
         gameState.setPlayer1(activePlayer);
-        /*Player nextPlayer = gameState.getPlayer2();
-        vector<Character> newSpawnUnits =  gameState.getPlayer2().getUnits();
 
+        Player nextPlayer = gameState.getPlayer2();
+        vector<Character> newSpawnUnits =  gameState.getPlayer2().getUnits();
+        vector<pair<int, int>> fourWay;
+        bool unitSpawned = false;
+        fourWay.push_back(pair<int, int>(-1, 0));
+        fourWay.push_back(pair<int, int>(0, -1));
+        fourWay.push_back(pair<int, int>(0, 1));
+        fourWay.push_back(pair<int, int>(1, 0));
         for(auto spawnArea : nextPlayer.getApparitionAreas()){
-            if(Cordinate::isValid()
+            if(!unitSpawned) {
+                for (auto coord : fourWay) {
+                    if (!unitSpawned) {
+                        int newX = coord.first;
+                        int newY = coord.second;
+                        if (spawnArea.getY() + newY < 0 || spawnArea.getY() + newY > (Y_MAX / Y_STEP) - 1) {
+                            newY = 0;
+                        }
+                        if (spawnArea.getX() + newX < 0 || spawnArea.getX() + newX > (X_MAX / X_STEP) - 1) {
+                            newX = 0;
+                        }
+                        if (Cordinate::isValid(spawnArea.getX() + newX, spawnArea.getY() + newY, gameState.getWorld(),
+                                               gameState.getGameObjects())) {
+                            newSpawnUnits.push_back(Character{spawnArea.getX() + newX, spawnArea.getY() + newY});
+                            unitSpawned = true;
+                        }
+                    }
+                }
+            }
         }
         nextPlayer.setUnits(newSpawnUnits);
-        gameState.setPlayer2(nextPlayer);*/
+        gameState.setPlayer2(nextPlayer);
+
         gameState.setActivePlayer(gameState.getPlayer2());
         gameState.setTurn(gameState.getTurn()+1);
     } else if(gameState.getActivePlayer().getId() == 2) {
         gameState.setPlayer2(activePlayer);
+
+
+        Player nextPlayer = gameState.getPlayer1();
+        vector<Character> newSpawnUnits =  gameState.getPlayer1().getUnits();
+        vector<pair<int, int>> fourWay;
+        bool unitSpawned = false;
+        fourWay.push_back(pair<int, int>(-1, 0));
+        fourWay.push_back(pair<int, int>(0, -1));
+        fourWay.push_back(pair<int, int>(0, 1));
+        fourWay.push_back(pair<int, int>(1, 0));
+        for(auto spawnArea : nextPlayer.getApparitionAreas()){
+            if(!unitSpawned) {
+                for (auto coord : fourWay) {
+                    if (!unitSpawned) {
+                        int newX = coord.first;
+                        int newY = coord.second;
+                        if (spawnArea.getY() + newY < 0 || spawnArea.getY() + newY > (Y_MAX / Y_STEP) - 1) {
+                            newY = 0;
+                        }
+                        if (spawnArea.getX() + newX < 0 || spawnArea.getX() + newX > (X_MAX / X_STEP) - 1) {
+                            newX = 0;
+                        }
+                        if (Cordinate::isValid(spawnArea.getX() + newX, spawnArea.getY() + newY, gameState.getWorld(),
+                                               gameState.getGameObjects())) {
+                            newSpawnUnits.push_back(Character{spawnArea.getX() + newX, spawnArea.getY() + newY});
+                            unitSpawned = true;
+                        }
+                    }
+                }
+            }
+        }
+        nextPlayer.setUnits(newSpawnUnits);
+        gameState.setPlayer1(nextPlayer);
+
+
+
         gameState.setActivePlayer(gameState.getPlayer1());
         gameState.setTurn(gameState.getTurn()+1);
     } else {

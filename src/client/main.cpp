@@ -188,6 +188,7 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             // Calcul et affiche un chemin possible
                             Node depart = {.x =  engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
                             Node destination = {.x = mouseEventX, .y = mouseEventY};
+                            cout << "souris en x = " << mouseEventX << " et y = " << mouseEventY << endl;
                             scene->updateTrajectory(Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm()));
                         } else if(!engine->getSelectedUnit().get()->hasAttacked) {
                             // Affiche les cases pouvant être affectées par l'attaque

@@ -3,7 +3,8 @@
 namespace state {
 
 
-    Character::Character() : GameObject(), weapon{Weapon()} {
+    Character::Character() : GameObject() {
+        this->weapon = Weapon();
         this->pm = this->weapon.getPmMax();
     }
 
@@ -12,7 +13,10 @@ namespace state {
     }
 
     // TODO: set weapon's level
-    Character::Character(int x, int y, int hp, int pm) : GameObject(x, y), weapon{Weapon()}, hp{hp}, pm{static_cast<unsigned int>(pm)} {
+    Character::Character(int x, int y, int hp, int pm) : GameObject(x, y) {
+        this->weapon = Weapon{};
+        this->hp = hp;
+        this->pm = pm;
     }
 
     int Character::getHp() const {

@@ -3,8 +3,8 @@
 namespace state{
 
 
-    Player::Player() : id(0) {
-
+    Player::Player(){
+        this->id = 0;
     }
 
     Player::Player(int id, std::vector<Character> units, std::vector<Tower> towers,

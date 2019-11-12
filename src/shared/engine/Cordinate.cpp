@@ -1,4 +1,3 @@
-#pragma once
 #include <stack>
 #include <vector>
 #include <array>
@@ -28,15 +27,20 @@ public:
     static bool isValid(int x, int y, state::World world, vector<state::GameObject> gameObjects) { //If our Node is an obstacle it is not valid
         int id = x + y * 20;
         for(auto gameObject : gameObjects){
-            if(gameObject.getX() == x && gameObject.getY() == y)
+            if(gameObject.getX() == x && gameObject.getY() == y){
+                cout << "La destination est obstruée par un objet"<< endl;
+                cout << "L'objet est en x = " << gameObject.getX() << " et y = " << gameObject.getY() << endl;
                 return false;
+            }
         }
         if (world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3) {
-            if (x < 0 || y < 0 || x >= (X_MAX / X_STEP) || y >= (Y_MAX / Y_STEP)) {
+            if (x < 0 || y < 0 || x > (X_MAX / X_STEP)-1 || y > (Y_MAX / Y_STEP)-1) {
+                cout << "en dehors de la map"<< endl;
                 return false;
             }
             return true;
         }
+        cout << "obstacle de map en x = "<< x << " et y = " << y << endl;
         return false;
     }
 
@@ -54,12 +58,11 @@ public:
     }
 
     static vector<Node> makePath(array<array<Node, (Y_MAX / Y_STEP)>, (X_MAX / X_STEP)> map, Node dest) {
+        int x = dest.x;
+        int y = dest.y;
+        stack<Node> path;
+        vector<Node> usablePath;
         try {
-            int x = dest.x;
-            int y = dest.y;
-            stack<Node> path;
-            vector<Node> usablePath;
-
             while (!(map[x][y].parentX == x && map[x][y].parentY == y)
                    && map[x][y].x != -1 && map[x][y].y != -1) {
                 path.push(map[x][y]);
@@ -77,11 +80,11 @@ public:
                 //cout << top.x << " " << top.y << endl;
                 usablePath.emplace_back(top);
             }
-            return usablePath;
         }
         catch (const exception &e) {
             cout << e.what() << endl;
         }
+        return usablePath;
     }
 
 
@@ -94,10 +97,12 @@ public:
                 gameObjects.push_back(gameObject);
         }
         if (isValid(dest.x, dest.y, world, gameObjects) == false) {
+            cout << "Destination is invalid"<< endl;
             return empty;
             //Destination is invalid
         }
         if (isDestination(player.x, player.y, dest)) {
+            cout << "You clicked on yourself"<< endl;
             return empty;
             //You clicked on yourself
         }
@@ -173,8 +178,11 @@ public:
             for (auto coord : fourWay) {
                 int newX = coord.first;
                 int newY = coord.second;
-                if(y == 0 || y == (Y_MAX / Y_STEP)-1){
+                if(y + newY < 0 || y + newY > (Y_MAX / Y_STEP)-1){
                     newY = 0;
+                }
+                if(x + newX < 0 || x + newX > (X_MAX / X_STEP)-1){
+                    newX = 0;
                 }
                 double gNew, hNew, fNew;
                 if (isValid(x + newX, y + newY, world, gameObjects)) {
@@ -183,7 +191,7 @@ public:
                         allMap[x + newX][y + newY].parentX = x;
                         allMap[x + newX][y + newY].parentY = y;
                         destinationFound = true;
-                        if(makePath(allMap, dest).size() > pm+1){
+                        if(makePath(allMap, dest).size() > static_cast<unsigned int>(pm+1)){
                             return empty;
                         } else {
                             return makePath(allMap, dest);
@@ -210,10 +218,11 @@ public:
             }
         }
         if (destinationFound == false) {
+            cout << "destinationFound == false"<< endl;
             return empty;
         }
+        return empty;
     }
 };
 
 
-#pragma clang diagnostic pop

@@ -1,15 +1,21 @@
-
 #include "GameState.h"
 #include <utility>
+#include <iostream>
 
 namespace state{
 
-    GameState::GameState() : world{World()}, turn{0}, player1{Player()}, player2{Player()}{
-
+    GameState::GameState() {
+        this->world = World();
+        this->turn = 0;
+        this->player1 = Player();
+        this->player2 = Player();
     }
 
-    GameState::GameState(std::string fileName) : world{World(std::move(fileName))}, turn{0}, player1{Player()}, player2{Player()}{
-
+    GameState::GameState(std::string fileName) {
+        this->world = World(std::move(fileName));
+        this->turn = 0;
+        this->player1 = Player();
+        this->player2 = Player();
     }
 
     void GameState::saveWorld() {
@@ -73,8 +79,10 @@ namespace state{
             gameObjects.push_back(gameObject);
         for(auto gameObject : getPlayer2().getTowers())
             gameObjects.push_back(gameObject);
-        for(auto gameObject : getPlayer2().getApparitionAreas())
+        for(auto gameObject : getPlayer2().getApparitionAreas()){
+            std::cout << " spawnArea en x = " << gameObject.getX() << " et y = " << gameObject.getY() << std::endl;
             gameObjects.push_back(gameObject);
+        }
         return gameObjects;
     }
 }

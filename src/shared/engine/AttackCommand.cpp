@@ -1,7 +1,6 @@
 #include "AttackCommand.h"
 #include <iostream>
 #include <state.h>
-#include "engine.h"
 #include "engine/Cordinate.cpp"
 #include "engine/DisplayAttack.cpp"
 

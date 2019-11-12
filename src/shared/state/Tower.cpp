@@ -10,8 +10,8 @@ namespace state {
 
     }
 
-    Tower::Tower(int x, int y, int hp) :GameObject(x, y), hp{hp} {
-
+    Tower::Tower(int x, int y, int hp) :GameObject(x, y) {
+        this->hp = hp;
     }
 
     int Tower::getHp() const {

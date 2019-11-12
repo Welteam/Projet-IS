@@ -40,7 +40,7 @@ namespace state {
         return this->damageAreaMax;
     }
 
-    int Weapon::getDirection() const {
+    DirectionType Weapon::getDirection() const {
         return this->direction;
     }
 

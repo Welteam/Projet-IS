@@ -9,7 +9,9 @@
 
 namespace state {
 
-    World::World() : xMax(0), yMax(0) {
+    World::World() {
+        this->xMax = 0;
+        this->yMax = 0;
 
     }
 

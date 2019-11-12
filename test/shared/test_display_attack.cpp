@@ -35,9 +35,5 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandConstructor)
         unit.get()->levelUp();
         vector<int> field4 = DisplayAttack::createField(unit.get(), gameState.getWorld());
         BOOST_CHECK_EQUAL(field4.size(), 400);
-        Weapon weapon(0,100, 5, 10, 0, 8, 2, DirectionType::DIAGONAL);
-        unit->setWeapon(weapon);
-        vector<int> field5 = DisplayAttack::createField(unit.get(), gameState.getWorld());
-        BOOST_CHECK_EQUAL(field5.size(), 400);
     }
 }

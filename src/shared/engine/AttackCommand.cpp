@@ -91,6 +91,31 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                     vector<Tower> newTowers2;
                     for (auto unit : gameState.getPlayer2().getUnits()) {
                         if ((unit.getX() == selectedUnit.get()->getX() && unit.getY() == selectedUnit.get()->getY())) {
+                            if(abs(unit.getX()-target.x) > abs(unit.getY()-target.y)){
+                                if((unit.getX()-target.x)  > 0){
+                                    unit.setOrientation(state::Orientation::WEST);
+                                } else if((unit.getX()-target.x)  < 0){
+                                    unit.setOrientation(state::Orientation::EST);
+                                } else {
+                                    if((unit.getY()-target.y)  > 0){
+                                        unit.setOrientation(state::Orientation::NORTH);
+                                    } else if((unit.getY()-target.y)  < 0){
+                                        unit.setOrientation(state::Orientation::SOUTH);
+                                    }
+                                }
+                            } else if(abs(unit.getX()-target.x) < abs(unit.getY()-target.y)){
+                                if((unit.getY()-target.y)  > 0){
+                                    unit.setOrientation(state::Orientation::NORTH);
+                                } else if((unit.getY()-target.y)  < 0){
+                                    unit.setOrientation(state::Orientation::SOUTH);
+                                } else {
+                                    if((unit.getX()-target.x)  > 0){
+                                        unit.setOrientation(state::Orientation::WEST);
+                                    } else if((unit.getX()-target.x)  < 0){
+                                        unit.setOrientation(state::Orientation::EST);
+                                    }
+                                }
+                            }
                             unit.hasAttacked = true;
                         }
                         if ((unit.getX() == damageX && unit.getY() == damageY)) {
@@ -183,6 +208,31 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                     vector<Tower> newTowers1;
                     for (auto unit : gameState.getPlayer1().getUnits()) {
                         if (unit.getX() == selectedUnit.get()->getX() && unit.getY() == selectedUnit.get()->getY()) {
+                            if(abs(unit.getX()-target.x) > abs(unit.getY()-target.y)){
+                                if((unit.getX()-target.x)  > 0){
+                                    unit.setOrientation(state::Orientation::WEST);
+                                } else if((unit.getX()-target.x)  < 0){
+                                    unit.setOrientation(state::Orientation::EST);
+                                } else {
+                                    if((unit.getY()-target.y)  > 0){
+                                        unit.setOrientation(state::Orientation::NORTH);
+                                    } else if((unit.getY()-target.y)  < 0){
+                                        unit.setOrientation(state::Orientation::SOUTH);
+                                    }
+                                }
+                            } else if(abs(unit.getX()-target.x) < abs(unit.getY()-target.y)){
+                                if((unit.getY()-target.y)  > 0){
+                                    unit.setOrientation(state::Orientation::NORTH);
+                                } else if((unit.getY()-target.y)  < 0){
+                                    unit.setOrientation(state::Orientation::SOUTH);
+                                } else {
+                                    if((unit.getX()-target.x)  > 0){
+                                        unit.setOrientation(state::Orientation::WEST);
+                                    } else if((unit.getX()-target.x)  < 0){
+                                        unit.setOrientation(state::Orientation::EST);
+                                    }
+                                }
+                            }
                             unit.hasAttacked = true;
                         }
                         if ((unit.getX() == damageX && unit.getY() == damageY)) {

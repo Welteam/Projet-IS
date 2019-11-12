@@ -33,11 +33,11 @@ public:
                 return false;
             }
         }
+        if (x < 0 || y < 0 || x > (X_MAX / X_STEP)-1 || y > (Y_MAX / Y_STEP)-1) {
+            cout << "en dehors de la map"<< endl;
+            return false;
+        }
         if (world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3) {
-            if (x < 0 || y < 0 || x > (X_MAX / X_STEP)-1 || y > (Y_MAX / Y_STEP)-1) {
-                cout << "en dehors de la map"<< endl;
-                return false;
-            }
             return true;
         }
         cout << "obstacle de map en x = "<< x << " et y = " << y << endl;
@@ -62,7 +62,6 @@ public:
         int y = dest.y;
         stack<Node> path;
         vector<Node> usablePath;
-        try {
             while (!(map[x][y].parentX == x && map[x][y].parentY == y)
                    && map[x][y].x != -1 && map[x][y].y != -1) {
                 path.push(map[x][y]);
@@ -77,13 +76,8 @@ public:
             while (!path.empty()) {
                 Node top = path.top();
                 path.pop();
-                //cout << top.x << " " << top.y << endl;
                 usablePath.emplace_back(top);
             }
-        }
-        catch (const exception &e) {
-            cout << e.what() << endl;
-        }
         return usablePath;
     }
 
@@ -136,7 +130,7 @@ public:
 
         vector<Node> openList;
         openList.emplace_back(allMap[x][y]);
-        bool destinationFound = false;
+        //bool destinationFound = false;
 
         while (!openList.empty() && openList.size() < (X_MAX / X_STEP) * (Y_MAX / Y_STEP)) {
             Node node;
@@ -190,7 +184,7 @@ public:
                         //Destination found - make path
                         allMap[x + newX][y + newY].parentX = x;
                         allMap[x + newX][y + newY].parentY = y;
-                        destinationFound = true;
+                        //destinationFound = true;
                         if(makePath(allMap, dest).size() > static_cast<unsigned int>(pm+1)){
                             return empty;
                         } else {
@@ -217,12 +211,11 @@ public:
 
             }
         }
-        if (destinationFound == false) {
-            cout << "destinationFound == false"<< endl;
-            return empty;
-        }
+        /*if (destinationFound == false)
+            return empty;*/
         return empty;
     }
+
 };
 
 

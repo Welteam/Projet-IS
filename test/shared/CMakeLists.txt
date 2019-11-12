@@ -9,5 +9,11 @@ add_custom_test(player)
 add_custom_test(game_state)
 add_custom_test(character)
 add_custom_test(state_event)
+add_custom_test(move_command)
+add_custom_test(cordinate)
+add_custom_test(attack_command)
+add_custom_test(new_turn_command)
+add_custom_test(engine)
+add_custom_test(display_attack)
 # vim: set sw=2 sts=2 et:
 

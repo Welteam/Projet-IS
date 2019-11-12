@@ -8,12 +8,12 @@ using namespace std;
 using namespace state;
 using namespace engine;
 
-engine::AttackCommand::AttackCommand(std::shared_ptr<state::Character> selectedUnit, int targetX, int targetY) {
+AttackCommand::AttackCommand(std::shared_ptr<state::Character> selectedUnit, int targetX, int targetY) {
     this->selectedUnit = selectedUnit;
     this->target = Node{.x = targetX, .y = targetY};
 }
 
-void engine::AttackCommand::execute(state::GameState &gameState) {
+void AttackCommand::execute(state::GameState &gameState) {
     cout << "unité déjà en mode attaque : attaque !!!!" << endl;
     if(!selectedUnit.get()->hasAttacked){
         vector<int> attackField = DisplayAttack::createField(selectedUnit.get(), gameState.getWorld());
@@ -41,11 +41,6 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                                 if ((unitAttacking.getX() == unitEvolve.get()->getX() &&
                                      unitAttacking.getY() == unitEvolve.get()->getY())) {
                                     unitAttacking.levelUp();
-                                    if (unit.getX() < unitAttacking.getX()) {
-                                        unitAttacking.setOrientation(Orientation::WEST);
-                                    } else {
-                                        unitAttacking.setOrientation(Orientation::EST);
-                                    }
                                 }
                                 newAttackingUnits.push_back(unitAttacking);
                             }
@@ -68,11 +63,6 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                                 if ((unitAttacking.getX() == unitEvolve.get()->getX() &&
                                      unitAttacking.getY() == unitEvolve.get()->getY())) {
                                     unitAttacking.levelUp();
-                                    if (tower.getX() < unitAttacking.getX()) {
-                                        unitAttacking.setOrientation(Orientation::WEST);
-                                    } else {
-                                        unitAttacking.setOrientation(Orientation::EST);
-                                    }
                                 }
                                 newAttackingUnits.push_back(unitAttacking);
                             }
@@ -95,24 +85,18 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                                     unit.setOrientation(state::Orientation::WEST);
                                 } else if((unit.getX()-target.x)  < 0){
                                     unit.setOrientation(state::Orientation::EST);
-                                } else {
-                                    if((unit.getY()-target.y)  > 0){
-                                        unit.setOrientation(state::Orientation::NORTH);
-                                    } else if((unit.getY()-target.y)  < 0){
-                                        unit.setOrientation(state::Orientation::SOUTH);
-                                    }
                                 }
                             } else if(abs(unit.getX()-target.x) < abs(unit.getY()-target.y)){
                                 if((unit.getY()-target.y)  > 0){
                                     unit.setOrientation(state::Orientation::NORTH);
                                 } else if((unit.getY()-target.y)  < 0){
                                     unit.setOrientation(state::Orientation::SOUTH);
-                                } else {
-                                    if((unit.getX()-target.x)  > 0){
-                                        unit.setOrientation(state::Orientation::WEST);
-                                    } else if((unit.getX()-target.x)  < 0){
-                                        unit.setOrientation(state::Orientation::EST);
-                                    }
+                                }
+                            } else {
+                                if((unit.getX()-target.x)  > 0){
+                                    unit.setOrientation(state::Orientation::WEST);
+                                } else if((unit.getX()-target.x)  < 0){
+                                    unit.setOrientation(state::Orientation::EST);
                                 }
                             }
                             unit.hasAttacked = true;
@@ -158,11 +142,6 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                                 if ((unitAttacking.getX() == unitEvolve.get()->getX() &&
                                      unitAttacking.getY() == unitEvolve.get()->getY())) {
                                     unitAttacking.levelUp();
-                                    if (unit.getX() < unitAttacking.getX()) {
-                                        unitAttacking.setOrientation(Orientation::WEST);
-                                    } else {
-                                        unitAttacking.setOrientation(Orientation::EST);
-                                    }
                                 }
                                 newAttackingUnits.push_back(unitAttacking);
                             }
@@ -185,11 +164,6 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                                 if ((unitAttacking.getX() == unitEvolve.get()->getX() &&
                                      unitAttacking.getY() == unitEvolve.get()->getY())) {
                                     unitAttacking.levelUp();
-                                    if (tower.getX() < unitAttacking.getX()) {
-                                        unitAttacking.setOrientation(Orientation::WEST);
-                                    } else {
-                                        unitAttacking.setOrientation(Orientation::EST);
-                                    }
                                 }
                                 newAttackingUnits.push_back(unitAttacking);
                             }
@@ -212,24 +186,18 @@ void engine::AttackCommand::execute(state::GameState &gameState) {
                                     unit.setOrientation(state::Orientation::WEST);
                                 } else if((unit.getX()-target.x)  < 0){
                                     unit.setOrientation(state::Orientation::EST);
-                                } else {
-                                    if((unit.getY()-target.y)  > 0){
-                                        unit.setOrientation(state::Orientation::NORTH);
-                                    } else if((unit.getY()-target.y)  < 0){
-                                        unit.setOrientation(state::Orientation::SOUTH);
-                                    }
                                 }
                             } else if(abs(unit.getX()-target.x) < abs(unit.getY()-target.y)){
                                 if((unit.getY()-target.y)  > 0){
                                     unit.setOrientation(state::Orientation::NORTH);
                                 } else if((unit.getY()-target.y)  < 0){
                                     unit.setOrientation(state::Orientation::SOUTH);
-                                } else {
-                                    if((unit.getX()-target.x)  > 0){
-                                        unit.setOrientation(state::Orientation::WEST);
-                                    } else if((unit.getX()-target.x)  < 0){
-                                        unit.setOrientation(state::Orientation::EST);
-                                    }
+                                }
+                            } else {
+                                if((unit.getX()-target.x)  > 0){
+                                    unit.setOrientation(state::Orientation::WEST);
+                                } else if((unit.getX()-target.x)  < 0){
+                                    unit.setOrientation(state::Orientation::EST);
                                 }
                             }
                             unit.hasAttacked = true;

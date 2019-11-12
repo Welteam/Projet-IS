@@ -79,10 +79,8 @@ namespace state{
             gameObjects.push_back(gameObject);
         for(auto gameObject : getPlayer2().getTowers())
             gameObjects.push_back(gameObject);
-        for(auto gameObject : getPlayer2().getApparitionAreas()){
-            std::cout << " spawnArea en x = " << gameObject.getX() << " et y = " << gameObject.getY() << std::endl;
+        for(auto gameObject : getPlayer2().getApparitionAreas())
             gameObjects.push_back(gameObject);
-        }
         return gameObjects;
     }
 }

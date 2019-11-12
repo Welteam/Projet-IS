@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Engine.h"
 
-
 using namespace engine;
 using namespace std;
 
@@ -51,7 +50,7 @@ void engine::Engine::addCommand(std::shared_ptr<Command> command, unsigned int p
 }
 
 void engine::Engine::undoCommands() {
-
+    this->commands.clear(); 
 }
 
 void engine::Engine::runCommands(bool prod) {
@@ -74,4 +73,8 @@ std::stack<std::shared_ptr<engine::Command>> engine::Engine::update() {
 
 const std::map<int, std::shared_ptr<Command>> &Engine::getCommands() {
     return commands;
+}
+
+void Engine::setCommands(const std::map<int, std::shared_ptr<Command>> &commands) {
+    this->commands = commands;
 }

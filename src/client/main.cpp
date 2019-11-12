@@ -159,9 +159,10 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             }
                         }
                     } else {
-                        cout << "Aucune unité sélectionée" << endl;
+                        cout << "Aucune unité sélectionée précédent" << endl;
                         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
                             if(unit.getX() == x && unit.getY() == y){
+                                cout << "Une unité est maintenant sélectionée" << endl;
                                 engine->setSelectedUnit(make_shared<Character>(unit));
                                 scene->updateTrajectory(vector<Node>{Node{.x = unit.getX(), .y = unit.getY()}});
                                 scene->updateAttackField(vector<int>(400,0));

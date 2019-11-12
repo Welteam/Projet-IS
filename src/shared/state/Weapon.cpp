@@ -108,7 +108,7 @@ namespace state {
                 this->rangeMin = 0;
                 this->rangeMax = 8;
                 this->damageAreaMax = 0;
-                this->direction = DirectionType::FULL;
+                this->direction = DirectionType::DIAGONAL;
                 break;
             case 3:
                 this->level = 3; // Bazooka

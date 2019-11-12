@@ -14,7 +14,7 @@ namespace engine {
     void MoveCommand::execute(state::GameState &gameState) {
         std::cout << "unité se déplace" << std::endl;
         engine::Node depart = {.x = selectedUnit->getX(), .y = selectedUnit->getY()};
-        vector<Node> nodes = Cordinate::aStar(depart, destination, gameState.getWorld(), gameState.getGameObjects(), selectedUnit.get()->getWeapon().getPmMax());
+        vector<Node> nodes = Cordinate::aStar(depart, destination, gameState.getWorld(), gameState.getGameObjects(), selectedUnit.get()->getPm());
         if(nodes.at(nodes.size()-1).x == destination.x && nodes.at(nodes.size()-1).y == destination.y){
             state::Player player = gameState.getActivePlayer();
             vector<state::Character> newUnits;
@@ -22,6 +22,7 @@ namespace engine {
                 if(unit.getX() == selectedUnit->getX() && unit.getY() == selectedUnit->getY()){
                     unit.setX(nodes.at(nodes.size()-1).x);
                     unit.setY(nodes.at(nodes.size()-1).y);
+                    unit.usePm(nodes.size()-1);
                 }
                 newUnits.push_back(unit);
             }

@@ -99,6 +99,17 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
             case sf::Event::TextEntered:
                 break;
             case sf::Event::KeyPressed:
+                if (event.key.code == sf::Keyboard::T)
+                {
+                    std::cout << "the T key was pressed, new turn" << std::endl;
+                    engine->unselectedUnit();
+                    scene->updateTrajectory(vector<Node>{});
+                    scene->updateAttackField(vector<int>(400,0));
+                    shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
+                    engine->addCommand(newTurnCommand, 1);
+                    engine->runCommands(true);
+
+                }
                 break;
             case sf::Event::KeyReleased:
                 break;
@@ -177,8 +188,8 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             // Calcul et affiche un chemin possible
                             Node depart = {.x =  engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
                             Node destination = {.x = mouseEventX, .y = mouseEventY};
-                            scene->updateTrajectory(Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit()->getWeapon().getPmMax()));
-                        } else {
+                            scene->updateTrajectory(Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm()));
+                        } else if(!engine->getSelectedUnit().get()->hasAttacked) {
                             // Affiche les cases pouvant être affectées par l'attaque
                             vector<int> attackField = DisplayAttack::createField(engine->getSelectedUnit().get(), engine->getGameState().getWorld());
                             if(attackField[mouseEventX+mouseEventY*engine->getGameState().getWorld().getYMax()] == 1){

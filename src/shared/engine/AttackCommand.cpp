@@ -71,6 +71,11 @@ void AttackCommand::execute(state::GameState &gameState) {
                             gameState.setActivePlayer(gameState.getPlayer2());
                         }
                     }
+                    if(newUnits1.empty() || newTowers1.empty()){
+                        cout << "JOUEUR 1 EN ROUGE A PERDUUUUUUUU !" << endl;
+                        newUnits1.clear();
+                        newTowers1.clear();
+                    }
                     player1.setUnits(newUnits1);
                     player1.setTowers(newTowers1);
                     gameState.setPlayer1(player1);
@@ -171,6 +176,11 @@ void AttackCommand::execute(state::GameState &gameState) {
                             gameState.setPlayer1(playerAttacking);
                             gameState.setActivePlayer(gameState.getPlayer1());
                         }
+                    }
+                    if(newUnits2.empty() || newTowers2.empty()){
+                        cout << "JOUEUR 1 EN ROUGE A PERDUUUUUUUU !" << endl;
+                        newUnits2.clear();
+                        newTowers2.clear();
                     }
                     player2.setUnits(newUnits2);
                     player2.setTowers(newTowers2);

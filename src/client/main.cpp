@@ -32,7 +32,7 @@ int main(int argc,char* argv[])
     gameState.registerObserver(scene.get());
 
     // 5. Charger la carte World dans GameState
-    gameState.setWorld(World{"../res/map.txt"});
+    gameState.setWorld(World{"../res/map2.txt"});
 
     // 6. Charger players dans GameState
     gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
@@ -62,7 +62,12 @@ int main(int argc,char* argv[])
         }
         else if (strcmp(argv[1], "engine") == 0) {
             cout << "Bienvenue sur engine" << endl;
-
+            cout << "Appuyer sur D pour la demo" << endl;
+            cout << "Sinon cliquer sur un soldat rouge pour le selectionner" << endl;
+            cout << "Re-cliquer dessus pour la faire passer en mode attaque" << endl;
+            cout << "Ou déplacer la souris pour voir jusqu'où vous pouvez le déplacer," << endl;
+            cout << "puis cliquer sur une des cases pour le déplacer" << endl;
+            cout << "POur changer de tour et laisser votre adversaire jouer, appuyer sur T" << endl;
             // Create our engine
             shared_ptr<Engine> engine = make_shared<Engine>(gameState);
 
@@ -109,6 +114,10 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                     engine->addCommand(newTurnCommand, 1);
                     engine->runCommands(true);
 
+                }
+                if (event.key.code == sf::Keyboard::D)
+                {
+                    std::cout << "the D key was pressed, Demo" << std::endl;
                 }
                 break;
             case sf::Event::KeyReleased:
@@ -189,7 +198,6 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             // Calcul et affiche un chemin possible
                             Node depart = {.x =  engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
                             Node destination = {.x = mouseEventX, .y = mouseEventY};
-                            cout << "souris en x = " << mouseEventX << " et y = " << mouseEventY << endl;
                             scene->updateTrajectory(Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm()));
                         } else if(!engine->getSelectedUnit().get()->hasAttacked) {
                             // Affiche les cases pouvant être affectées par l'attaque

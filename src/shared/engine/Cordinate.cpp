@@ -28,19 +28,19 @@ public:
         int id = x + y * 20;
         for(auto gameObject : gameObjects){
             if(gameObject.getX() == x && gameObject.getY() == y){
-                cout << "La destination est obstruée par un objet"<< endl;
-                cout << "L'objet est en x = " << gameObject.getX() << " et y = " << gameObject.getY() << endl;
+                //cout << "La destination est obstruée par un objet"<< endl;
+                //cout << "L'objet est en x = " << gameObject.getX() << " et y = " << gameObject.getY() << endl;
                 return false;
             }
         }
         if (x < 0 || y < 0 || x > (X_MAX / X_STEP)-1 || y > (Y_MAX / Y_STEP)-1) {
-            cout << "en dehors de la map"<< endl;
+            //cout << "en dehors de la map"<< endl;
             return false;
         }
         if (world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3) {
             return true;
         }
-        cout << "obstacle de map en x = "<< x << " et y = " << y << endl;
+        //cout << "obstacle de map en x = "<< x << " et y = " << y << endl;
         return false;
     }
 
@@ -91,12 +91,12 @@ public:
                 gameObjects.push_back(gameObject);
         }
         if (isValid(dest.x, dest.y, world, gameObjects) == false) {
-            cout << "Destination is invalid"<< endl;
+            // cout << "Destination is invalid"<< endl;
             return empty;
             //Destination is invalid
         }
         if (isDestination(player.x, player.y, dest)) {
-            cout << "You clicked on yourself"<< endl;
+            // cout << "You clicked on yourself"<< endl;
             return empty;
             //You clicked on yourself
         }

@@ -28,10 +28,6 @@ public:
         return false;
     }
 
-    static double calculateH(int x, int y, engine::Node dest) {
-        return sqrt((x-dest.x)^2 + (y-dest.y)^2);
-    }
-
     static vector<int> findCorrectBlock(int x, int y, Character *unit, World world, vector<int> field, int min){
         int posx = unit->getX() + x;
         int posy = unit->getY() + y;

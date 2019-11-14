@@ -6,13 +6,14 @@
 #include "engine/Cordinate.cpp"
 #include "engine/DisplayAttack.cpp"
 #include <cstring>
+#include <thread>
 
 using namespace std;
 using namespace state;
 using namespace render;
 using namespace engine;
 
-void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<Engine> engine);
+void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, const shared_ptr<Engine>& engine);
 
 int main(int argc,char* argv[])
 {
@@ -47,7 +48,7 @@ int main(int argc,char* argv[])
             cout << "Bienvenue sur render" << endl;
 
             while (window.isOpen()) {
-                sf::Event event;
+                sf::Event event{};
                 while (window.pollEvent(event)) {
                     switch (event.type) {
                         case sf::Event::Closed:
@@ -61,13 +62,15 @@ int main(int argc,char* argv[])
             }
         }
         else if (strcmp(argv[1], "engine") == 0) {
-            cout << "Bienvenue sur engine" << endl;
-            cout << "Appuyer sur D pour la demo" << endl;
-            cout << "Sinon cliquer sur un soldat rouge pour le selectionner" << endl;
-            cout << "Re-cliquer dessus pour la faire passer en mode attaque" << endl;
-            cout << "Ou déplacer la souris pour voir jusqu'où vous pouvez le déplacer," << endl;
-            cout << "puis cliquer sur une des cases pour le déplacer" << endl;
-            cout << "POur changer de tour et laisser votre adversaire jouer, appuyer sur T" << endl;
+            cout << "Bienvenue sur engine !" << endl;
+            cout << "" << endl;
+            cout << "Clic gauche pour selectionner un soldat rouge." << endl;
+            cout << "Déplacer la souris pour voir ces déplacements, puis cliquer sur une des cases pour le déplacer." << endl;
+            cout << "" << endl;
+            cout << "Double clic pour passer en mode attaque." << endl;
+            cout << "Appuyer sur T pour changer de tour et laisser votre adversaire jouer." << endl;
+            cout << "" << endl;
+            cout << "Sinon appuyer sur D pour la demo (mais cela ruinerai votre expérience)." << endl;
             // Create our engine
             shared_ptr<Engine> engine = make_shared<Engine>(gameState);
 
@@ -84,10 +87,10 @@ int main(int argc,char* argv[])
 
 
 
-void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<Engine> engine){
-    sf::Event event;
-    int oldMouseEventX;
-    int oldMouseEventY;
+void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, const shared_ptr<Engine>& engine){
+    sf::Event event{};
+    int oldMouseEventX = 0;
+    int oldMouseEventY = 0;
     int mouseEventX;
     int mouseEventY;
     while (window.pollEvent(event))
@@ -117,7 +120,67 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                 }
                 if (event.key.code == sf::Keyboard::D)
                 {
-                    std::cout << "the D key was pressed, Demo" << std::endl;
+                    std::cout << "Lancement du mode démo ne pas bouger votre souris..." << std::endl;
+                    for(const auto& unit : engine->getGameState().getActivePlayer().getUnits()){
+                        if(unit.getX() == 1 && unit.getY() == 4){
+                            // cout << "Une unité est maintenant sélectionée" << endl;
+                            engine->setSelectedUnit(make_shared<Character>(unit));
+                            scene->updateTrajectory(vector<Node>{Node{.x = unit.getX(), .y = unit.getY()}});
+                            scene->updateAttackField(vector<int>(400,0));
+                        }
+                    }
+                    if(engine->getSelectedUnit() != nullptr){
+                        Node depart = {.x =  engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
+                        Node destination = {.x = 3, .y = 6};
+                        scene->updateTrajectory(Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm()));
+                        shared_ptr<Command> move = make_shared<MoveCommand>(engine->getSelectedUnit(), 3, 6);
+                        engine->addCommand(move, 1);
+                        engine->runCommands(true);
+                    } else {
+                        cout << "L'unité démo ne peut pas être sélectionée." << endl;
+                        cout << "Relancer le jeu s'il vous plaît" << endl;
+                    }
+                    for(const auto& unit : engine->getGameState().getActivePlayer().getUnits()){
+                        if(unit.getX() == 3 && unit.getY() == 6){
+                            // cout << "Une unité est maintenant sélectionée" << endl;
+                            engine->setSelectedUnit(make_shared<Character>(unit));
+                            scene->updateTrajectory(vector<Node>{Node{.x = unit.getX(), .y = unit.getY()}});
+                            scene->updateAttackField(vector<int>(400,0));
+                        }
+                    }
+                    if(engine->getSelectedUnit() != nullptr){
+                        for(int i = 0; i < 4; i++){
+                            this_thread::sleep_for(std::chrono::milliseconds(400));
+                            engine->setAttackMode(true);
+                            scene->updateAttackField(DisplayAttack::createField(engine->getSelectedUnit().get(), engine->getGameState().getWorld()));
+                            scene->updateTrajectory(vector<Node>{});
+                            vector<int> attackField = DisplayAttack::createField(engine->getSelectedUnit().get(), engine->getGameState().getWorld());
+                            if(attackField[9+5*engine->getGameState().getWorld().getYMax()] == 1){
+                                scene->updateTrajectory(DisplayAttack::createDamageArea(9, 5, engine->getSelectedUnit().get(), engine->getGameState().getWorld()));
+                            } else{
+                                scene->updateTrajectory(vector<Node>{});
+                            }
+                            this_thread::sleep_for(std::chrono::milliseconds(600));
+                            shared_ptr<Command> attack = make_shared<AttackCommand>(engine->getSelectedUnit(), 9, 5);
+                            engine->addCommand(attack, 1);
+                            engine->runCommands(true);
+                            scene->updateTrajectory(vector<Node>{});
+                            scene->updateAttackField(vector<int>(400,0));
+                        }
+                    } else {
+                        cout << "L'unité démo ne peut pas être sélectionée." << endl;
+                        cout << "Relancer le jeu s'il vous plaît" << endl;
+                    }
+                    for(int i = 0; i < 4; i++){
+                        this_thread::sleep_for(std::chrono::milliseconds(600));
+                        engine->unselectedUnit();
+                        scene->updateTrajectory(vector<Node>{});
+                        scene->updateAttackField(vector<int>(400,0));
+                        shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
+                        engine->addCommand(newTurnCommand, 1);
+                        engine->runCommands(true);
+                    }
+
                 }
                 break;
             case sf::Event::KeyReleased:
@@ -133,7 +196,7 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                     int y = (event.mouseButton.y - (((1 - window.getView().getViewport().height)*window.getSize().y)/2))/(window.getView().getViewport().height*window.getSize().y)*20;
                     bool foundNewUnit = false;
                     if(engine->getSelectedUnit() != nullptr){
-                        for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
+                        for(const auto& unit : engine->getGameState().getActivePlayer().getUnits()){
                             if((unit.getX() == x && unit.getY() == y)){
                                 if(x != engine->getSelectedUnit().get()->getX() || y != engine->getSelectedUnit().get()->getY()){
                                     foundNewUnit = true;
@@ -152,12 +215,12 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                                 scene->updateTrajectory(vector<Node>{});
                                 scene->updateAttackField(vector<int>(400,0));
                             } else{
-                                cout << "unité déjà en mode déplacement" << endl;
+                                // cout << "unité déjà en mode déplacement" << endl;
                                 if(engine->getSelectedUnit().get()->getX() == x && engine->getSelectedUnit().get()->getY() == y){
                                     engine->setAttackMode(true);
                                     scene->updateAttackField(DisplayAttack::createField(engine->getSelectedUnit().get(), engine->getGameState().getWorld()));
                                     scene->updateTrajectory(vector<Node>{});
-                                    cout << "unité mis en mode attaque" << endl;
+                                    // cout << "unité mis en mode attaque" << endl;
                                 } else {
                                     shared_ptr<Command> move = make_shared<MoveCommand>(engine->getSelectedUnit(), x, y);
                                     engine->addCommand(move, 1);
@@ -168,10 +231,10 @@ void handleInputs(sf::RenderWindow &window, shared_ptr<Scene> scene, shared_ptr<
                             }
                         }
                     } else {
-                        cout << "Aucune unité sélectionée précédent" << endl;
-                        for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
+                        // cout << "Aucune unité sélectionée précédent" << endl;
+                        for(const auto& unit : engine->getGameState().getActivePlayer().getUnits()){
                             if(unit.getX() == x && unit.getY() == y){
-                                cout << "Une unité est maintenant sélectionée" << endl;
+                                // cout << "Une unité est maintenant sélectionée" << endl;
                                 engine->setSelectedUnit(make_shared<Character>(unit));
                                 scene->updateTrajectory(vector<Node>{Node{.x = unit.getX(), .y = unit.getY()}});
                                 scene->updateAttackField(vector<int>(400,0));

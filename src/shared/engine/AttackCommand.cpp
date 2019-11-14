@@ -14,7 +14,7 @@ AttackCommand::AttackCommand(std::shared_ptr<state::Character> selectedUnit, int
 }
 
 void AttackCommand::execute(state::GameState &gameState) {
-    cout << "unité déjà en mode attaque : attaque !!!!" << endl;
+    // cout << "unité déjà en mode attaque : attaque !!!!" << endl;
     if(!selectedUnit.get()->hasAttacked){
         vector<int> attackField = DisplayAttack::createField(selectedUnit.get(), gameState.getWorld());
         if(attackField[target.x+target.y*gameState.getWorld().getYMax()] == 1) {

@@ -10,7 +10,7 @@ Scene::Scene(sf::RenderWindow &window, sf::View &view) : window(window), view(vi
     
 }
 
-void Scene::updateWorld(World world) {
+void Scene::updateWorld(const World& world) {
     if(isWindowAvailable(window)){
         LayerRender map;
         vector<TileType> input = world.getTiles();
@@ -22,7 +22,7 @@ void Scene::updateWorld(World world) {
         updateAll();
     }
 }
-void Scene::updatePlayers(Player player) {
+void Scene::updatePlayers(const Player& player) {
     if(isWindowAvailable(window)){
         // on charge la texture du tileset
         if (!unitsRed.loadFromFile("../res/units_red.png"))
@@ -114,11 +114,11 @@ void Scene::updateAttackField(vector<int> field) {
 void Scene::stateChanged (const StateEvent &e, GameState &gameState){
     switch(e.getStateEventID()){
         case StateEventID::WORLD:
-            cout << "Notification from gameState for WORLD" << endl;
+            //cout << "Notification from gameState for WORLD" << endl;
             this->updateWorld(gameState.getWorld());
-            break;case StateEventID::PLAYER1:cout << "Notification from gameState for PLAYER1" << endl;
+            break;case StateEventID::PLAYER1://cout << "Notification from gameState for PLAYER1" << endl;
             this->updatePlayers(gameState.getPlayer1());
-            break;case StateEventID::PLAYER2:cout << "Notification from gameState for PLAYER2" << endl;
+            break;case StateEventID::PLAYER2://cout << "Notification from gameState for PLAYER2" << endl;
             this->updatePlayers(gameState.getPlayer2());
             break;case StateEventID::ACTIVEPLAYER:// TODO Apply rendering coming from new active player
             break;case StateEventID::TURN:// TODO Update IHM who shows the number of turn

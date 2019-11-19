@@ -1,12 +1,7 @@
 #include <vector>
 #include <cmath>
-#include <iostream>
 #include "state.h"
 #include "Node.h"
-#include <stdio.h>      /* printf */
-#include <math.h>       /* atan */
-
-#define PI 3.14159265
 
 
 using namespace std;
@@ -33,16 +28,7 @@ public:
         int posy = unit->getY() + y;
         if(isValid(posx, posy, world)){
             if (abs(x) + abs(y) > min){
-                /*double result;
-                result = atan2(y,x);
-                printf ("The arc tangent for (x=%d, y=%d) is %f degrees\n", x, y, result);
-                cout << "cord x = " << static_cast<int>(cos(result)*8) << " et y = " << static_cast<int>(sin(result)*8)  << endl;*/
-                try {
-                    field.at(posx + posy * world.getYMax()) = 1;
-                } catch (const exception &e) {
-                    cout << e.what() << endl;
-                }
-
+                field.at(posx + posy * world.getYMax()) = 1;
             }
         }
         field.at(unit->getX() + unit->getY() * world.getYMax()) = 0;
@@ -103,6 +89,5 @@ public:
         }
         return  damageArea;
     }
-
 };
 

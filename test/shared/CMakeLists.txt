@@ -15,5 +15,6 @@ add_custom_test(attack_command)
 add_custom_test(new_turn_command)
 add_custom_test(engine)
 add_custom_test(display_attack)
+add_custom_test(random_ai)
 # vim: set sw=2 sts=2 et:
 

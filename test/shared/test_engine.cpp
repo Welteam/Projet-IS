@@ -43,6 +43,9 @@ BOOST_AUTO_TEST_CASE(TestEngine)
         BOOST_CHECK_EQUAL(engine->getGameState().getAttackMode(), 1);
         engine->getGameState().unselectedUnit();
         BOOST_CHECK_EQUAL(engine->getGameState().getSelectedUnit(), nullptr);
+        BOOST_CHECK_THROW( engine->addCommand(nullptr, 1), std::exception );
+        shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
+        BOOST_REQUIRE_NO_THROW( engine->addCommand(newTurnCommand, 1));
     }
-}
 
+}

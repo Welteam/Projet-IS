@@ -14,7 +14,7 @@ state::GameState& Engine::getGameState() {
 
 void engine::Engine::addCommand(std::shared_ptr<Command> command, unsigned int priority) {
     if (!command) {
-        throw new std::runtime_error("empty command error");
+        throw std::runtime_error("empty command error");
     }
     // Block addCommand during commands copy
     commands_mutex->lock();
@@ -43,10 +43,6 @@ void engine::Engine::runCommands(bool prod) {
         it->second->execute(gameState);
         it++;
     }
-}
-
-std::stack<std::shared_ptr<engine::Command>> engine::Engine::update() {
-    return std::stack<std::shared_ptr<engine::Command>>();
 }
 
 const std::map<int, std::shared_ptr<Command>> &Engine::getCommands() {

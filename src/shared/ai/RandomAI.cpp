@@ -39,8 +39,6 @@ void ai::RandomAI::run(Engine &e) {
                     cout << "AI didn't found a move, it tries again" << endl;
                 }
 
-            } else {
-                cout << "L'unité ia ne peut pas être sélectionée.getGameState()." << endl;
             }
         }
         while(!unit.hasAttacked){
@@ -64,8 +62,6 @@ void ai::RandomAI::run(Engine &e) {
                     cout << "AI didn't found a target, it tries again" << endl;
                 }
 
-            } else {
-                cout << "L'unité ia ne peut pas être sélectionée.getGameState()." << endl;
             }
         }
     }

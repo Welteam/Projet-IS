@@ -18,10 +18,6 @@ namespace state{
         this->player2 = Player();
     }
 
-    void GameState::saveWorld() {
-
-    }
-
     int GameState::getTurn() const {
         return this->turn;
     }

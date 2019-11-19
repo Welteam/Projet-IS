@@ -8,15 +8,15 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
 }
 
 BOOST_AUTO_TEST_CASE(TestWeaponGettersSettersConstrutor)
-{/*
+{
     { // GET & SET pm
        state::Weapon weapon;
-       BOOST_CHECK_EQUAL(weapon.getLpMax(), 100);
-       BOOST_CHECK_EQUAL(weapon.getPm(), 5);
-       weapon.setPm(6);
-       BOOST_CHECK_EQUAL(weapon.getPm(), 6);
+       weapon.setLevel(2);
+       BOOST_CHECK_EQUAL(weapon.getLevel(), 2);
+        weapon.setLevel(5);
+        BOOST_CHECK_EQUAL(weapon.getLevel(), 2);
     }
-
+/*
     { // GET & SET damage
         state::Weapon weapon;
         BOOST_CHECK_EQUAL(weapon.getDamage(), 30);

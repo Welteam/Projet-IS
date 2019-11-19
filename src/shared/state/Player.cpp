@@ -1,46 +1,48 @@
 #include "Player.h"
 
-namespace state{
+#include <utility>
+
+using namespace state;
+using namespace std;
 
 
-    Player::Player(){
-        this->id = 0;
-    }
+Player::Player(){
+    this->id = 0;
+}
 
-    Player::Player(int id, std::vector<Character> units, std::vector<Tower> towers,
-                   std::vector<ApparitionArea> apparitionAreas) {
-        this->id = id;
-        this->units = units;
-        this->towers = towers;
-        this->apparitionAreas = apparitionAreas;
+Player::Player(int id, vector<Character> units, vector<Tower> towers,
+        vector<ApparitionArea> apparitionAreas) {
+    this->id = id;
+    this->units = move(units);
+    this->towers = move(towers);
+    this->apparitionAreas = move(apparitionAreas);
 
-    }
+}
 
-    int Player::getId() const {
-        return this->id;
-    }
+int Player::getId() const {
+    return this->id;
+}
 
-    std::vector<Character> Player::getUnits() const {
-        return this->units;
-    }
+vector<Character> Player::getUnits() const {
+    return this->units;
+}
 
-    std::vector<Tower> Player::getTowers() const {
-        return this->towers;
-    }
+vector<Tower> Player::getTowers() const {
+    return this->towers;
+}
 
-    std::vector<ApparitionArea> Player::getApparitionAreas() const {
-        return this->apparitionAreas;
-    }
+vector<ApparitionArea> Player::getApparitionAreas() const {
+    return this->apparitionAreas;
+}
 
-    void Player::setUnits(std::vector<Character> characters) {
-        this->units = characters;
-    }
+void Player::setUnits(vector<Character> characters) {
+    this->units = std::move(characters);
+}
 
-    void Player::setTowers(std::vector<Tower> towers) {
-        this->towers = towers;
-    }
+void Player::setTowers(vector<Tower> newTowers) {
+    this->towers = std::move(newTowers);
+}
 
-    void Player::setApparitionAreas(std::vector<ApparitionArea> apparitionAreas) {
-        this->apparitionAreas = apparitionAreas;
-    }
+void Player::setApparitionAreas(vector<ApparitionArea> newApparitionAreas) {
+    this->apparitionAreas = std::move(newApparitionAreas);
 }

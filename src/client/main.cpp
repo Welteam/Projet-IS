@@ -78,7 +78,7 @@ int main(int argc,char* argv[])
 
             while (window.isOpen()) {
                 handleInputs(window, scene, engine);
-                engine->runCommands(true);
+                engine->runCommands();
             }
         } else if (strcmp(argv[1], "random_ai") == 0) {
             cout << "Bienvenue sur random_ai !" << endl;
@@ -90,7 +90,7 @@ int main(int argc,char* argv[])
                 if(!iaTurn){
                     // Manage user inputs
                     handleInputs(window, scene, engine);
-                    engine->runCommands(true);
+                    engine->runCommands();
                 } else {
                     cout << "run ai" << endl;
                     ai->run(*engine);
@@ -144,7 +144,7 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                         scene->updateTrajectory(Cordinate::aStar(depart, destination, e->getGameState().getWorld(), e->getGameState().getGameObjects(), e->getGameState().getSelectedUnit().get()->getPm()));
                         shared_ptr<Command> move = make_shared<MoveCommand>(e->getGameState().getSelectedUnit(), 3, 6);
                         e->addCommand(move, 1);
-                        e->runCommands(true);
+                        e->runCommands();
                     } else {
                         cout << "L'unité démo ne peut pas être sélectionée." << endl;
                         cout << "Relancer le jeu s'il vous plaît" << endl;
@@ -168,7 +168,7 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                             this_thread::sleep_for(std::chrono::milliseconds(600));
                             shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), 9, 5);
                             e->addCommand(attack, 1);
-                            e->runCommands(true);
+                            e->runCommands();
                         }
                     } else {
                         cout << "L'unité démo ne peut pas être sélectionée." << endl;
@@ -179,7 +179,7 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                         e->getGameState().unselectedUnit();
                         shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
                         e->addCommand(newTurnCommand, 1);
-                        e->runCommands(true);
+                        e->runCommands();
                     }
 
                 }
@@ -189,7 +189,7 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
             case sf::Event::MouseButtonPressed:
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    int x = (event.mouseButton.x - (((1 - window.getView().getViewport().width)*window.getSize().x)/2))/(window.getView().getViewport().width*window.getSize().x)*20;
+                    int x = (event.mouseButton.x - (((1 - window.getView().getViewport().width)*window.getSize().x)/2))/(window.getView().getViewport().width*window.getSize().x)*20; // NOLINT(bugprone-narrowing-conversions)
                     int y = (event.mouseButton.y - (((1 - window.getView().getViewport().height)*window.getSize().y)/2))/(window.getView().getViewport().height*window.getSize().y)*20;
                     bool foundNewUnit = false;
                     if(e->getGameState().getSelectedUnit() != nullptr){
@@ -280,5 +280,3 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
         }
     }
   }
-
-

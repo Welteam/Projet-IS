@@ -1,6 +1,5 @@
 #include "GameObject.h"
 
-
 using namespace state;
 
 GameObject::GameObject(int x, int y) {
@@ -21,12 +20,12 @@ int GameObject::getY() const {
     return this->y;
 }
 
-void GameObject::setX(int x) {
-    this->x = x;
+void GameObject::setX(int newX) {
+    this->x = newX;
 }
 
-void GameObject::setY(int y) {
-    this->y = y;
+void GameObject::setY(int newY) {
+    this->y = newY;
 }
 
 

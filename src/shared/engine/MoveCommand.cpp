@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 #include <vector>
 #include "MoveCommand.h"
 #include "Cordinate.cpp"
@@ -9,7 +10,7 @@
 namespace engine {
 
     MoveCommand::MoveCommand(std::shared_ptr<state::Character> selectedUnit, int newX, int newY) {
-        this->selectedUnit = selectedUnit;
+        this->selectedUnit = std::move(selectedUnit);
         this->destination = Node{.x = newX, .y = newY};
     }
 

@@ -11,7 +11,7 @@ class DisplayAttack {
 public:
 
 
-    static bool isValid(int x, int y, state::World world) { //If our Node is an obstacle it is not valid
+    static bool isValid(int x, int y, const state::World& world) { //If our Node is an obstacle it is not valid
         int id = x + y * world.getYMax();
         if (x < 0 || y < 0 || x >= world.getXMax() || y >= world.getYMax()) {
             return false;
@@ -23,7 +23,7 @@ public:
         return false;
     }
 
-    static vector<int> findCorrectBlock(int x, int y, Character *unit, World world, vector<int> field, int min){
+    static vector<int> findCorrectBlock(int x, int y, Character *unit, const World& world, vector<int> field, int min){
         int posx = unit->getX() + x;
         int posy = unit->getY() + y;
         if(isValid(posx, posy, world)){
@@ -35,7 +35,7 @@ public:
         return field;
     }
 
-    static vector<int> createField(Character *unit, World world) {
+    static vector<int> createField(Character *unit, const World& world) {
         // Define principles variables
         int min = unit->getWeapon().getRangeMin();
         int max = unit->getWeapon().getRangeMax();
@@ -70,7 +70,7 @@ public:
         return field;
     }
 
-    static vector<engine::Node> createDamageArea(int mouseX, int mouseY, Character *unit, World world) {
+    static vector<engine::Node> createDamageArea(int mouseX, int mouseY, Character *unit, const World& world) {
         // Define principles variables
         int max = unit->getWeapon().getDamageAreaMax();
         vector<engine::Node> damageArea;

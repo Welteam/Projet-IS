@@ -87,29 +87,29 @@ void Scene::updatePlayers(const Player& player) {
         updateAll();
     }
 }
-void Scene::updateTrajectory(vector<engine::Node> nodes) {
+void Scene::updateTrajectory(const vector<engine::Node>& nodes) {
     if(isWindowAvailable(window)){
-        LayerRender trajectory;
+        LayerRender newTrajectory;
         vector<int> data(400, 0);
         for(engine::Node node : nodes){
             data[node.x + node.y*20] = 1;
         }
         int arr[400];
         copy(data.begin(), data.end(), arr);
-        if (!trajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+        if (!newTrajectory.load("../res/newTrajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
             cout << "Cannot load map" << endl;
-        this->trajectory = trajectory;
+        this->trajectory = newTrajectory;
         updateAll();
     }
 }
 void Scene::updateAttackField(vector<int> field) {
     if(isWindowAvailable(window)){
-        LayerRender attackField;
+        LayerRender newAttackField;
         int arr[field.size()];
         copy(field.begin(), field.end(), arr);
-        if (!attackField.load("../res/attack_field.png", sf::Vector2u(16, 16), arr, 20, 20))
+        if (!newAttackField.load("../res/attack_field.png", sf::Vector2u(16, 16), arr, 20, 20))
             cout << "Cannot load map" << endl;
-        this->attackField = attackField;
+        this->attackField = newAttackField;
         updateAll();
     }
 }
@@ -155,8 +155,8 @@ void Scene::stateChanged (const StateEvent &e, GameState &gameState){
             default:cout << "Cannot read notification from gameState : "<< e.getStateEventID() << endl;
     }
 }
-bool Scene::isWindowAvailable(sf::RenderWindow &window) {
-    if (!window.isOpen()) {
+bool Scene::isWindowAvailable(sf::RenderWindow &renderWindow) {
+    if (!renderWindow.isOpen()) {
         cout << "window reference in Scene is closed" << endl;
         return false;
     }
@@ -190,9 +190,9 @@ void Scene::updateAll() {
         window.draw(this->worldRender);
         window.draw(this->attackField);
         window.draw(this->trajectory);
-        for(auto sprite : this->player1Render)
+        for(const auto& sprite : this->player1Render)
             window.draw(sprite);
-        for(auto sprite : this->player2Render)
+        for(const auto& sprite : this->player2Render)
             window.draw(sprite);
         window.display();
     }

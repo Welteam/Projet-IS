@@ -3,7 +3,6 @@
 #include <array>
 #include <cmath>
 #include <cfloat>
-#include <iostream>
 #include "../engine.h"
 
 #define X_MAX 320
@@ -24,7 +23,7 @@ class Cordinate {
 public:
 
 
-    static bool isValid(int x, int y, state::World world, vector<state::GameObject> gameObjects) { //If our Node is an obstacle it is not valid
+    static bool isValid(int x, int y, const state::World& world, const vector<state::GameObject>& gameObjects) { //If our Node is an obstacle it is not valid
         int id = x + y * 20;
         for(auto gameObject : gameObjects){
             if(gameObject.getX() == x && gameObject.getY() == y){
@@ -37,18 +36,12 @@ public:
             //cout << "en dehors de la map"<< endl;
             return false;
         }
-        if (world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3) {
-            return true;
-        }
+        return world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3;
         //cout << "obstacle de map en x = "<< x << " et y = " << y << endl;
-        return false;
     }
 
     static bool isDestination(int x, int y, Node dest) {
-        if (x == dest.x && y == dest.y) {
-            return true;
-        }
-        return false;
+        return x == dest.x && y == dest.y;
     }
 
     static double calculateH(int x, int y, Node dest) {
@@ -82,7 +75,7 @@ public:
     }
 
 
-    static vector<Node> aStar(Node player, Node dest, state::World world, vector<state::GameObject> gameObjectsWithUnitSelected, int pm) {
+    static vector<Node> aStar(Node player, Node dest, const state::World& world, const vector<state::GameObject>& gameObjectsWithUnitSelected, int pm) {
         vector<Node> empty;
         empty.push_back(player);
         vector<state::GameObject> gameObjects;
@@ -90,7 +83,7 @@ public:
             if(gameObject.getX() != player.x || gameObject.getY() != player.y)
                 gameObjects.push_back(gameObject);
         }
-        if (isValid(dest.x, dest.y, world, gameObjects) == false) {
+        if (!isValid(dest.x, dest.y, world, gameObjects)) {
             // cout << "Destination is invalid"<< endl;
             return empty;
             //Destination is invalid
@@ -104,7 +97,7 @@ public:
 
         //Initialize whole map
         //Node allMap[50][25];
-        array<array<Node, (Y_MAX / Y_STEP)>, (X_MAX / X_STEP)> allMap;
+        array<array<Node, (Y_MAX / Y_STEP)>, (X_MAX / X_STEP)> allMap{};
         for (int x = 0; x < (X_MAX / X_STEP); x++) {
             for (int y = 0; y < (Y_MAX / Y_STEP); y++) {
                 allMap[x][y].fCost = FLT_MAX;
@@ -133,7 +126,7 @@ public:
         //bool destinationFound = false;
 
         while (!openList.empty() && openList.size() < (X_MAX / X_STEP) * (Y_MAX / Y_STEP)) {
-            Node node;
+            Node node{};
             do {
                 //This do-while loop could be replaced with extracting the first
                 //element from a set, but you'd have to make the openList a set.
@@ -142,7 +135,7 @@ public:
                 //not as good as a set performance wise.
                 float temp = FLT_MAX;
                 vector<Node>::iterator itNode;
-                for (vector<Node>::iterator it = openList.begin();
+                for (auto it = openList.begin();
                      it != openList.end(); it = next(it)) {
                     Node n = *it;
                     if (n.fCost < temp) {
@@ -152,7 +145,7 @@ public:
                 }
                 node = *itNode;
                 openList.erase(itNode);
-            } while (isValid(node.x, node.y, world, gameObjects) == false);
+            } while (!isValid(node.x, node.y, world, gameObjects));
                 x = node.x;
                 y = node.y;
                 closedList[x][y] = true;
@@ -160,14 +153,14 @@ public:
 
             //For each neighbour starting from North-West to South-East
             vector<pair<int, int>> fourWay;
-            fourWay.push_back(pair<int, int>(-1, 0));
-            fourWay.push_back(pair<int, int>(0, 0));
-            fourWay.push_back(pair<int, int>(0, -1));
-            fourWay.push_back(pair<int, int>(0, 0));
-            fourWay.push_back(pair<int, int>(0, 1));
-            fourWay.push_back(pair<int, int>(0, 0));
-            fourWay.push_back(pair<int, int>(1, 0));
-            fourWay.push_back(pair<int, int>(0, 0));
+            fourWay.emplace_back(-1, 0);
+            fourWay.emplace_back(0, 0);
+            fourWay.emplace_back(0, -1);
+            fourWay.emplace_back(0, 0);
+            fourWay.emplace_back(0, 1);
+            fourWay.emplace_back(0, 0);
+            fourWay.emplace_back(1, 0);
+            fourWay.emplace_back(0, 0);
 
             for (auto coord : fourWay) {
                 int newX = coord.first;
@@ -190,7 +183,7 @@ public:
                         } else {
                             return makePath(allMap, dest);
                         }
-                    } else if (closedList[x + newX][y + newY] == false) {
+                    } else if (!closedList[x + newX][y + newY]) {
                         gNew = node.gCost + 1.0;
                         hNew = calculateH(x + newX, y + newY, dest);
                         fNew = gNew + hNew;
@@ -198,9 +191,9 @@ public:
                         if (allMap[x + newX][y + newY].fCost == FLT_MAX ||
                             allMap[x + newX][y + newY].fCost > fNew) {
                             // Update the details of this neighbour node
-                            allMap[x + newX][y + newY].fCost = fNew;
-                            allMap[x + newX][y + newY].gCost = gNew;
-                            allMap[x + newX][y + newY].hCost = hNew;
+                            allMap[x + newX][y + newY].fCost = static_cast<float>(fNew);
+                            allMap[x + newX][y + newY].gCost = static_cast<float>(gNew);
+                            allMap[x + newX][y + newY].hCost = static_cast<float>(hNew);
                             allMap[x + newX][y + newY].parentX = x;
                             allMap[x + newX][y + newY].parentY = y;
 
@@ -211,8 +204,6 @@ public:
 
             }
         }
-        /*if (destinationFound == false)
-            return empty;*/
         return empty;
     }
 

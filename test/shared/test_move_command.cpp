@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(TestMoveCommandExecutePlayer1)
         BOOST_CHECK_EQUAL(engine->getCommands().size(), 0);
         engine->addCommand(move, 1);
         BOOST_CHECK_EQUAL(engine->getCommands().size(), 1);
-        engine->runCommands(true);
+        engine->runCommands();
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getX(), 4);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getY(), 0);
         std::map<int, std::shared_ptr<Command>> commands = engine->getCommands();
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(TestMoveCommandExecutePlayer2)
         }
         shared_ptr<Command> move = make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(), 0, 11);
         engine->addCommand(move, 1);
-        engine->runCommands(true);
+        engine->runCommands();
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getX(), 0);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getY(), 11);
 

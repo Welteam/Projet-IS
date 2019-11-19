@@ -47,9 +47,9 @@ namespace state {
         }
     }
 
-    void Weapon::setLevel(int level) {
-        if (level <= 3) {
-            this->level = level;
+    void Weapon::setLevel(int newLevel) {
+        if (newLevel <= 3) {
+            this->level = newLevel;
         }
     }
 

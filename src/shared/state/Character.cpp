@@ -23,16 +23,16 @@ namespace state {
         return this->hp;
     }
 
-    void Character::setHp(int hp) {
-        this->hp = hp;
+    void Character::setHp(int newHp) {
+        this->hp = newHp;
     }
 
     const Weapon &Character::getWeapon() const {
         return this->weapon;
     }
 
-    void Character::setWeapon(const Weapon &weapon) {
-        this->weapon = weapon;
+    void Character::setWeapon(const Weapon &newWeapon) {
+        this->weapon = newWeapon;
     }
 
     void Character::levelUp() {
@@ -46,8 +46,8 @@ namespace state {
         this->pm = this->weapon.getPmMax();
     }
 
-    void Character::usePm(int pm) {
-        this->pm -= pm;
+    void Character::usePm(int newPm) {
+        this->pm -= newPm;
     }
 
     int Character::getPm() const {
@@ -58,8 +58,8 @@ namespace state {
         return this->orientation;
     }
 
-    void Character::setOrientation(Orientation orientation) {
-        this->orientation = orientation;
+    void Character::setOrientation(Orientation newOrientation) {
+        this->orientation = newOrientation;
     }
 
 

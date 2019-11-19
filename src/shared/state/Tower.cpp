@@ -18,8 +18,8 @@ namespace state {
         return this->hp;
     }
 
-    void Tower::setHp(int hp) {
-        this->hp = hp;
+    void Tower::setHp(int newHp) {
+        this->hp = newHp;
     }
 
 }

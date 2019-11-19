@@ -22,8 +22,8 @@ namespace state{
         return this->turn;
     }
 
-    void GameState::setTurn(int turn) {
-        this->turn = turn;
+    void GameState::setTurn(int newTurn) {
+        this->turn = newTurn;
         this->notifyObservers(StateEvent{TURN}, *this);
     }
 
@@ -31,8 +31,8 @@ namespace state{
         return this->player1;
     }
 
-    void GameState::setPlayer1(Player player1) {
-        this->player1 = std::move(player1);
+    void GameState::setPlayer1(Player newPlayer1) {
+        this->player1 = std::move(newPlayer1);
         this->notifyObservers(StateEvent{PLAYER1}, *this);
     }
 
@@ -40,8 +40,8 @@ namespace state{
         return this->player2;
     }
 
-    void GameState::setPlayer2(Player player2) {
-        this->player2 = std::move(player2);
+    void GameState::setPlayer2(Player newPlayer2) {
+        this->player2 = std::move(newPlayer2);
         this->notifyObservers(StateEvent{PLAYER2}, *this);
     }
 
@@ -49,8 +49,8 @@ namespace state{
         return this->activePlayer;
     }
 
-    void GameState::setActivePlayer(const Player &activePlayer) {
-        this->activePlayer = activePlayer;
+    void GameState::setActivePlayer(const Player &newActivePlayer) {
+        this->activePlayer = newActivePlayer;
         this->notifyObservers(StateEvent{ACTIVEPLAYER}, *this);
     }
 
@@ -58,20 +58,20 @@ namespace state{
         return this->world;
     }
 
-    void GameState::setWorld(const World &world) {
-        this->world = world;
+    void GameState::setWorld(const World &newWorld) {
+        this->world = newWorld;
         this->notifyObservers(StateEvent{WORLD}, *this);
     }
 
     std::vector<GameObject> GameState::getGameObjects() {
         std::vector<GameObject> gameObjects;
-        for(auto gameObject : getPlayer1().getUnits())
+        for(const auto& gameObject : getPlayer1().getUnits())
             gameObjects.push_back(gameObject);
         for(auto gameObject : getPlayer1().getTowers())
             gameObjects.push_back(gameObject);
         for(auto gameObject : getPlayer1().getApparitionAreas())
             gameObjects.push_back(gameObject);
-        for(auto gameObject : getPlayer2().getUnits())
+        for(const auto& gameObject : getPlayer2().getUnits())
             gameObjects.push_back(gameObject);
         for(auto gameObject : getPlayer2().getTowers())
             gameObjects.push_back(gameObject);
@@ -81,12 +81,12 @@ namespace state{
     }
 
     std::shared_ptr<state::Character> GameState::getSelectedUnit() {
-        return selectedUnit;;
+        return selectedUnit;
     }
 
-    void GameState::setSelectedUnit(std::shared_ptr<state::Character> selectedUnit) {
+    void GameState::setSelectedUnit(std::shared_ptr<state::Character> newSelectedUnit) {
         attackMode = false;
-        this->selectedUnit = selectedUnit;
+        this->selectedUnit = std::move(newSelectedUnit);
         this->notifyObservers(StateEvent{SELECTED_UNIT}, *this);
         this->notifyObservers(StateEvent{ATTACK_MODE}, *this);
     }
@@ -102,8 +102,8 @@ namespace state{
         return attackMode;
     }
 
-    void GameState::setAttackMode(bool attackMode) {
-        this->attackMode = attackMode;
+    void GameState::setAttackMode(bool newAttackMode) {
+        this->attackMode = newAttackMode;
         this->notifyObservers(StateEvent{ATTACK_MODE}, *this);
     }
 }

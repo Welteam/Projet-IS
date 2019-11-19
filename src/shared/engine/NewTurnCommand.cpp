@@ -8,8 +8,7 @@ using namespace engine;
 using namespace state;
 using namespace std;
 
-NewTurnCommand::NewTurnCommand() {
-}
+NewTurnCommand::NewTurnCommand() = default;
 
 void NewTurnCommand::execute(GameState &gameState) {
     Player activePlayer = gameState.getActivePlayer();
@@ -27,10 +26,10 @@ void NewTurnCommand::execute(GameState &gameState) {
         vector<Character> newSpawnUnits =  gameState.getPlayer2().getUnits();
         vector<pair<int, int>> fourWay;
         bool unitSpawned = false;
-        fourWay.push_back(pair<int, int>(-1, 0));
-        fourWay.push_back(pair<int, int>(0, -1));
-        fourWay.push_back(pair<int, int>(0, 1));
-        fourWay.push_back(pair<int, int>(1, 0));
+        fourWay.emplace_back(-1, 0);
+        fourWay.emplace_back(0, -1);
+        fourWay.emplace_back(0, 1);
+        fourWay.emplace_back(1, 0);
         for(auto spawnArea : nextPlayer.getApparitionAreas()){
             if(!unitSpawned) {
                 for (auto coord : fourWay) {
@@ -45,7 +44,7 @@ void NewTurnCommand::execute(GameState &gameState) {
                         }
                         if (Cordinate::isValid(spawnArea.getX() + newX, spawnArea.getY() + newY, gameState.getWorld(),
                                                gameState.getGameObjects())) {
-                            newSpawnUnits.push_back(Character{spawnArea.getX() + newX, spawnArea.getY() + newY});
+                            newSpawnUnits.emplace_back(spawnArea.getX() + newX, spawnArea.getY() + newY);
                             unitSpawned = true;
                         }
                     }
@@ -65,10 +64,10 @@ void NewTurnCommand::execute(GameState &gameState) {
         vector<Character> newSpawnUnits =  gameState.getPlayer1().getUnits();
         vector<pair<int, int>> fourWay;
         bool unitSpawned = false;
-        fourWay.push_back(pair<int, int>(-1, 0));
-        fourWay.push_back(pair<int, int>(0, -1));
-        fourWay.push_back(pair<int, int>(0, 1));
-        fourWay.push_back(pair<int, int>(1, 0));
+        fourWay.emplace_back(-1, 0);
+        fourWay.emplace_back(0, -1);
+        fourWay.emplace_back(0, 1);
+        fourWay.emplace_back(1, 0);
         for(auto spawnArea : nextPlayer.getApparitionAreas()){
             if(!unitSpawned) {
                 for (auto coord : fourWay) {
@@ -83,7 +82,7 @@ void NewTurnCommand::execute(GameState &gameState) {
                         }
                         if (Cordinate::isValid(spawnArea.getX() + newX, spawnArea.getY() + newY, gameState.getWorld(),
                                                gameState.getGameObjects())) {
-                            newSpawnUnits.push_back(Character{spawnArea.getX() + newX, spawnArea.getY() + newY});
+                            newSpawnUnits.emplace_back(spawnArea.getX() + newX, spawnArea.getY() + newY);
                             unitSpawned = true;
                         }
                     }

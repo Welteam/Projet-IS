@@ -1,7 +1,6 @@
 #include <memory>
 #include "RandomAI.h"
 #include <iostream>
-#include <engine.h>
 #include <engine/AttackCommand.h>
 #include <engine/MoveCommand.h>
 #include <cstdlib>
@@ -33,7 +32,7 @@ void ai::RandomAI::run(Engine &e) {
                 if(trajectory.size() > 1){
                     shared_ptr<Command> move = make_shared<MoveCommand>(e.getGameState().getSelectedUnit(), randomMoveX, randomMoveY);
                     e.addCommand(move, 1);
-                    e.runCommands(true);
+                    e.runCommands();
                     foundUnitMove = true;
                 } else {
                     cout << "AI didn't found a move, it tries again" << endl;
@@ -55,7 +54,7 @@ void ai::RandomAI::run(Engine &e) {
                 if(attackField[randomAttackX+ randomAttackY * e.getGameState().getWorld().getYMax()] == 1){
                     shared_ptr<Command> attack = make_shared<AttackCommand>(e.getGameState().getSelectedUnit(), randomAttackX, randomAttackY);
                     e.addCommand(attack, 1);
-                    e.runCommands(true);
+                    e.runCommands();
                     e.getGameState().unselectedUnit();
                     unit.hasAttacked = true;
                 } else {
@@ -67,6 +66,6 @@ void ai::RandomAI::run(Engine &e) {
     }
     shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
     e.addCommand(newTurnCommand, 1);
-    e.runCommands(true);
+    e.runCommands();
 }
 

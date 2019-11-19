@@ -40,13 +40,13 @@ BOOST_AUTO_TEST_CASE(TestNewTurnCommand)
       }
       shared_ptr<Command> move = make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(), 4, 0);
       engine->addCommand(move, 1);
-      engine->runCommands(true);
+      engine->runCommands();
       BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getX(), 4);
       BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getY(), 0);
       BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getPm(), 1);
       shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
       engine->addCommand(newTurnCommand, 1);
-      engine->runCommands(true);
+      engine->runCommands();
       BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getPm(), 5);
   }
 }
@@ -79,13 +79,13 @@ BOOST_AUTO_TEST_CASE(TestNewTurnCommandPLayer2)
         }
         shared_ptr<Command> move = make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(), 0, 11);
         engine->addCommand(move, 1);
-        engine->runCommands(true);
+        engine->runCommands();
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getX(), 0);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getY(), 11);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getPm(), 0);
         shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
         engine->addCommand(newTurnCommand, 1);
-        engine->runCommands(true);
+        engine->runCommands();
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getPm(), 5);
     }
 }

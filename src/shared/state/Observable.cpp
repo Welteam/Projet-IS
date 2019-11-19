@@ -1,6 +1,5 @@
 #include "Observable.h"
 #include "GameState.h"
-#include <algorithm>
 #include <iostream>
 
 
@@ -11,14 +10,6 @@ namespace state {
 
     void Observable::registerObserver(Observer *o) {
         observers.push_back(o);
-    }
-
-    void Observable::unregisterObserver(Observer *o) {
-        observers.erase(find(observers.cbegin(),observers.cend(),o));
-    }
-
-    void Observable::unregisterObservers() {
-        observers.clear();
     }
 
     void Observable::notifyObservers(const StateEvent &e, GameState &gameState) {

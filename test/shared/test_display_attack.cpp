@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
-#include "../../src/shared/engine.h"
 #include "../../src/shared/engine/DisplayAttack.cpp"
 
 using namespace engine;

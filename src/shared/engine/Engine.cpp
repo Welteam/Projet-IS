@@ -12,7 +12,7 @@ state::GameState& Engine::getGameState() {
     return this->gameState;
 }
 
-void engine::Engine::addCommand(std::shared_ptr<Command> command, unsigned int priority) {
+void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigned int priority) {
     if (!command) {
         throw std::runtime_error("empty command error");
     }
@@ -31,7 +31,7 @@ void engine::Engine::undoCommands() {
     this->commands.clear(); 
 }
 
-void engine::Engine::runCommands(bool prod) {
+void engine::Engine::runCommands() {
     commands_mutex->lock();
     // Copy commands in the buffer
     std::unique_ptr<std::map<int, std::shared_ptr<Command>>> commands_buffer;
@@ -49,6 +49,6 @@ const std::map<int, std::shared_ptr<Command>> &Engine::getCommands() {
     return commands;
 }
 
-void Engine::setCommands(const std::map<int, std::shared_ptr<Command>> &commands) {
-    this->commands = commands;
+void Engine::setCommands(const std::map<int, std::shared_ptr<Command>> &newCommands) {
+    this->commands = newCommands;
 }

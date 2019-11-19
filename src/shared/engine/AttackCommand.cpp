@@ -1,5 +1,6 @@
 #include "AttackCommand.h"
 #include <iostream>
+#include <utility>
 #include <state.h>
 #include "engine/Cordinate.cpp"
 #include "engine/DisplayAttack.cpp"
@@ -9,7 +10,7 @@ using namespace state;
 using namespace engine;
 
 AttackCommand::AttackCommand(std::shared_ptr<state::Character> selectedUnit, int targetX, int targetY) {
-    this->selectedUnit = selectedUnit;
+    this->selectedUnit = std::move(selectedUnit);
     this->target = Node{.x = targetX, .y = targetY};
 }
 

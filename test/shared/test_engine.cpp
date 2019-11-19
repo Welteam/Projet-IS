@@ -35,14 +35,14 @@ BOOST_AUTO_TEST_CASE(TestEngine)
         int y = 2;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        BOOST_CHECK_EQUAL(engine->getAttackMode(), 0);
-        engine->setAttackMode(true);
-        BOOST_CHECK_EQUAL(engine->getAttackMode(), 1);
-        engine->unselectedUnit();
-        BOOST_CHECK_EQUAL(engine->getSelectedUnit(), nullptr);
+        BOOST_CHECK_EQUAL(engine->getGameState().getAttackMode(), 0);
+        engine->getGameState().setAttackMode(true);
+        BOOST_CHECK_EQUAL(engine->getGameState().getAttackMode(), 1);
+        engine->getGameState().unselectedUnit();
+        BOOST_CHECK_EQUAL(engine->getGameState().getSelectedUnit(), nullptr);
     }
 }
 

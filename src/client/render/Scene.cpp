@@ -1,7 +1,9 @@
 #include "Scene.h"
 #include <iostream>
 #include "state/TileType.h"
+#include "engine/DisplayAttack.cpp"
 
+using namespace engine;
 using namespace render;
 using namespace state;
 using namespace std;
@@ -116,13 +118,41 @@ void Scene::stateChanged (const StateEvent &e, GameState &gameState){
         case StateEventID::WORLD:
             //cout << "Notification from gameState for WORLD" << endl;
             this->updateWorld(gameState.getWorld());
-            break;case StateEventID::PLAYER1://cout << "Notification from gameState for PLAYER1" << endl;
+            break;
+            case StateEventID::PLAYER1://cout << "Notification from gameState for PLAYER1" << endl;
             this->updatePlayers(gameState.getPlayer1());
-            break;case StateEventID::PLAYER2://cout << "Notification from gameState for PLAYER2" << endl;
+            break;
+            case StateEventID::PLAYER2://cout << "Notification from gameState for PLAYER2" << endl;
             this->updatePlayers(gameState.getPlayer2());
-            break;case StateEventID::ACTIVEPLAYER:// TODO Apply rendering coming from new active player
-            break;case StateEventID::TURN:// TODO Update IHM who shows the number of turn
-            break;default:cout << "Cannot read notification from gameState : "<< e.getStateEventID() << endl;
+            break;
+        case StateEventID::SELECTED_UNIT:
+            //cout << "Notification from gameState for SELECTED_UNIT" << endl;
+        if(gameState.getSelectedUnit() != nullptr){
+           if(!gameState.getAttackMode()){
+               this->updateTrajectory(vector<Node>{Node{.x = gameState.getSelectedUnit().get()->getX(), .y = gameState.getSelectedUnit().get()->getY()}});
+           } else {
+               this->updateTrajectory(vector<Node>{});
+           }
+        } else {
+            this->updateTrajectory(vector<Node>{});
+        }
+            break;
+        case StateEventID::ATTACK_MODE://cout << "Notification from gameState for PLAYER2" << endl;
+            if(gameState.getSelectedUnit() != nullptr){
+                if(gameState.getAttackMode()){
+                    this->updateAttackField(DisplayAttack::createField(gameState.getSelectedUnit().get(), gameState.getWorld()));
+                } else {
+                    this->updateAttackField(vector<int>(400,0));
+                }
+            } else {
+                this->updateAttackField(vector<int>(400,0));
+            }
+            break;
+            case StateEventID::ACTIVEPLAYER:// TODO Apply rendering coming from new active player
+            break;
+            case StateEventID::TURN:// TODO Update IHM who shows the number of turn
+            break;
+            default:cout << "Cannot read notification from gameState : "<< e.getStateEventID() << endl;
     }
 }
 bool Scene::isWindowAvailable(sf::RenderWindow &window) {

@@ -35,10 +35,10 @@ BOOST_AUTO_TEST_CASE(TestMoveCommandConstructor)
       int y = 2;
       for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
           if(unit.getX() == x && unit.getY() == y){
-              engine->setSelectedUnit(make_shared<Character>(unit));
+              engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
           }
       }
-    MoveCommand moveCommand{engine->getSelectedUnit(), 5, 4};
+    MoveCommand moveCommand{engine->getGameState().getSelectedUnit(), 5, 4};
     BOOST_CHECK_EQUAL(moveCommand.selectedUnit.get()->getX(), 1);
     BOOST_CHECK_EQUAL(moveCommand.selectedUnit.get()->getY(), 2);
     BOOST_CHECK_EQUAL(moveCommand.destination.x, 5);
@@ -69,10 +69,10 @@ BOOST_AUTO_TEST_CASE(TestMoveCommandExecutePlayer1)
         int y = 2;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> move = make_shared<MoveCommand>(engine->getSelectedUnit(), 4, 0);
+        shared_ptr<Command> move = make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(), 4, 0);
         BOOST_CHECK_EQUAL(engine->getCommands().size(), 0);
         engine->addCommand(move, 1);
         BOOST_CHECK_EQUAL(engine->getCommands().size(), 1);
@@ -109,10 +109,10 @@ BOOST_AUTO_TEST_CASE(TestMoveCommandExecutePlayer2)
         int y = 9;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> move = make_shared<MoveCommand>(engine->getSelectedUnit(), 0, 11);
+        shared_ptr<Command> move = make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(), 0, 11);
         engine->addCommand(move, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getX(), 0);

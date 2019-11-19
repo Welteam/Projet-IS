@@ -83,4 +83,31 @@ namespace state{
             gameObjects.push_back(gameObject);
         return gameObjects;
     }
+
+    std::shared_ptr<state::Character> GameState::getSelectedUnit() {
+        return selectedUnit;;
+    }
+
+    void GameState::setSelectedUnit(std::shared_ptr<state::Character> selectedUnit) {
+        attackMode = false;
+        this->selectedUnit = selectedUnit;
+        this->notifyObservers(StateEvent{SELECTED_UNIT}, *this);
+        this->notifyObservers(StateEvent{ATTACK_MODE}, *this);
+    }
+
+    void GameState::unselectedUnit() {
+        selectedUnit.reset();
+        attackMode = false;
+        this->notifyObservers(StateEvent{SELECTED_UNIT}, *this);
+        this->notifyObservers(StateEvent{ATTACK_MODE}, *this);
+    }
+
+    bool GameState::getAttackMode() const {
+        return attackMode;
+    }
+
+    void GameState::setAttackMode(bool attackMode) {
+        this->attackMode = attackMode;
+        this->notifyObservers(StateEvent{ATTACK_MODE}, *this);
+    }
 }

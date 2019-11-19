@@ -35,10 +35,10 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandConstructor)
       int y = 2;
       for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
           if(unit.getX() == x && unit.getY() == y){
-              engine->setSelectedUnit(make_shared<Character>(unit));
+              engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
           }
       }
-    AttackCommand attackCommand{engine->getSelectedUnit(), 5, 4};
+    AttackCommand attackCommand{engine->getGameState().getSelectedUnit(), 5, 4};
     BOOST_CHECK_EQUAL(attackCommand.selectedUnit.get()->getX(), 1);
     BOOST_CHECK_EQUAL(attackCommand.selectedUnit.get()->getY(), 2);
     BOOST_CHECK_EQUAL(attackCommand.target.x, 5);
@@ -69,23 +69,23 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandExecutePlayer2)
         int y = 5;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> attackCommand = make_shared<AttackCommand>(engine->getSelectedUnit(), 1, 2);
+        shared_ptr<Command> attackCommand = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 1, 2);
         engine->addCommand(attackCommand, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(0).getHp(), 70);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(1).getHp(), 70);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(2).getHp(), 70);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().at(3).getHp(), 100);
-        shared_ptr<Command> attackCommand2 = make_shared<AttackCommand>(engine->getSelectedUnit(), 1, 2);
+        shared_ptr<Command> attackCommand2 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 1, 2);
         engine->addCommand(attackCommand2, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand3 = make_shared<AttackCommand>(engine->getSelectedUnit(), 1, 2);
+        shared_ptr<Command> attackCommand3 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 1, 2);
         engine->addCommand(attackCommand3, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand4 = make_shared<AttackCommand>(engine->getSelectedUnit(), 1, 2);
+        shared_ptr<Command> attackCommand4 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 1, 2);
         engine->addCommand(attackCommand4, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getUnits().size(), 1);
@@ -96,10 +96,10 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandExecutePlayer2)
         y = 9;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getTowers().at(0).getHp(), 70);
@@ -130,20 +130,20 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandExecutePlayer1)
         int y = 12;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> attackCommand = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 9);
+        shared_ptr<Command> attackCommand = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 9);
         engine->addCommand(attackCommand, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getHp(), 70);
-        shared_ptr<Command> attackCommand2 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 9);
+        shared_ptr<Command> attackCommand2 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 9);
         engine->addCommand(attackCommand2, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand3 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 9);
+        shared_ptr<Command> attackCommand3 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 9);
         engine->addCommand(attackCommand3, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand4 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 9);
+        shared_ptr<Command> attackCommand4 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 9);
         engine->addCommand(attackCommand4, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().size(), 3);
@@ -171,21 +171,21 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandExecutePlayer1Towers)
         int y = 12;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getTowers().at(0).getHp(), 70);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getTowers().at(0).getHp(), 70);
-        shared_ptr<Command> attackCommand6 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand6 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand7 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand7 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand8 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand8 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getTowers().size(), 0);
@@ -215,21 +215,21 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandExecutePlayer2Towers)
         int y = 9;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getTowers().at(0).getHp(), 70);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getTowers().at(0).getHp(), 70);
-        shared_ptr<Command> attackCommand6 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand6 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand7 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand7 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
-        shared_ptr<Command> attackCommand8 = make_shared<AttackCommand>(engine->getSelectedUnit(), 8, 10);
+        shared_ptr<Command> attackCommand8 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 8, 10);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer1().getTowers().size(), 0);
@@ -261,48 +261,48 @@ BOOST_AUTO_TEST_CASE(TestAttackCommandExecutePlayerOrientation)
         int y = 9;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        shared_ptr<Command> attackCommand1 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 6);
+        shared_ptr<Command> attackCommand1 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 6);
         engine->addCommand(attackCommand1, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::NORTH);
-        shared_ptr<Command> attackCommand2 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 12);
+        shared_ptr<Command> attackCommand2 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 12);
         engine->addCommand(attackCommand2, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::SOUTH);
-        shared_ptr<Command> attackCommand3 = make_shared<AttackCommand>(engine->getSelectedUnit(), 0, 9);
+        shared_ptr<Command> attackCommand3 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 0, 9);
         engine->addCommand(attackCommand3, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::WEST);
-        shared_ptr<Command> attackCommand4 = make_shared<AttackCommand>(engine->getSelectedUnit(), 6, 9);
+        shared_ptr<Command> attackCommand4 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 6, 9);
         engine->addCommand(attackCommand4, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::EST);
-        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getSelectedUnit(), 4, 9);
+        shared_ptr<Command> attackCommand5 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 4, 9);
         engine->addCommand(attackCommand5, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::EST);
-        shared_ptr<Command> attackCommand6 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 8);
+        shared_ptr<Command> attackCommand6 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 8);
         engine->addCommand(attackCommand6, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::NORTH);
-        shared_ptr<Command> attackCommand7 = make_shared<AttackCommand>(engine->getSelectedUnit(), 3, 11);
+        shared_ptr<Command> attackCommand7 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 3, 11);
         engine->addCommand(attackCommand7, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::SOUTH);
-        shared_ptr<Command> attackCommand8 = make_shared<AttackCommand>(engine->getSelectedUnit(), 2, 9);
+        shared_ptr<Command> attackCommand8 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 2, 9);
         engine->addCommand(attackCommand8, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::WEST);
 
-        shared_ptr<Command> attackCommand9 = make_shared<AttackCommand>(engine->getSelectedUnit(), 2, 10);
+        shared_ptr<Command> attackCommand9 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 2, 10);
         engine->addCommand(attackCommand9, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::WEST);
 
-        shared_ptr<Command> attackCommand10 = make_shared<AttackCommand>(engine->getSelectedUnit(), 5, 11);
+        shared_ptr<Command> attackCommand10 = make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(), 5, 11);
         engine->addCommand(attackCommand10, 1);
         engine->runCommands(true);
         BOOST_CHECK_EQUAL(engine->getGameState().getPlayer2().getUnits().at(1).getOrientation(), Orientation::EST);

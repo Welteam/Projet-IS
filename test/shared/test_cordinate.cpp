@@ -25,12 +25,12 @@ BOOST_AUTO_TEST_CASE(TestCordinateDestinationIsAnotherUnit)
       int y = 2;
       for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
           if(unit.getX() == x && unit.getY() == y){
-              engine->setSelectedUnit(make_shared<Character>(unit));
+              engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
           }
       }
-      Node depart = Node{.x = engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
+      Node depart = Node{.x = engine->getGameState().getSelectedUnit().get()->getX(), .y = engine->getGameState().getSelectedUnit().get()->getY()};
       Node destination = Node{.x = 1, .y = 3};
-      vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm());
+      vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getGameState().getSelectedUnit().get()->getPm());
       BOOST_CHECK_EQUAL(nodes.size(), 1);
   }
 }
@@ -53,12 +53,12 @@ BOOST_AUTO_TEST_CASE(TestCordinateDestinationIsAnElementOfTheMap)
         int y = 2;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        Node depart = Node{.x = engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
+        Node depart = Node{.x = engine->getGameState().getSelectedUnit().get()->getX(), .y = engine->getGameState().getSelectedUnit().get()->getY()};
         Node destination = Node{.x = 5, .y = 2};
-        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm());
+        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getGameState().getSelectedUnit().get()->getPm());
         BOOST_CHECK_EQUAL(nodes.size(), 1);
     }
 }
@@ -81,12 +81,12 @@ BOOST_AUTO_TEST_CASE(TestCordinateDestinationIsYourself)
         int y = 2;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        Node depart = Node{.x = engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
+        Node depart = Node{.x = engine->getGameState().getSelectedUnit().get()->getX(), .y = engine->getGameState().getSelectedUnit().get()->getY()};
         Node destination = Node{.x = 2, .y = 2};
-        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm());
+        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getGameState().getSelectedUnit().get()->getPm());
         BOOST_CHECK_EQUAL(nodes.size(), 1);
     }
 }
@@ -152,12 +152,12 @@ BOOST_AUTO_TEST_CASE(TestCordinateFuncAstarNoObstacle)
         int y = 2;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        Node depart = Node{.x = engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
+        Node depart = Node{.x = engine->getGameState().getSelectedUnit().get()->getX(), .y = engine->getGameState().getSelectedUnit().get()->getY()};
         Node destination = Node{.x = 0, .y = 4};
-        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm());
+        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getGameState().getSelectedUnit().get()->getPm());
         BOOST_CHECK_EQUAL(nodes.size(), 5);
     }
 }
@@ -180,12 +180,12 @@ BOOST_AUTO_TEST_CASE(TestCordinateFuncAstarDestinationNotFound)
         int y = 2;
         for(auto unit : engine->getGameState().getActivePlayer().getUnits()){
             if(unit.getX() == x && unit.getY() == y){
-                engine->setSelectedUnit(make_shared<Character>(unit));
+                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
             }
         }
-        Node depart = Node{.x = engine->getSelectedUnit().get()->getX(), .y = engine->getSelectedUnit().get()->getY()};
+        Node depart = Node{.x = engine->getGameState().getSelectedUnit().get()->getX(), .y = engine->getGameState().getSelectedUnit().get()->getY()};
         Node destination = Node{.x = 8, .y = 0};
-        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getSelectedUnit().get()->getPm());
+        vector<Node> nodes = Cordinate::aStar(depart, destination, engine->getGameState().getWorld(), engine->getGameState().getGameObjects(), engine->getGameState().getSelectedUnit().get()->getPm());
         BOOST_CHECK_EQUAL(nodes.size(), 1);
     }
 }

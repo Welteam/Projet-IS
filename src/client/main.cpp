@@ -189,6 +189,7 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
             case sf::Event::KeyReleased:
                 break;
             case sf::Event::MouseButtonPressed:
+                // TODO: Directly show attack if pm = 0
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     int x = (event.mouseButton.x - (((1 - window.getView().getViewport().width)*window.getSize().x)/2))/(window.getView().getViewport().width*window.getSize().x)*20; // NOLINT(bugprone-narrowing-conversions)
@@ -248,7 +249,7 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                             Node depart = {.x =  e->getGameState().getSelectedUnit().get()->getX(), .y = e->getGameState().getSelectedUnit().get()->getY()};
                             Node destination = {.x = mouseEventX, .y = mouseEventY};
                             scene->updateTrajectory(Cordinate::aStar(depart, destination, e->getGameState().getWorld(), e->getGameState().getGameObjects(), e->getGameState().getSelectedUnit().get()->getPm()));
-                        } else if(!e->getGameState().getSelectedUnit().get()->hasAttacked) {
+                        } else if(!e->getGameState().getSelectedUnit().get()->getHasAttacked()) {
                             // Affiche les cases pouvant être affectées par l'attaque
                             vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld());
                             if(attackField[mouseEventX+ mouseEventY * e->getGameState().getWorld().getYMax()] == 1){

@@ -62,5 +62,13 @@ namespace state {
         this->orientation = newOrientation;
     }
 
+    bool Character::getHasAttacked() const {
+        return this->hasAttacked;
+    }
+
+    void Character::setHasAttacked(bool attack) {
+        this->hasAttacked = attack;
+    }
+
 
 }

@@ -14,7 +14,7 @@ void NewTurnCommand::execute(GameState &gameState) {
     Player activePlayer = gameState.getActivePlayer();
     vector<Character> newUnits;
     for(auto unit : activePlayer.getUnits()){
-        unit.hasAttacked = false;
+        unit.setHasAttacked(false);
         unit.resetPm();
         newUnits.push_back(unit);
     }

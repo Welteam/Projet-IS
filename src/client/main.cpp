@@ -82,6 +82,8 @@ int main(int argc,char* argv[])
             }
         } else if (strcmp(argv[1], "random_ai") == 0) {
             cout << "Bienvenue sur random_ai !" << endl;
+
+            cout << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
             unique_ptr<AI> ai;
             ai.reset(new RandomAI);
             // Create our engine

@@ -96,7 +96,7 @@ void Scene::updateTrajectory(const vector<engine::Node>& nodes) {
         }
         int arr[400];
         copy(data.begin(), data.end(), arr);
-        if (!newTrajectory.load("../res/newTrajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
             cout << "Cannot load map" << endl;
         this->trajectory = newTrajectory;
         updateAll();

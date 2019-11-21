@@ -12,6 +12,7 @@ state::GameState& Engine::getGameState() {
     return this->gameState;
 }
 
+// TODO: store currently selected unit in command. Currently need to run commands every time we change unit.
 void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigned int priority) {
     if (!command) {
         throw std::runtime_error("empty command error");

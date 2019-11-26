@@ -2,20 +2,10 @@
 #include <cmath>
 #include "state.h"
 #include "Node.h"
-#include <cmath>
 #include <iostream>
 
 using namespace std;
 using namespace state;
-
-typedef unsigned int uint;
-
-static int multipliers[4][8] = {
-        {1, 0, 0, -1, -1, 0, 0, 1},
-        {0, 1, -1, 0, 0, -1, 1, 0},
-        {0, 1, 1, 0, 0, -1, -1, 0},
-        {1, 0, 0, 1, -1, 0, 0, -1}
-};
 
 class DisplayAttack {
 public:
@@ -33,17 +23,16 @@ public:
         return false;
     }
 
-    static double calculateH(int x, int y, int destx, int desty) {
-        return sqrt(((destx-x)^2) + ((desty-y)^2));
-    }
-
     static vector<int> findCorrectBlock(int x, int y, Character *unit, const World& world, vector<int> field, int min){
         int posx = unit->getX() + x;
         int posy = unit->getY() + y;
         if(isValid(posx, posy, world)){
             if (abs(x) + abs(y) > min){
-                field.at(posx + posy * world.getYMax()) = 1;
-                // do_fov(field, posx, posy, calculateH(unit->getX(), unit->getY(), posx, posy), world);
+                if(isValidBetweenPositionAndTarget(unit->getX(), unit->getY(), posx, posy, world)){
+                    field.at(posx + posy * world.getYMax()) = 1;
+                } else {
+                    field.at(posx + posy * world.getYMax()) = 0;
+                }
             }
         }
         return field;
@@ -104,67 +93,32 @@ public:
         return  damageArea;
     }
 
-    static void cast_light(vector<int>& field, uint x, uint y, uint radius, uint row,
-                           float start_slope, float end_slope, uint xx, uint xy, uint yx,
-                           uint yy, const World& world) {
-        if (start_slope < end_slope) {
-            return;
-        }
-        float next_start_slope = start_slope;
-        for (uint i = row; i <= radius; i++) {
-            bool blocked = false;
-            for (int dx = -i, dy = -i; dx <= 0; dx++) {
-                float l_slope = (dx - 0.5) / (dy + 0.5);
-                float r_slope = (dx + 0.5) / (dy - 0.5);
-                if (start_slope < r_slope) {
-                    continue;
-                } else if (end_slope > l_slope) {
-                    break;
+    static bool isValidBetweenPositionAndTarget(int pX, int pY, int tX, int tY, const World& world){
+        double arct = atan2((tY - pY), (tX - pX));
+        double distEucli = sqrt((tX - pX) * (tX - pX) + (tY - pY) * (tY - pY));
+        int oldX = 0;
+        int oldY = 0;
+        for(int i = 0; i < distEucli*16; i++){
+            int pixX = static_cast<int>(round(posToPix(pX)+i*cos(arct)));
+            int pixY = static_cast<int>(round(posToPix(pY)+i*sin(arct)));
+            if(oldX != pixToPos(pixX) || oldY != pixToPos(pixY)){
+                if(!isValid(pixToPos(pixX), pixToPos(pixY), world)){
+                    return false;
                 }
-
-                int sax = dx * xx + dy * xy;
-                int say = dx * yx + dy * yy;
-                if ((sax < 0 && (uint)std::abs(sax) > x) ||
-                    (say < 0 && (uint)std::abs(say) > y)) {
-                    continue;
-                }
-                uint ax = x + sax;
-                uint ay = y + say;
-                if (ax >= 20 || ay >= 20) {
-                    continue;
-                }
-
-                uint radius2 = radius * radius;
-                if ((uint)(dx * dx + dy * dy) < radius2) {
-                    field.at(ax + ay * world.getYMax()) = 0;
-                }
-
-                if (blocked) {
-                    if (isValid(ax, ay, world)) {
-                        next_start_slope = r_slope;
-                        continue;
-                    } else {
-                        blocked = false;
-                        start_slope = next_start_slope;
-                    }
-                } else if (isValid(ax, ay, world)) {
-                    blocked = true;
-                    next_start_slope = r_slope;
-                    cast_light(field, x, y, radius, i + 1, start_slope, l_slope, xx,
-                               xy, yx, yy, world);
-                }
-            }
-            if (blocked) {
-                break;
+                oldX = pixToPos(pixX);
+                oldY = pixToPos(pixY);
             }
         }
+        return true;
     }
 
-    static void do_fov(vector<int>& field, uint x, uint y, uint radius, const World& world) {
-        for (uint i = 0; i < 8; i++) {
-            cast_light(field, x, y, radius, 1, 1.0, 0.0, multipliers[0][i],
-                       multipliers[1][i], multipliers[2][i], multipliers[3][i], world);
-        }
+    static int posToPix(int pos){
+        return 8 + 16*pos;
     }
+
+    static int pixToPos(int pixel){
+        return static_cast<int>(round((static_cast<double >(pixel)-8.0)/16.0));
+    }
+
 };
 

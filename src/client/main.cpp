@@ -16,6 +16,10 @@ using namespace engine;
 using namespace ai;
 
 bool iaTurn = false;
+int oldMouseEventX = 0;
+int oldMouseEventY = 0;
+int mouseEventX = 0;
+int mouseEventY = 0;
 void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, const shared_ptr<Engine>& e);
 
 int main(int argc,char* argv[])
@@ -111,10 +115,6 @@ int main(int argc,char* argv[])
 
 void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, const shared_ptr<Engine>& e){
     sf::Event event{};
-    int oldMouseEventX = 0;
-    int oldMouseEventY = 0;
-    int mouseEventX;
-    int mouseEventY;
     while (window.pollEvent(event))
     {
         switch (event.type)

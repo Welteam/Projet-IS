@@ -258,7 +258,7 @@ public:
 
         vector<Node> openList;
         openList.emplace_back(allMap[x][y]);
-        bool destinationFound = false;
+
 
         while (!openList.empty() && openList.size() < (X_MAX / X_STEP) * (Y_MAX / Y_STEP)) {
             Node node{};
@@ -312,7 +312,6 @@ public:
                         //Destination found - make path
                         allMap[x + newX][y + newY].parentX = x;
                         allMap[x + newX][y + newY].parentY = y;
-                        destinationFound = true;
                         return makePath(allMap, dest);
                     } else if (!closedList[x + newX][y + newY]) {
                         gNew = node.gCost + 1.0;
@@ -334,9 +333,7 @@ public:
 
             }
         }
-        if (!destinationFound) {
-            return empty;
-        }
+        return empty;
     }
 
 

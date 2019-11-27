@@ -48,7 +48,7 @@ void ai::HeuristicAI::run(Engine &e) {
                 e.getGameState().setSelectedUnit(make_shared<Character>(unit));
                 vector<pair<GameObject, int>> targetsAndScores;
                 vector<int> attackField = DisplayAttack::createField(e.getGameState().getSelectedUnit().get(), e.getGameState().getWorld(), e.getGameState().getGameObjects());
-                for(int i = 0; i < attackField.size(); i++){
+                for(int i = 0; i < static_cast<int>(attackField.size()); i++){
                     if(attackField[i] == 1) {
                         GameObject target{i % e.getGameState().getWorld().getYMax(), i / e.getGameState().getWorld().getYMax()};
                         vector<engine::Node> damageArea = DisplayAttack::createDamageArea(
@@ -93,7 +93,7 @@ void ai::HeuristicAI::run(Engine &e) {
                         }
                     }
                 }
-                if(targetsAndScores.size() > 0){
+                if(!targetsAndScores.empty()){
                     pair<Character, vector<pair<GameObject, int>>> unitAndSCore{unit, targetsAndScores};
                     attackScore.push_back(unitAndSCore);
                 }
@@ -131,7 +131,7 @@ void ai::HeuristicAI::run(Engine &e) {
                                         bool couldBeAttack = false;
                                         shared_ptr<Character> enemy_ptr = make_shared<Character>(enemy);
                                         vector<int> attackField = DisplayAttack::createField(enemy_ptr.get(), e.getGameState().getWorld(), e.getGameState().getGameObjects());
-                                        for(int i = 0; i < attackField.size(); i++) {
+                                        for(int i = 0; i < static_cast<int>(attackField.size()); i++) {
                                             if (attackField[i] == 1) {
                                                 vector<engine::Node> damageArea = DisplayAttack::createDamageArea(
                                                         i % e.getGameState().getWorld().getYMax(), i / e.getGameState().getWorld().getYMax(),
@@ -150,10 +150,10 @@ void ai::HeuristicAI::run(Engine &e) {
                                         }
                                     }
                                 } else {
-                                    for (auto enemy : enemies) {
+                                    for (const auto& enemy : enemies) {
                                         vector<Node> nodesFromEnemy = Cordinate::aStar(Node{.x = x, .y = y}, Node{.x = enemy.getX(), .y = enemy.getY()}, e.getGameState().getWorld(), e.getGameState().getGameObjects());
                                         if(nodesFromEnemy.size() > 1){
-                                            if(nodesFromEnemy.size() < distanceFromNearestEnemi){
+                                            if(static_cast<int>(nodesFromEnemy.size()) < distanceFromNearestEnemi){
                                                 score = unit.getWeapon().getDamage()-nodesFromEnemy.size();
                                                 distanceFromNearestEnemi = nodesFromEnemy.size();
                                             }
@@ -173,7 +173,7 @@ void ai::HeuristicAI::run(Engine &e) {
                         }
                     }
                 }
-                if(movementsAndScores.size() > 0){
+                if(!movementsAndScores.empty()){
                     pair<Character, vector<pair<GameObject, int>>> unitAndScore{unit, movementsAndScores};
                     movementScore.push_back(unitAndScore);
                 }
@@ -198,7 +198,7 @@ void ai::HeuristicAI::run(Engine &e) {
 
 
         /** TESTING EVALUATION OF MOVE SCORE **/
-        /*for(auto score : movementScore){
+        for(auto score : movementScore){
             cout << "score of unit in position : (" << score.first.getX() << ", " << score.first.getY() << ")" << endl;
             for(auto position : score.second){
                 cout << "move to : (" << position.first.getX() << ", " << position.first.getY() << ") has a score of " << position.second << endl;
@@ -207,7 +207,7 @@ void ai::HeuristicAI::run(Engine &e) {
         }
         if(movementScore.empty()){
             cout << "All scores for movement is 0" << endl;
-        }*/
+        }
 
 
 
@@ -218,7 +218,7 @@ void ai::HeuristicAI::run(Engine &e) {
         if(passTurn > maxAttackScore.second.second && passTurn > maxMovementScore.second.second){
             terminateTurn = true;
         } else if(maxAttackScore.second.second > maxMovementScore.second.second){
-            for(auto unit : e.getGameState().getActivePlayer().getUnits()){
+            for(const auto& unit : e.getGameState().getActivePlayer().getUnits()){
                 if(unit.getX() == maxAttackScore.first.getX() && unit.getY() == maxAttackScore.first.getY()){
                     e.getGameState().setSelectedUnit(make_shared<Character>(unit));
                 }
@@ -231,7 +231,7 @@ void ai::HeuristicAI::run(Engine &e) {
                 e.getGameState().unselectedUnit();
             }
         } else if (maxAttackScore.second.second < maxMovementScore.second.second){
-            for(auto unit : e.getGameState().getActivePlayer().getUnits()){
+            for(const auto& unit : e.getGameState().getActivePlayer().getUnits()){
                 if(unit.getX() == maxMovementScore.first.getX() && unit.getY() == maxMovementScore.first.getY()){
                     e.getGameState().setSelectedUnit(make_shared<Character>(unit));
                 }

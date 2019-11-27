@@ -140,7 +140,7 @@ void Scene::stateChanged (const StateEvent &e, GameState &gameState){
         case StateEventID::ATTACK_MODE://cout << "Notification from gameState for PLAYER2" << endl;
             if(gameState.getSelectedUnit() != nullptr){
                 if(gameState.getAttackMode()){
-                    this->updateAttackField(DisplayAttack::createField(gameState.getSelectedUnit().get(), gameState.getWorld()));
+                    this->updateAttackField(DisplayAttack::createField(gameState.getSelectedUnit().get(), gameState.getWorld(), gameState.getGameObjects()));
                 } else {
                     this->updateAttackField(vector<int>(400,0));
                 }

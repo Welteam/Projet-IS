@@ -52,7 +52,6 @@ int main(int argc,char* argv[])
             cout << "Bonjour le monde !" << endl;
         } else if (strcmp(argv[1], "render") == 0) {
             cout << "Bienvenue sur render" << endl;
-
             while (window.isOpen()) {
                 sf::Event event{};
                 while (window.pollEvent(event)) {
@@ -90,6 +89,25 @@ int main(int argc,char* argv[])
             cout << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
             unique_ptr<AI> ai;
             ai.reset(new RandomAI);
+            // Create our engine
+            shared_ptr<Engine> engine = make_shared<Engine>(gameState);
+            while (window.isOpen()) {
+                if(!iaTurn){
+                    // Manage user inputs
+                    handleInputs(window, scene, engine);
+                    engine->runCommands();
+                } else {
+                    cout << "run ai" << endl;
+                    ai->run(*engine);
+                    iaTurn = false;
+                }
+            }
+        }  else if (strcmp(argv[1], "heuristic_ai") == 0) {
+            cout << "Bienvenue sur heuristic_ai !" << endl;
+
+            cout << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+            unique_ptr<AI> ai;
+            ai.reset(new HeuristicAI);
             // Create our engine
             shared_ptr<Engine> engine = make_shared<Engine>(gameState);
             while (window.isOpen()) {
@@ -161,9 +179,11 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                         for(int i = 0; i < 4; i++){
                             this_thread::sleep_for(std::chrono::milliseconds(400));
                             e->getGameState().setAttackMode(true);
-                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld());
+                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(),
+                                    e->getGameState().getWorld(), e->getGameState().getGameObjects());
                             if(attackField[9+ 5 * e->getGameState().getWorld().getYMax()] == 1){
-                                scene->updateTrajectory(DisplayAttack::createDamageArea(9, 5, e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld()));
+                                scene->updateTrajectory(DisplayAttack::createDamageArea(9, 5,
+                                        e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld()));
                             } else{
                                 scene->updateTrajectory(vector<Node>{});
                             }
@@ -251,7 +271,8 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                             scene->updateTrajectory(Cordinate::aStar(depart, destination, e->getGameState().getWorld(), e->getGameState().getGameObjects(), e->getGameState().getSelectedUnit().get()->getPm()));
                         } else if(!e->getGameState().getSelectedUnit().get()->getHasAttacked()) {
                             // Affiche les cases pouvant être affectées par l'attaque
-                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld());
+                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(),
+                                    e->getGameState().getWorld(), e->getGameState().getGameObjects());
                             if(attackField[mouseEventX+ mouseEventY * e->getGameState().getWorld().getYMax()] == 1){
                                 scene->updateTrajectory(DisplayAttack::createDamageArea(mouseEventX, mouseEventY, e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld()));
                             } else{

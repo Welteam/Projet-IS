@@ -4,7 +4,6 @@
 #include <iostream>
 #include <engine/AttackCommand.h>
 #include <engine/MoveCommand.h>
-#include <cstdlib>
 #include <engine/NewTurnCommand.h>
 #include "engine/Cordinate.cpp"
 #include "engine/DisplayAttack.cpp"
@@ -61,7 +60,7 @@ void ai::RandomAI::run(Engine &e) {
                     std::uniform_int_distribution<int> distAttackY(minY, maxY);
                     int randomAttackX = distAttackX(mt);
                     int randomAttackY = distAttackY(mt);
-                    vector<int> attackField = DisplayAttack::createField(unit.get(), e.getGameState().getWorld());
+                    vector<int> attackField = DisplayAttack::createField(unit.get(), e.getGameState().getWorld(), e.getGameState().getGameObjects());
                     if (attackField[randomAttackX + randomAttackY * e.getGameState().getWorld().getYMax()] == 1) {
                         cout << "random attack x" << randomAttackX << endl;
                         cout << "random attack y" << randomAttackY << endl;

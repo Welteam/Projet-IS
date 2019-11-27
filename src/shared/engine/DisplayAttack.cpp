@@ -124,7 +124,7 @@ public:
         double distEucli = sqrt((tX - pX) * (tX - pX) + (tY - pY) * (tY - pY));
         int oldX = 0;
         int oldY = 0;
-        for(int i = 0; i < distEucli*16; i++){
+        for(int i = 0; i < distEucli*16-12; i++){
             int pixX = static_cast<int>(round(posToPix(pX)+i*cos(arct)));
             int pixY = static_cast<int>(round(posToPix(pY)+i*sin(arct)));
             if(oldX != pixToPos(pixX) || oldY != pixToPos(pixY)){

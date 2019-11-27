@@ -201,7 +201,7 @@ void ai::HeuristicAI::run(Engine &e) {
 
 
         /** TESTING EVALUATION OF MOVE SCORE **/
-        for(auto score : movementScore){
+        /*for(auto score : movementScore){
             cout << "score of unit in position : (" << score.first.getX() << ", " << score.first.getY() << ")" << endl;
             for(auto position : score.second){
                 cout << "move to : (" << position.first.getX() << ", " << position.first.getY() << ") has a score of " << position.second << endl;
@@ -210,7 +210,7 @@ void ai::HeuristicAI::run(Engine &e) {
         }
         if(movementScore.empty()){
             cout << "All scores for movement is 0" << endl;
-        }
+        }*/
 
 
         // TODO : Pick a random score from both best scores vector

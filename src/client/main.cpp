@@ -124,7 +124,7 @@ int main(int argc,char* argv[])
         }
     } else {
         cout << "I don't understand" << endl;
-        cout << "you can say hello, render, engine..." << endl;
+        cout << "you can say hello, render, engine, random_ai, heuristic_ai..." << endl;
     }
     return 0;
 }

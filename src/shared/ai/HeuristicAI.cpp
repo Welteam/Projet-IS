@@ -34,6 +34,7 @@ void ai::HeuristicAI::run(Engine &e) {
         // Create a vector of scoreAllies attack that will store every case where score is
         vector<pair<Character, vector<pair<GameObject, int>>>> attackScore;
         vector<pair<Character, vector<pair<GameObject, int>>>> movementScore;
+        // TODO make a vector of the two variables below
         pair<Character, pair<GameObject, int>> maxAttackScore{};
         pair<Character, pair<GameObject, int>> maxMovementScore{};
         int passTurn = 1;
@@ -85,7 +86,9 @@ void ai::HeuristicAI::run(Engine &e) {
                         if (score > 0) {
                             pair<GameObject, int> targetAndScore{target, score};
                             targetsAndScores.push_back(targetAndScore);
+                            // TODO : when score equal to previous score, add it to the vector
                             if(score > maxAttackScore.second.second){
+                                // TODO : empty vector in this case before pushBack()
                                 maxAttackScore.first = unit;
                                 maxAttackScore.second.first = target;
                                 maxAttackScore.second.second = score;
@@ -209,6 +212,8 @@ void ai::HeuristicAI::run(Engine &e) {
             cout << "All scores for movement is 0" << endl;
         }
 
+
+        // TODO : Pick a random score from both best scores vector
 
 
         /** TESTING BEST MOVEMENT AND BEST ATTACK **/

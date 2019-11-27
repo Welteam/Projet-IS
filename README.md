@@ -34,3 +34,8 @@ From the same folder, you can then run the client with `../bin/client` :
 * You can run the client with `../bin/client random_ai`. You can now play with your mouse first.
 	
 	Then Press T for next turn and let the AI play versus you.
+
+
+* You can run the client with `../bin/client heuristic_ai`. You can now play with your mouse first.
+	
+	Then Press T for next turn and let the AI play versus you. Be careful, she's SAVAGE !!!

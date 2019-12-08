@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include <iostream>
+#include <thread>
 #include "state/TileType.h"
 #include "engine/DisplayAttack.cpp"
 
@@ -50,7 +51,7 @@ void Scene::updatePlayers(const Player& player) {
             sprites.push_back(unit);
             sprites.push_back(life);
         }
-        for(Tower towerFromPlayer :  player.getTowers()){
+        for(Tower towerFromPlayer : player.getTowers()){
             sf::Sprite tower;
             sf::Sprite life;
             life.setTexture(lifeBar);
@@ -102,6 +103,41 @@ void Scene::updateTrajectory(const vector<engine::Node>& nodes) {
         updateAll();
     }
 }
+
+void Scene::updateDamageAnimation(const vector<engine::Node>& nodes) {
+    if(isWindowAvailable(window)){
+        LayerRender newTrajectory;
+        vector<int> data(400, 0);
+        for(engine::Node node : nodes){
+            data[node.x + node.y*20] = 2;
+        }
+        int arr[400];
+        copy(data.begin(), data.end(), arr);
+        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+            cout << "Cannot load map" << endl;
+        this->trajectory = newTrajectory;
+        updateAll();
+        this_thread::sleep_for(std::chrono::milliseconds(200));
+
+        for(engine::Node node : nodes){
+            data[node.x + node.y*20] = 3;
+        }
+        copy(data.begin(), data.end(), arr);
+        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+            cout << "Cannot load map" << endl;
+        this->trajectory = newTrajectory;
+        updateAll();
+        this_thread::sleep_for(std::chrono::milliseconds(200));
+
+        data = vector<int>(400, 0);
+        copy(data.begin(), data.end(), arr);
+        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+            cout << "Cannot load map" << endl;
+        this->trajectory = newTrajectory;
+        updateAll();
+    }
+}
+
 void Scene::updateAttackField(vector<int> field) {
     if(isWindowAvailable(window)){
         LayerRender newAttackField;
@@ -113,16 +149,17 @@ void Scene::updateAttackField(vector<int> field) {
         updateAll();
     }
 }
+
 void Scene::stateChanged (const StateEvent &e, GameState &gameState){
     switch(e.getStateEventID()){
         case StateEventID::WORLD:
             //cout << "Notification from gameState for WORLD" << endl;
             this->updateWorld(gameState.getWorld());
             break;
-            case StateEventID::PLAYER1://cout << "Notification from gameState for PLAYER1" << endl;
+        case StateEventID::PLAYER1://cout << "Notification from gameState for PLAYER1" << endl;
             this->updatePlayers(gameState.getPlayer1());
             break;
-            case StateEventID::PLAYER2://cout << "Notification from gameState for PLAYER2" << endl;
+        case StateEventID::PLAYER2://cout << "Notification from gameState for PLAYER2" << endl;
             this->updatePlayers(gameState.getPlayer2());
             break;
         case StateEventID::SELECTED_UNIT:
@@ -148,13 +185,17 @@ void Scene::stateChanged (const StateEvent &e, GameState &gameState){
                 this->updateAttackField(vector<int>(400,0));
             }
             break;
-            case StateEventID::ACTIVEPLAYER:// TODO Apply rendering coming from new active player
+        case StateEventID::ACTIVEPLAYER:
             break;
-            case StateEventID::TURN:// TODO Update IHM who shows the number of turn
+        case StateEventID::TURN:
             break;
-            default:cout << "Cannot read notification from gameState : "<< e.getStateEventID() << endl;
+        case StateEventID::DAMAGE_ANIMATION:
+            this->updateDamageAnimation(gameState.damageAnimation);
+            break;
+        default:cout << "Cannot read notification from gameState : "<< e.getStateEventID() << endl;
     }
 }
+
 bool Scene::isWindowAvailable(sf::RenderWindow &renderWindow) {
     if (!renderWindow.isOpen()) {
         cout << "window reference in Scene is closed" << endl;
@@ -197,4 +238,6 @@ void Scene::updateAll() {
         window.display();
     }
 }
+
+
 

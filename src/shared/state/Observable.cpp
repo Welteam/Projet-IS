@@ -1,6 +1,7 @@
 #include "Observable.h"
 #include "GameState.h"
 #include <iostream>
+#include <engine/Node.h>
 
 
 namespace state {

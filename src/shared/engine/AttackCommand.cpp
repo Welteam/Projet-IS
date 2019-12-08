@@ -234,6 +234,10 @@ void AttackCommand::execute(state::GameState &gameState) {
                     gameState.setActivePlayer(gameState.getPlayer1());
                 }
             }
+            gameState.launchDamageAnimation(damageArea);
         }
     }
 }
+
+
+

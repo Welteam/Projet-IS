@@ -106,4 +106,9 @@ namespace state{
         this->attackMode = newAttackMode;
         this->notifyObservers(StateEvent{ATTACK_MODE}, *this);
     }
+
+    void GameState::launchDamageAnimation(const std::vector<engine::Node> &nodes) {
+        this->damageAnimation = nodes;
+        this->notifyObservers(StateEvent{DAMAGE_ANIMATION}, *this);
+    }
 }

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "render/Animation.hpp"
+#include "render/AnimatedSprite.hpp"
 #include <state.h>
 #include "render.h"
 #include "engine.h"
@@ -15,42 +17,57 @@ using namespace render;
 using namespace engine;
 using namespace ai;
 
+/****************************/
+/***** GLOBAL VARIABLES *****/
+/****************************/
 bool iaTurn = false;
 int oldMouseEventX = 0;
 int oldMouseEventY = 0;
 int mouseEventX = 0;
 int mouseEventY = 0;
+
 void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, const shared_ptr<Engine>& e);
+
+
 
 int main(int argc,char* argv[])
 {
-    // 1. Intancier GameState
+
+    /****************************/
+    /*** Local Data GameState ***/
+    /****************************/
+
+    /// 1. Intancier GameState
     GameState gameState{};
-
-    // 2. Create Window SFML
+    /// 2. Create Window SFML
     sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM");
-    // on crée une vue
-    //sf::View view(window.getView().getCenter(), sf::Vector2f((float)320, (float)320));
+    window.setFramerateLimit(60);
     sf::View view(sf::FloatRect(0, 0, 320, 320));
-
-    // 3. Intanciate Scene
+    /// 3. Intanciate Scene
     shared_ptr<Scene> scene = make_shared<Scene>(Scene(window, view));
-
-    // 4. Register Scene -> GameState
+    /// 4. Register Scene -> GameState
     gameState.registerObserver(scene.get());
-
-    // 5. Charger la carte World dans GameState
+    /// 5. Charger la carte World dans GameState
     gameState.setWorld(World{"../res/map2.txt"});
-
-    // 6. Charger players dans GameState
+    /// 6. Charger players dans GameState
     gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
     gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
     gameState.setActivePlayer(gameState.getPlayer1());
+    /// 7. Create engine
+    shared_ptr<Engine> engine = make_shared<Engine>(gameState);
+
 
     if (argc == 2) {
         if (strcmp(argv[1], "hello") == 0) {
             cout << "Bonjour le monde !" << endl;
-        } else if (strcmp(argv[1], "render") == 0) {
+        }
+
+
+        /****************************/
+        /********** RENDER **********/
+        /****************************/
+
+        else if (strcmp(argv[1], "render") == 0) {
             cout << "Bienvenue sur render" << endl;
             while (window.isOpen()) {
                 sf::Event event{};
@@ -65,71 +82,86 @@ int main(int argc,char* argv[])
                     }
                 }
             }
-        } else if (strcmp(argv[1], "engine") == 0) {
-            cout << "Bienvenue sur engine !" << endl;
-            cout << "" << endl;
+        }
+
+
+        /****************************/
+        /********** ENGINE **********/
+        /****************************/
+
+        else if (strcmp(argv[1], "engine") == 0) {
+
+            cout << "Bienvenue sur engine !" << endl << endl;
             cout << "Clic gauche pour selectionner un soldat rouge." << endl;
-            cout << "Déplacer la souris pour voir ces déplacements, puis cliquer sur une des cases pour le déplacer."
-                 << endl;
-            cout << "" << endl;
+            cout << "Déplacer la souris pour voir ces déplacements, puis cliquer sur une des cases pour le déplacer."<< endl << endl;
             cout << "Double clic pour passer en mode attaque." << endl;
-            cout << "Appuyer sur T pour changer de tour et laisser votre adversaire jouer." << endl;
-            cout << "" << endl;
+            cout << "Appuyer sur T pour changer de tour et laisser votre adversaire jouer." << endl << endl;
             cout << "Sinon appuyer sur D pour la demo (mais cela ruinerai votre expérience)." << endl;
-            // Create our engine
-            shared_ptr<Engine> engine = make_shared<Engine>(gameState);
 
             while (window.isOpen()) {
                 handleInputs(window, scene, engine);
                 engine->runCommands();
             }
-        } else if (strcmp(argv[1], "random_ai") == 0) {
-            cout << "Bienvenue sur random_ai !" << endl;
+        }
 
-            cout << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+
+        /*****************************/
+        /********* RANDOM AI *********/
+        /*****************************/
+
+        else if (strcmp(argv[1], "random_ai") == 0) {
+            cout << "Bienvenue sur random_ai !" << endl<< "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+
             unique_ptr<AI> ai;
             ai.reset(new RandomAI);
-            // Create our engine
-            shared_ptr<Engine> engine = make_shared<Engine>(gameState);
-            while (window.isOpen()) {
-                if(!iaTurn){
-                    // Manage user inputs
-                    handleInputs(window, scene, engine);
-                    engine->runCommands();
-                } else {
-                    cout << "run ai" << endl;
-                    ai->run(*engine);
-                    iaTurn = false;
-                }
-            }
-        }  else if (strcmp(argv[1], "heuristic_ai") == 0) {
-            cout << "Bienvenue sur heuristic_ai !" << endl;
 
-            cout << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
-            unique_ptr<AI> ai;
-            ai.reset(new HeuristicAI);
-            // Create our engine
-            shared_ptr<Engine> engine = make_shared<Engine>(gameState);
             while (window.isOpen()) {
                 if(!iaTurn){
-                    // Manage user inputs
                     handleInputs(window, scene, engine);
                     engine->runCommands();
                 } else {
-                    cout << "run ai" << endl;
                     ai->run(*engine);
                     iaTurn = false;
                 }
             }
         }
+
+
+        /******************************/
+        /******** HEURISTIC AI ********/
+        /******************************/
+
+        else if (strcmp(argv[1], "heuristic_ai") == 0) {
+            cout << "Bienvenue sur heuristic_ai !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+
+            unique_ptr<AI> ai;
+            ai.reset(new HeuristicAI);
+
+            while (window.isOpen()) {
+                if(!iaTurn){
+                    handleInputs(window, scene, engine);
+                    engine->runCommands();
+                } else {
+                    ai->run(*engine);
+                    iaTurn = false;
+                }
+            }
+        }
+
+
+
     } else {
-        cout << "I don't understand" << endl;
-        cout << "you can say hello, render, engine, random_ai, heuristic_ai..." << endl;
+        cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai..." << endl;
     }
     return 0;
 }
 
 
+
+
+/******************************/
+/** Mouse and keyboard EVENT **/
+/******************************/
 
 void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, const shared_ptr<Engine>& e){
     sf::Event event{};
@@ -143,7 +175,6 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
             case sf::Event::KeyPressed:
                 if (event.key.code == sf::Keyboard::T)
                 {
-                    std::cout << "the T key was pressed, new turn" << std::endl;
                     e->getGameState().unselectedUnit();
                     shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
                     e->addCommand(newTurnCommand, 1);
@@ -229,6 +260,29 @@ void handleInputs(sf::RenderWindow &window, const shared_ptr<Scene>& scene, cons
                                 shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), x, y);
                                 e->addCommand(attack, 1);
                                 e->getGameState().unselectedUnit();
+
+                                // load texture (spritesheet)
+                                /*sf::Texture texture;
+                                if (!texture.loadFromFile("../res/trajectory.png"))
+                                {
+                                    std::cout << "Failed to load player spritesheet!" << std::endl;
+                                }
+
+                                Animation impactAttack;
+                                impactAttack.setSpriteSheet(texture);
+                                impactAttack.addFrame(sf::IntRect(32, 0, 16, 16));
+                                impactAttack.addFrame(sf::IntRect(48, 0, 16, 16));
+
+                                Animation* currentAnimation = &impactAttack;
+
+                                // set up AnimatedSprite
+                                AnimatedSprite animatedSprite(sf::seconds(0.2), true, false);
+                                animatedSprite.setPosition(sf::Vector2f(0, 0));
+
+                                sf::Clock frameClock;
+
+                                float speed = 80.f;*/
+
                             } else{
                                 // cout << "unité déjà en mode déplacement" << endl;
                                 if(e->getGameState().getSelectedUnit().get()->getX() == x && e->getGameState().getSelectedUnit().get()->getY() == y){

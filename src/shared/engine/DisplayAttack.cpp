@@ -20,7 +20,7 @@ public:
         if (x < 0 || y < 0 || x >= world.getXMax() || y >= world.getYMax()) {
             return false;
         } else {
-            if (world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3) {
+            if (world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3 || world.getTiles().at(id) == 4) {
                 return true;
             }
         }
@@ -40,7 +40,7 @@ public:
             //cout << "en dehors de la map"<< endl;
             return false;
         }
-        return world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3;
+        return world.getTiles().at(id) == 0 || world.getTiles().at(id) == 3 || world.getTiles().at(id) == 4;
         //cout << "obstacle de map en x = "<< x << " et y = " << y << endl;
     }
 
@@ -124,7 +124,7 @@ public:
         double distEucli = sqrt((tX - pX) * (tX - pX) + (tY - pY) * (tY - pY));
         int oldX = 0;
         int oldY = 0;
-        for(int i = 0; i < distEucli*16-10; i++){
+        for(int i = 0; i < distEucli*16-13; i++){
             int pixX = static_cast<int>(round(posToPix(pX)+i*cos(arct)));
             int pixY = static_cast<int>(round(posToPix(pY)+i*sin(arct)));
             if(oldX != pixToPos(pixX) || oldY != pixToPos(pixY)){

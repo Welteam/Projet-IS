@@ -2,6 +2,7 @@
 #include <random>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include "state.h"
 #include "engine.h"
 #include "engine/Cordinate.cpp"
@@ -70,7 +71,7 @@ void ai::HeuristicAI::run(Engine &e) {
                                     score += unit.getWeapon().getDamage();
                                     score += 100 / enemy.getHp();
                                     if (enemy.getHp() <= unit.getWeapon().getDamage()) {
-                                        score = +10;
+                                        score += 10;
                                     }
                                     // Score multiplié par 2 si enemi touchable par une autre unité
                                     for (auto scores : attackScore) {
@@ -154,6 +155,11 @@ void ai::HeuristicAI::run(Engine &e) {
                                     }
                                 } else {
                                     for (const auto& enemy : enemies) {
+                                        /*int distanceEucli = sqrt((enemy.getX() - x)*(enemy.getX() - x) + (enemy.getY() - y)*(enemy.getY() - y));
+                                        if(distanceEucli < distanceFromNearestEnemi){
+                                            score = unit.getWeapon().getDamage()-distanceEucli;
+                                            distanceFromNearestEnemi = distanceEucli;
+                                        }*/
                                         vector<Node> nodesFromEnemy = Cordinate::aStar(Node{.x = x, .y = y}, Node{.x = enemy.getX(), .y = enemy.getY()}, e.getGameState().getWorld(), e.getGameState().getGameObjects());
                                         if(nodesFromEnemy.size() > 1){
                                             if(static_cast<int>(nodesFromEnemy.size()) < distanceFromNearestEnemi){

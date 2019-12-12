@@ -28,8 +28,8 @@ void Scene::updateWorld(const World& world) {
 void Scene::updatePlayers(const Player& player) {
     if(isWindowAvailable(window)){
         // on charge la texture du tileset
-        if (!unitsRed.loadFromFile("../res/units_red.png"))
-            cout << "Cannot load Texture : ../res/units_red.png" << endl;
+        if (!unitsRed.loadFromFile("../res/units_yellow.png"))
+            cout << "Cannot load Texture : ../res/units_yellow.png" << endl;
         if (!unitsBlue.loadFromFile("../res/units_blue.png"))
             cout << "Cannot load Texture : ../res/units_blue.png" << endl;
         if (!lifeBar.loadFromFile("../res/units_red.png"))
@@ -44,7 +44,7 @@ void Scene::updatePlayers(const Player& player) {
             } else {
                 unit.setTexture(unitsBlue);
             }
-            life.setTextureRect(sf::IntRect(0, 72, 16.0*(static_cast<float >(character.getHp())/ static_cast<float >(character.getWeapon().getLpMax())), 2));
+            life.setTextureRect(sf::IntRect(16, 71, 16.0*(static_cast<float >(character.getHp())/ static_cast<float >(character.getWeapon().getLpMax())), 2));
             unit.setTextureRect(sf::IntRect(0+(16*(character.getOrientation())), 0+(16*(character.getWeapon().getLevel())), 16, 16));
             life.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20-4)); // position absolue
             unit.setPosition(sf::Vector2f(character.getX()*320/20, character.getY()*320/20)); // position absolue
@@ -60,7 +60,7 @@ void Scene::updatePlayers(const Player& player) {
             } else {
                 tower.setTexture(unitsBlue);
             }
-            life.setTextureRect(sf::IntRect(0, 72, 16.0*(static_cast<float >(towerFromPlayer.getHp())/100.0), 2));
+            life.setTextureRect(sf::IntRect(16, 71, 16.0*(static_cast<float >(towerFromPlayer.getHp())/100.0), 2));
             tower.setTextureRect(sf::IntRect(0, 64, 16, 16));
             life.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20-4)); // position absolue
             tower.setPosition(sf::Vector2f(towerFromPlayer.getX() * 320 / 20, towerFromPlayer.getY() * 320 / 20)); // position absolue
@@ -106,16 +106,16 @@ void Scene::updateTrajectory(const vector<engine::Node>& nodes) {
 
 void Scene::updateDamageAnimation(const vector<engine::Node>& nodes) {
     if(isWindowAvailable(window)){
-        LayerRender newTrajectory;
+        LayerRender newDamageArea;
         vector<int> data(400, 0);
         for(engine::Node node : nodes){
             data[node.x + node.y*20] = 2;
         }
         int arr[400];
         copy(data.begin(), data.end(), arr);
-        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+        if (!newDamageArea.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
             cout << "Cannot load map" << endl;
-        this->trajectory = newTrajectory;
+        this->damageArea = newDamageArea;
         updateAll();
         this_thread::sleep_for(std::chrono::milliseconds(200));
 
@@ -123,17 +123,17 @@ void Scene::updateDamageAnimation(const vector<engine::Node>& nodes) {
             data[node.x + node.y*20] = 3;
         }
         copy(data.begin(), data.end(), arr);
-        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+        if (!newDamageArea.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
             cout << "Cannot load map" << endl;
-        this->trajectory = newTrajectory;
+        this->damageArea = newDamageArea;
         updateAll();
         this_thread::sleep_for(std::chrono::milliseconds(200));
 
         data = vector<int>(400, 0);
         copy(data.begin(), data.end(), arr);
-        if (!newTrajectory.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
+        if (!newDamageArea.load("../res/trajectory.png", sf::Vector2u(16, 16), arr, 20, 20))
             cout << "Cannot load map" << endl;
-        this->trajectory = newTrajectory;
+        this->damageArea = newDamageArea;
         updateAll();
     }
 }
@@ -235,6 +235,7 @@ void Scene::updateAll() {
             window.draw(sprite);
         for(const auto& sprite : this->player2Render)
             window.draw(sprite);
+        window.draw(this->damageArea);
         window.display();
     }
 }

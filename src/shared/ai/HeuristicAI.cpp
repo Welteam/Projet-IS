@@ -7,7 +7,9 @@
 #include "engine.h"
 #include "engine/Cordinate.cpp"
 #include "engine/DisplayAttack.cpp"
+#include <chrono>
 
+using namespace std::chrono;
 using namespace state;
 using namespace std;
 using namespace engine;
@@ -29,6 +31,9 @@ void ai::HeuristicAI::run(Engine &e) {
     bool terminateTurn = false;
 
     while(!terminateTurn){
+
+
+
         /****************************/
         /** LOCAL VARIABLES NEEDED **/
         /****************************/
@@ -36,16 +41,19 @@ void ai::HeuristicAI::run(Engine &e) {
         vector<pair<Character, vector<pair<GameObject, int>>>> attackScore;
         vector<pair<Character, vector<pair<GameObject, int>>>> movementScore;
         // TODO make a vector of the two variables below
-        pair<Character, pair<GameObject, int>> maxAttackScore{};
-        pair<Character, pair<GameObject, int>> maxMovementScore{};
+        vector<pair<Character, pair<GameObject, int>>> maxAttackScores{};
+        vector<pair<Character, pair<GameObject, int>>> maxMovementScores{};
+
         int passTurn = 1;
 
 
+        auto start = high_resolution_clock::now();
         /********************************/
         /** Evaluating attacking score **/
         /********************************/
         // Parcours chaque unité de l'IA pour leur attribuer des scores à leurs cibles potentiels
         for(auto unit : e.getGameState().getActivePlayer().getUnits()){
+            pair<Character, pair<GameObject, int>> maxAttackScore{};
             if(!unit.getHasAttacked()){
                 e.getGameState().setSelectedUnit(make_shared<Character>(unit));
                 vector<pair<GameObject, int>> targetsAndScores;
@@ -100,21 +108,39 @@ void ai::HeuristicAI::run(Engine &e) {
                 if(!targetsAndScores.empty()){
                     pair<Character, vector<pair<GameObject, int>>> unitAndSCore{unit, targetsAndScores};
                     attackScore.push_back(unitAndSCore);
+                    maxAttackScores.push_back(maxAttackScore);
+                } else {
+                    maxAttackScore.first = unit;
+                    maxAttackScore.second.first = GameObject{unit.getX(), unit.getY()};;
+                    maxAttackScore.second.second = 0;
+                    maxAttackScores.push_back(maxAttackScore);
                 }
+            } else {
+                maxAttackScore.first = unit;
+                maxAttackScore.second.first = GameObject{unit.getX(), unit.getY()};;
+                maxAttackScore.second.second = 0;
+                maxAttackScores.push_back(maxAttackScore);
             }
             e.getGameState().unselectedUnit();
         }
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by attack calculation : "
+             << duration.count()/1000 << " milliseconds" << endl;
 
 
-
+        auto start2 = high_resolution_clock::now();
         /*******************************/
         /** Evaluating movement score **/
         /*******************************/
         // Parcours chaque unité de l'IA pour leur attribuer des scores à leurs déplacements potentiels
         for(auto unit : e.getGameState().getActivePlayer().getUnits()) {
+            pair<Character, pair<GameObject, int>> maxMovementScore{};
+            bool alreadyCalculAstar = false;
             if(unit.getPm() > 0){
                 e.getGameState().setSelectedUnit(make_shared<Character>(unit));
                 vector<pair<GameObject, int>> movementsAndScores;
+
                 for(int x = unit.getX()-unit.getPm(); x <= unit.getX()+unit.getPm(); x++) {
                     for (int y = unit.getY()-unit.getPm(); y <= unit.getY()+unit.getPm(); y++) {
                         if ((unit.getX()-abs(x)) + (unit.getY()-abs(y)) <= unit.getPm()) {
@@ -154,17 +180,26 @@ void ai::HeuristicAI::run(Engine &e) {
                                         }
                                     }
                                 } else {
-                                    for (const auto& enemy : enemies) {
-                                        /*int distanceEucli = sqrt((enemy.getX() - x)*(enemy.getX() - x) + (enemy.getY() - y)*(enemy.getY() - y));
-                                        if(distanceEucli < distanceFromNearestEnemi){
-                                            score = unit.getWeapon().getDamage()-distanceEucli;
-                                            distanceFromNearestEnemi = distanceEucli;
-                                        }*/
-                                        vector<Node> nodesFromEnemy = Cordinate::aStar(Node{.x = x, .y = y}, Node{.x = enemy.getX(), .y = enemy.getY()}, e.getGameState().getWorld(), e.getGameState().getGameObjects());
-                                        if(nodesFromEnemy.size() > 1){
-                                            if(static_cast<int>(nodesFromEnemy.size()) < distanceFromNearestEnemi){
-                                                score = unit.getWeapon().getDamage()-nodesFromEnemy.size();
-                                                distanceFromNearestEnemi = nodesFromEnemy.size();
+                                    if(!alreadyCalculAstar){
+                                        for (const auto& enemy : enemies) {
+                                                /*int distanceEucli = sqrt((enemy.getX() - x)*(enemy.getX() - x) + (enemy.getY() - y)*(enemy.getY() - y));
+                                                if(distanceEucli < distanceFromNearestEnemi){
+                                                score = unit.getWeapon().getDamage()-distanceEucli;
+                                                distanceFromNearestEnemi = distanceEucli;
+                                                }*/
+                                            vector<Node> nodesFromEnemy = Cordinate::aStar(Node{.x = unit.getX(), .y = unit.getY()}, Node{.x = enemy.getX(), .y = enemy.getY()}, e.getGameState().getWorld(), e.getGameState().getGameObjects());
+                                            if(nodesFromEnemy.size() > 1){
+                                                if(static_cast<int>(nodesFromEnemy.size()) < distanceFromNearestEnemi){
+                                                    score = unit.getWeapon().getDamage()-nodesFromEnemy.size();
+                                                    distanceFromNearestEnemi = nodesFromEnemy.size();
+                                                    if(static_cast<int>(nodesFromEnemy.size()) > unit.getPm()){
+                                                        move = GameObject{nodesFromEnemy.at(unit.getPm()).x, nodesFromEnemy.at(unit.getPm()).y};
+                                                    } else {
+                                                        move = GameObject{nodesFromEnemy.at(nodesFromEnemy.size()-1).x, nodesFromEnemy.at(nodesFromEnemy.size()-1).y};
+                                                    }
+
+                                                    alreadyCalculAstar = true;
+                                                }
                                             }
                                         }
                                     }
@@ -185,10 +220,26 @@ void ai::HeuristicAI::run(Engine &e) {
                 if(!movementsAndScores.empty()){
                     pair<Character, vector<pair<GameObject, int>>> unitAndScore{unit, movementsAndScores};
                     movementScore.push_back(unitAndScore);
+                    maxMovementScores.push_back(maxMovementScore);
+                } else {
+                    maxMovementScore.first = unit;
+                    maxMovementScore.second.first = GameObject{unit.getX(), unit.getY()};;
+                    maxMovementScore.second.second = 0;
+                    maxMovementScores.push_back(maxMovementScore);
                 }
+            } else {
+                maxMovementScore.first = unit;
+                maxMovementScore.second.first = GameObject{unit.getX(), unit.getY()};;
+                maxMovementScore.second.second = 0;
+                maxMovementScores.push_back(maxMovementScore);
             }
             e.getGameState().unselectedUnit();
         }
+
+        auto stop2 = high_resolution_clock::now();
+        auto duration2 = duration_cast<microseconds>(stop2 - start2);
+        cout << "Time taken by move calculation : "
+             << duration2.count()/1000 << " milliseconds" << endl;
 
 
 
@@ -223,37 +274,45 @@ void ai::HeuristicAI::run(Engine &e) {
 
 
         /** TESTING BEST MOVEMENT AND BEST ATTACK **/
+        for(auto maxAttackScore : maxAttackScores)
         cout << "best attack (" <<maxAttackScore.second.first.getX() << ", " <<  maxAttackScore.second.first.getY() <<") = " << maxAttackScore.second.second << endl;
+        for(auto maxMovementScore : maxMovementScores)
         cout << "best move (" <<maxMovementScore.second.first.getX() << ", " <<  maxMovementScore.second.first.getY() <<") = " << maxMovementScore.second.second << endl;
 
-        if(passTurn > maxAttackScore.second.second && passTurn > maxMovementScore.second.second){
-            terminateTurn = true;
-        } else if(maxAttackScore.second.second > maxMovementScore.second.second){
-            for(const auto& unit : e.getGameState().getActivePlayer().getUnits()){
-                if(unit.getX() == maxAttackScore.first.getX() && unit.getY() == maxAttackScore.first.getY()){
-                    e.getGameState().setSelectedUnit(make_shared<Character>(unit));
+        for(int i = 0; i < maxMovementScores.size(); i++){
+            pair<Character, pair<GameObject, int>> maxAttackScore = maxAttackScores.at(i);
+            pair<Character, pair<GameObject, int>> maxMovementScore = maxMovementScores.at(i);
+            if(passTurn > maxAttackScore.second.second && passTurn > maxMovementScore.second.second){
+                terminateTurn = true;
+            } else if(maxAttackScore.second.second > maxMovementScore.second.second){
+                terminateTurn = false;
+                for(const auto& unit : e.getGameState().getActivePlayer().getUnits()){
+                    if(unit.getX() == maxAttackScore.first.getX() && unit.getY() == maxAttackScore.first.getY()){
+                        e.getGameState().setSelectedUnit(make_shared<Character>(unit));
+                    }
                 }
-            }
-            if(e.getGameState().getSelectedUnit() != nullptr){
-                shared_ptr<Command> attack = make_shared<AttackCommand>(e.getGameState().getSelectedUnit(),
-                        maxAttackScore.second.first.getX(), maxAttackScore.second.first.getY());
-                e.addCommand(attack, 1);
-                e.runCommands();
-                e.getGameState().unselectedUnit();
-            }
-        } else if (maxAttackScore.second.second < maxMovementScore.second.second){
-            for(const auto& unit : e.getGameState().getActivePlayer().getUnits()){
-                if(unit.getX() == maxMovementScore.first.getX() && unit.getY() == maxMovementScore.first.getY()){
-                    e.getGameState().setSelectedUnit(make_shared<Character>(unit));
+                if(e.getGameState().getSelectedUnit() != nullptr){
+                    shared_ptr<Command> attack = make_shared<AttackCommand>(e.getGameState().getSelectedUnit(),
+                                                                            maxAttackScore.second.first.getX(), maxAttackScore.second.first.getY());
+                    e.addCommand(attack, 1);
+                    e.runCommands();
+                    e.getGameState().unselectedUnit();
                 }
-            }
-            if(e.getGameState().getSelectedUnit() != nullptr) {
-                shared_ptr<Command> move = make_shared<MoveCommand>(e.getGameState().getSelectedUnit(),
-                                                                    maxMovementScore.second.first.getX(),
-                                                                    maxMovementScore.second.first.getY());
-                e.addCommand(move, 1);
-                e.runCommands();
-                e.getGameState().unselectedUnit();
+            } else if (maxAttackScore.second.second < maxMovementScore.second.second){
+                terminateTurn = false;
+                for(const auto& unit : e.getGameState().getActivePlayer().getUnits()){
+                    if(unit.getX() == maxMovementScore.first.getX() && unit.getY() == maxMovementScore.first.getY()){
+                        e.getGameState().setSelectedUnit(make_shared<Character>(unit));
+                    }
+                }
+                if(e.getGameState().getSelectedUnit() != nullptr) {
+                    shared_ptr<Command> move = make_shared<MoveCommand>(e.getGameState().getSelectedUnit(),
+                                                                        maxMovementScore.second.first.getX(),
+                                                                        maxMovementScore.second.first.getY());
+                    e.addCommand(move, 1);
+                    e.runCommands();
+                    e.getGameState().unselectedUnit();
+                }
             }
         }
     }

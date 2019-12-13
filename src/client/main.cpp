@@ -153,6 +153,45 @@ int main(int argc,char* argv[])
         }
 
 
+        /******************************/
+        /********** ROLLBACK **********/
+        /******************************/
+
+        else if (!strcmp(argv[1], "rollback")) {
+            cout << "Bienvenue sur heuristic_ai !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+            cout << "Appuyer sur R pour rollback la dernière commande" << endl;
+            bool firstLaunchDemoRollback = false;
+
+            unique_ptr<AI> ai;
+            ai.reset(new HeuristicAI);
+
+            while (window.isOpen()) {
+                if(!iaTurn){
+                    /// UNDO COMMANDS UNTIL IS EMPTY
+                    if(!firstLaunchDemoRollback){
+                        handleInputs(window, scene, engine);
+                        engine->getGameState().unselectedUnit();
+                        shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
+                        engine->addCommand(newTurnCommand, 1);
+                        iaTurn = true;
+                        engine->runCommands();
+                        firstLaunchDemoRollback = true;
+                    } else {
+                        handleInputs(window, scene, engine);
+                        engine->runCommands();
+                    }
+                } else {
+                    ai->run(*engine);
+                    iaTurn = false;
+                    while(!engine->getPreviousCommands().empty()){
+                        engine->undoCommands();
+                        this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                }
+            }
+        }
+
+
 
     } else {
         cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai..." << endl;
@@ -177,6 +216,22 @@ void handleInputs(sf::RenderWindow &window, const unique_ptr<Scene>& scene, cons
                 window.close();
                 break;
             case sf::Event::KeyPressed:
+
+                /*************************************/
+                /** Press R -> Rollback one command **/
+                /*************************************/
+                if (event.key.code == sf::Keyboard::R)
+                {
+                    e->undoCommands();
+                }
+
+                /***************************/
+                /** Press U -> Update all **/
+                /***************************/
+                if (event.key.code == sf::Keyboard::U)
+                {
+                    scene.get()->updateAll();
+                }
 
                 /*****************************/
                 /** Press T -> end the turn **/

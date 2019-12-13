@@ -180,6 +180,7 @@ void ai::HeuristicAI::run(Engine &e) {
                                         }
                                     }
                                 } else {
+
                                     if(!alreadyCalculAstar){
                                         for (const auto& enemy : enemies) {
                                                 /*int distanceEucli = sqrt((enemy.getX() - x)*(enemy.getX() - x) + (enemy.getY() - y)*(enemy.getY() - y));
@@ -197,8 +198,10 @@ void ai::HeuristicAI::run(Engine &e) {
                                                     } else {
                                                         move = GameObject{nodesFromEnemy.at(nodesFromEnemy.size()-1).x, nodesFromEnemy.at(nodesFromEnemy.size()-1).y};
                                                     }
-
                                                     alreadyCalculAstar = true;
+                                                    for(auto moveTaken : maxMovementScores)
+                                                        if(moveTaken.second.first.getX()  == move.getX() && moveTaken.second.first.getY() == move.getY())
+                                                            alreadyCalculAstar = false;
                                                 }
                                             }
                                         }
@@ -279,7 +282,7 @@ void ai::HeuristicAI::run(Engine &e) {
         for(auto maxMovementScore : maxMovementScores)
         cout << "best move (" <<maxMovementScore.second.first.getX() << ", " <<  maxMovementScore.second.first.getY() <<") = " << maxMovementScore.second.second << endl;
 
-        for(int i = 0; i < maxMovementScores.size(); i++){
+        for(int i = 0; i < static_cast<int>(maxMovementScores.size()); i++){
             pair<Character, pair<GameObject, int>> maxAttackScore = maxAttackScores.at(i);
             pair<Character, pair<GameObject, int>> maxMovementScore = maxMovementScores.at(i);
             if(passTurn > maxAttackScore.second.second && passTurn > maxMovementScore.second.second){

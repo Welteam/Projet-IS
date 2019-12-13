@@ -29,20 +29,31 @@ void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigne
 }
 
 void engine::Engine::undoCommands() {
-    this->commands.clear(); 
+    if (!previous_commands.empty()) {
+        auto prevState = this->previous_commands.top();
+        this->gameState = std::move(*prevState);
+        this->previous_commands.pop();
+        this->gameState.notifyObservers(state::StateEvent{state::PLAYER1}, this->gameState);
+        this->gameState.notifyObservers(state::StateEvent{state::PLAYER2}, this->gameState);
+    }
 }
 
 void engine::Engine::runCommands() {
-    commands_mutex->lock();
-    // Copy commands in the buffer
-    std::unique_ptr<std::map<int, std::shared_ptr<Command>>> commands_buffer;
-    commands_buffer.reset(new std::map<int, std::shared_ptr<Command>>(commands));
-    commands.clear();
-    commands_mutex->unlock();
-    auto it = commands_buffer->begin();
-    while (it != commands_buffer->cend()) {
-        it->second->execute(gameState);
-        it++;
+    if(!commands.empty()){
+        cout << "runCommand" << endl;
+        commands_mutex->lock();
+        // Copy commands in the buffer
+        std::unique_ptr<std::map<int, std::shared_ptr<Command>>> commands_buffer;
+        commands_buffer.reset(new std::map<int, std::shared_ptr<Command>>(commands));
+        commands.clear();
+        commands_mutex->unlock();
+        state::GameState& currentState = gameState;
+        previous_commands.push(make_shared<state::GameState>(currentState));
+        auto it = commands_buffer->begin();
+        while (it != commands_buffer->cend()) {
+            it->second->execute(gameState);
+            it++;
+        }
     }
 }
 
@@ -52,4 +63,8 @@ const std::map<int, std::shared_ptr<Command>> &Engine::getCommands() {
 
 void Engine::setCommands(const std::map<int, std::shared_ptr<Command>> &newCommands) {
     this->commands = newCommands;
+}
+
+const std::stack<std::shared_ptr<state::GameState>> &Engine::getPreviousCommands() {
+    return previous_commands;
 }

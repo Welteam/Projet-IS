@@ -158,7 +158,7 @@ int main(int argc,char* argv[])
         /******************************/
 
         else if (!strcmp(argv[1], "rollback")) {
-            cout << "Bienvenue sur heuristic_ai !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+            cout << "Bienvenue sur rollback !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
             cout << "Appuyer sur R pour rollback la dernière commande" << endl;
             bool firstLaunchDemoRollback = false;
 
@@ -167,7 +167,6 @@ int main(int argc,char* argv[])
 
             while (window.isOpen()) {
                 if(!iaTurn){
-                    /// UNDO COMMANDS UNTIL IS EMPTY
                     if(!firstLaunchDemoRollback){
                         handleInputs(window, scene, engine);
                         engine->getGameState().unselectedUnit();
@@ -183,6 +182,7 @@ int main(int argc,char* argv[])
                 } else {
                     ai->run(*engine);
                     iaTurn = false;
+                    /// UNDO COMMANDS UNTIL IS EMPTY
                     while(!engine->getPreviousCommands().empty()){
                         engine->undoCommands();
                         this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -192,9 +192,36 @@ int main(int argc,char* argv[])
         }
 
 
+        /*****************************/
+        /********** DEEP AI **********/
+        /*****************************/
+
+        else if (!strcmp(argv[1], "deep_ai")) {
+            cout << "Bienvenue sur deep_ai !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+            cout << "Clic gauche pour selectionner un soldat rouge." << endl;
+            cout << "Déplacer la souris pour voir ces déplacements, puis cliquer sur une des cases pour le déplacer."<< endl << endl;
+            cout << "Double clic pour passer en mode attaque." << endl;
+            cout << "Sinon appuyer sur D pour la demo (mais cela ruinerai votre expérience)." << endl;
+            cout << "Appuyer sur R pour rollback la dernière commande" << endl;
+
+            unique_ptr<AI> ai;
+            ai.reset(new DeepAI);
+
+            while (window.isOpen()) {
+                if(!iaTurn){
+                    handleInputs(window, scene, engine);
+                    engine->runCommands();
+                } else {
+                    ai->run(*engine);
+                    iaTurn = false;
+                }
+            }
+        }
+
+
 
     } else {
-        cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai..." << endl;
+        cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai, rollback, deep_ai..." << endl;
     }
     return 0;
 }

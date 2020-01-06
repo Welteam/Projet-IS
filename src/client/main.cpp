@@ -358,9 +358,13 @@ void handleInputs(sf::RenderWindow &window, const unique_ptr<Scene>& scene, cons
                         if(!foundNewUnit){
                             if(e->getGameState().getAttackMode()){
                                 /// ATTACK WITH SELECTED UNIT
-                                shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), x, y);
-                                e->addCommand(attack, 1);
-                                e->getGameState().unselectedUnit();
+                                if(x != e->getGameState().getSelectedUnit().get()->getX() || y != e->getGameState().getSelectedUnit().get()->getY()){
+                                    shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), x, y);
+                                    e->addCommand(attack, 1);
+                                    e->getGameState().unselectedUnit();
+                                } else {
+                                    e->getGameState().unselectedUnit();
+                                }
                             } else{
                                 if(e->getGameState().getSelectedUnit().get()->getX() == x && e->getGameState().getSelectedUnit().get()->getY() == y){
                                     if(e->getGameState().getSelectedUnit()->getHasAttacked()){

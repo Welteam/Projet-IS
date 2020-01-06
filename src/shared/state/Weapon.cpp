@@ -5,7 +5,7 @@ namespace state {
 
     Weapon::Weapon() {
         // Value is too long so dia2code cannot declare it as a default value
-        this->direction = {DirectionType::FULL, DirectionType::CROSS, DirectionType::DIAGONAL, DirectionType::OCTOPUS};
+        this->direction = {DirectionType::FULL, DirectionType::CROSS, DirectionType::FULL, DirectionType::OCTOPUS};
     }
 
     int Weapon::getPmMax() const {

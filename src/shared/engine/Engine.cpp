@@ -1,11 +1,13 @@
 #include <iostream>
 #include "Engine.h"
 
+#include "../../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
+
 using namespace engine;
 using namespace std;
 
 Engine::Engine(state::GameState gameState) {
-    this->gameState = std::move(gameState);
+    this->gameState = gameState;
 }
 
 state::GameState& Engine::getGameState() {
@@ -38,8 +40,9 @@ void engine::Engine::undoCommands() {
     }
 }
 
-void engine::Engine::runCommands() {
+bool engine::Engine::runCommands() {
     if(!commands.empty()){
+        bool validAction = true;
         cout << "runCommand" << endl;
         commands_mutex->lock();
         // Copy commands in the buffer
@@ -51,9 +54,10 @@ void engine::Engine::runCommands() {
         previous_commands.push(make_shared<state::GameState>(currentState));
         auto it = commands_buffer->begin();
         while (it != commands_buffer->cend()) {
-            it->second->execute(gameState);
+            validAction = it->second->execute(gameState);
             it++;
         }
+        return validAction;
     }
 }
 

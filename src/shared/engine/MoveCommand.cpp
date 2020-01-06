@@ -14,9 +14,10 @@ namespace engine {
         this->destination = Node{.x = newX, .y = newY};
     }
 
-    void MoveCommand::execute(state::GameState &gameState) {
+    bool MoveCommand::execute(state::GameState &gameState) {
 
-        //std::cout << "unité se déplace" << std::endl;
+        
+        std::cout << "("<< selectedUnit->getX() << ", "<< selectedUnit->getY() <<")" << std::endl;
         engine::Node depart = {.x = selectedUnit->getX(), .y = selectedUnit->getY()};
         vector<Node> nodes = Cordinate::aStar(depart, destination, gameState.getWorld(), gameState.getGameObjects(), selectedUnit.get()->getPm());
         if(nodes.at(nodes.size()-1).x == destination.x && nodes.at(nodes.size()-1).y == destination.y){
@@ -40,7 +41,7 @@ namespace engine {
                         unit.setX(node.x);
                         unit.setY(node.y);
                         lastMove = Node{.x = node.x, .y = node.y};
-                        if(!(unit.getX() == selectedUnit->getX() && unit.getY() == selectedUnit->getY())){
+                        if(!(unit.getX() == selectedUnit->getX()  && unit.getY() == selectedUnit->getY())){
                             unit.usePm(1);
                             std::this_thread::sleep_for(std::chrono::milliseconds(150));
                         }
@@ -56,6 +57,13 @@ namespace engine {
                     gameState.setActivePlayer(gameState.getPlayer2());
                 }
             }
+        } else {
+            cout << " can't reach destination" << endl;
         }
+        return nodes.size() != 1;
+    }
+
+    void MoveCommand::serialize(Json::Value &root) {
+
     }
 }

@@ -14,7 +14,7 @@ AttackCommand::AttackCommand(std::shared_ptr<state::Character> selectedUnit, int
     this->target = Node{.x = targetX, .y = targetY};
 }
 
-void AttackCommand::execute(state::GameState &gameState) {
+bool AttackCommand::execute(state::GameState &gameState) {
     // cout << "unité déjà en mode attaque : attaque !!!!" << endl;
     if(!selectedUnit.get()->getHasAttacked()){
         vector<int> attackField = DisplayAttack::createField(selectedUnit.get(), gameState.getWorld(), gameState.getGameObjects());
@@ -237,6 +237,10 @@ void AttackCommand::execute(state::GameState &gameState) {
             gameState.launchDamageAnimation(damageArea);
         }
     }
+}
+
+void AttackCommand::serialize(Json::Value &root) {
+
 }
 
 

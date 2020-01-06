@@ -16,8 +16,10 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/
         ${CMAKE_CURRENT_SOURCE_DIR}/../client/
 )
-target_include_directories(${lib_shared_target} INTERFACE
+target_include_directories(${lib_shared_target} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
+        ${jsoncpp_include_dir}
+        &{jsoncpp_sources}
   )
 
 # vim: set sw=2 sts=2 et:

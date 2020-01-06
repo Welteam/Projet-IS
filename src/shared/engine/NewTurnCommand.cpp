@@ -10,7 +10,7 @@ using namespace std;
 
 NewTurnCommand::NewTurnCommand() = default;
 
-void NewTurnCommand::execute(GameState &gameState) {
+bool NewTurnCommand::execute(GameState &gameState) {
     Player activePlayer = gameState.getActivePlayer();
     vector<Character> newUnits;
     for(auto unit : activePlayer.getUnits()){
@@ -98,5 +98,10 @@ void NewTurnCommand::execute(GameState &gameState) {
         gameState.setTurn(gameState.getTurn()+1);
     } else {
         cout <<"Wrong activePlayer id in main .cpp key T pressed = " << gameState.getActivePlayer().getId() << endl;
+        return false;
     }
+}
+
+void NewTurnCommand::serialize(Json::Value &root) {
+
 }

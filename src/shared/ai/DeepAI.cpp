@@ -274,7 +274,7 @@ void ai::DeepAI::calculateUnitMove(Engine &e, Character unit){
                                     vector<Node> nodesFromEnemy = Cordinate::aStar(Node{.x = unit.getX(), .y = unit.getY()}, Node{.x = enemy.getX(), .y = enemy.getY()}, e.getGameState().getWorld(), gameObjects);
                                     if(nodesFromEnemy.size() > 1){
                                         if(static_cast<int>(nodesFromEnemy.size()) < distanceFromNearestEnemi){
-                                            if(unit.getWeapon().getDamage() > nodesFromEnemy.size()){
+                                            if(unit.getWeapon().getDamage() > static_cast<int>(nodesFromEnemy.size())){
                                                 score = unit.getWeapon().getDamage()-nodesFromEnemy.size();
                                             } else {
                                                 score = 5;

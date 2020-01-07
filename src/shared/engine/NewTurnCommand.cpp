@@ -100,8 +100,18 @@ bool NewTurnCommand::execute(GameState &gameState) {
         cout <<"Wrong activePlayer id in main .cpp key T pressed = " << gameState.getActivePlayer().getId() << endl;
         return false;
     }
+    return true;
 }
 
 void NewTurnCommand::serialize(Json::Value &root) {
+    Json::Value newCmd;
+    newCmd["CommandTypeId"] = 0;
+
+    if(!(root["commands"].empty())) {
+        root["commands"][root["commands"].size()] = newCmd;
+    }
+    else {
+        root["commands"][0] = newCmd;
+    }
 
 }

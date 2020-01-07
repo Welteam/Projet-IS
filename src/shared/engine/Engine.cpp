@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Engine.h"
-
 #include "../../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
 
 using namespace engine;
@@ -21,6 +20,24 @@ void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigne
     }
     // Block addCommand during commands copy
     commands_mutex->lock();
+
+    /*if (dev) {
+
+        ifstream readF;
+        readF.open("replay.txt", ios_base::in);
+        Json::Reader reader;
+        Json::Value root;
+        vector<Command> prevCmds;
+        reader.parse(readF, root);
+        readF.close();
+        command->serialize(root);
+        ofstream file;
+        file.open("replay.txt", ios_base::out | ios_base::trunc);
+        Json::StyledWriter writer;
+        file << writer.write(root);
+        file.close();
+    }*/
+
     if (commands.find(priority) == commands.cend())
         commands[priority] = command;
     else {
@@ -59,6 +76,7 @@ bool engine::Engine::runCommands() {
         }
         return validAction;
     }
+    return true;
 }
 
 const std::map<int, std::shared_ptr<Command>> &Engine::getCommands() {

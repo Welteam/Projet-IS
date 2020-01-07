@@ -219,6 +219,18 @@ int main(int argc,char* argv[])
         }
 
 
+        /****************************/
+        /********** THREAD **********/
+        /****************************/
+
+        else if (!strcmp(argv[1], "thread")) {
+            cout << "thread" << endl;
+            //Client client1;
+            //client1.run();
+
+        }
+
+
 
     } else {
         cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai, rollback, deep_ai..." << endl;

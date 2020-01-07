@@ -2,7 +2,7 @@
 set(lib_server_target server_static)
 
 # Generate header files from dia UML files
-#generate_dia_header("${CMAKE_CURRENT_SOURCE_DIR}/../server.dia")
+generate_dia_header("${CMAKE_CURRENT_SOURCE_DIR}/../server.dia")
 
 # Find all source files to include in library
 file(GLOB_RECURSE server_sources *.cpp)
@@ -16,7 +16,7 @@ target_include_directories(${lib_server_target} INTERFACE
   ${jsoncpp_include_dir}
   )
 target_link_libraries(${lib_server_target} PUBLIC
-  ${MHD_LIBRARY}
+  ${SFML_LIBRARY}
   $<TARGET_NAME:shared_static>
   )
 

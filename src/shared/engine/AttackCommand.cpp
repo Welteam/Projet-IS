@@ -237,10 +237,22 @@ bool AttackCommand::execute(state::GameState &gameState) {
             gameState.launchDamageAnimation(damageArea);
         }
     }
+    return true;
 }
 
 void AttackCommand::serialize(Json::Value &root) {
+    Json::Value newCmd;
+    newCmd["CommandTypeId"] = 2;
+    newCmd["selectedUnit"] = this->selectedUnit.get();
+    newCmd["targetX"] = this->target.x;
+    newCmd["targetY"] = this->target.y;
 
+    if(!(root["commands"].empty())) {
+        root["commands"][root["commands"].size()] = newCmd;
+    }
+    else {
+        root["commands"][0] = newCmd;
+    }
 }
 
 

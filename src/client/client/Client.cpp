@@ -5,6 +5,7 @@
 #include "engine.h"
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <zconf.h>
 #include <SFML/Network.hpp>
 #include <SFML/Window/Event.hpp>
@@ -18,8 +19,11 @@ using namespace std;
 using namespace state;
 using namespace ai;
 
+<<<<<<< Updated upstream
 bool clientAITurn = false;
 
+=======
+>>>>>>> Stashed changes
 Client::Client(){
 
 }
@@ -52,20 +56,20 @@ void Client::run(){
     cerr << "render running" << endl;
     shared_ptr<Engine> enginePtr = engine;
     shared_ptr<AI> aiPtr = ai;
+    mutex *input_lock = new std::mutex;
 
-    thread eng([this] {
+    thread eng([this, &input_lock] {
         while(1){
             clientAITurn = true;
-            ai->run(*engine);
+            input_lock->lock();
+            ai->run_thread(*engine, input_lock);
+            input_lock->unlock();
             cout << "about to sleep" << endl;
             usleep(1000000);
-            engine->runCommands();
             cout << "end commands" << endl;
 
             // TODO n°2 find a variable to exit the while(1). If you put the variable
             //  to false, the AI will play versus herself infinitely.
-            if(true)
-                return 0;
         }
     });
 
@@ -73,7 +77,13 @@ void Client::run(){
         // TODO n°1 : try to handleInputs (if you uncomment the two lines, any event
         //  from mouse or keyboard will create a signal 6: SIGABRT). We Should try to
         //  block AI when new events are coming on TO DO n°2
+<<<<<<< Updated upstream
         handleInputs(window, scene, engine);
+=======
+        input_lock->lock();
+        handleInputs(window, scene, engine);
+        input_lock->unlock();
+>>>>>>> Stashed changes
         //engine->runCommands();
     }
     eng.join();

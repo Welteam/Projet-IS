@@ -35,33 +35,35 @@ void handleInputs(sf::RenderWindow &window, const unique_ptr<Scene>& scene, cons
 int main(int argc,char* argv[])
 {
 
-    /****************************/
-    /*** Local Data GameState ***/
-    /****************************/
+    if (argc == 2 && strcmp(argv[1], "thread") != 0) {
 
-    /// 1. Intancier GameState
-    GameState gameState{};
-    /// 2. Create Window SFML
-    // TODO n°3 : the main class are creating a second window when
-    //  we are launching ./bin/client thread.
-    sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM from main.cpp");
-    window.setFramerateLimit(60);
-    sf::View view(sf::FloatRect(0, 0, 320, 320));
-    /// 3. Intanciate Scene
-    unique_ptr<Scene> scene(new Scene(window, view));
-    /// 4. Register Scene -> GameState
-    gameState.registerObserver(scene.get());
-    /// 5. Charger la carte World dans GameState
-    gameState.setWorld(World{"../res/map2.txt"});
-    /// 6. Charger players dans GameState
-    gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
-    gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
-    gameState.setActivePlayer(gameState.getPlayer1());
-    /// 7. Create engine
-    shared_ptr<Engine> engine = make_shared<Engine>(gameState);
+        /****************************/
+        /*** Local Data GameState ***/
+        /****************************/
 
 
-    if (argc == 2) {
+        /// 1. Intancier GameState
+        GameState gameState{};
+        /// 2. Create Window SFML
+        // TODO n°3 : the main class are creating a second window when
+        //  we are launching ./bin/client thread.
+        sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM from main.cpp");
+        window.setFramerateLimit(60);
+        sf::View view(sf::FloatRect(0, 0, 320, 320));
+        /// 3. Intanciate Scene
+        unique_ptr<Scene> scene(new Scene(window, view));
+        /// 4. Register Scene -> GameState
+        gameState.registerObserver(scene.get());
+        /// 5. Charger la carte World dans GameState
+        gameState.setWorld(World{"../res/map2.txt"});
+        /// 6. Charger players dans GameState
+        gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
+        gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
+        gameState.setActivePlayer(gameState.getPlayer1());
+        /// 7. Create engine
+        shared_ptr<Engine> engine = make_shared<Engine>(gameState);
+
+
         if (strcmp(argv[1], "hello") == 0) {
             cout << "Bonjour le monde !" << endl;
         }
@@ -222,20 +224,18 @@ int main(int argc,char* argv[])
             }
         }
 
+    }
 
-        /****************************/
-        /********** THREAD **********/
-        /****************************/
+    /****************************/
+    /********** THREAD **********/
+    /****************************/
 
-        else if (!strcmp(argv[1], "thread")) {
-            cout << "thread" << endl;
-            Client client1;
-            client1.run();
-        }
-
-
-
-    } else {
+    else if (!strcmp(argv[1], "thread")) {
+        cout << "thread" << endl;
+        Client client1;
+        client1.run();
+    }
+    else {
         cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai, rollback, deep_ai..." << endl;
     }
     return 0;

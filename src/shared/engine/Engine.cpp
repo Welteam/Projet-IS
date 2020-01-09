@@ -1,12 +1,18 @@
 #include <iostream>
 #include "Engine.h"
 #include "../../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
+#include <fstream>
 
 using namespace engine;
 using namespace std;
 
 Engine::Engine(state::GameState gameState) {
     this->gameState = gameState;
+}
+
+Engine::Engine(state::GameState gameState, bool dev) {
+    this->gameState = gameState;
+    this->dev = dev;
 }
 
 state::GameState& Engine::getGameState() {
@@ -21,8 +27,7 @@ void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigne
     // Block addCommand during commands copy
     commands_mutex->lock();
 
-    /*if (dev) {
-
+    if (dev) {
         ifstream readF;
         readF.open("replay.txt", ios_base::in);
         Json::Reader reader;
@@ -36,7 +41,7 @@ void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigne
         Json::StyledWriter writer;
         file << writer.write(root);
         file.close();
-    }*/
+    }
 
     if (commands.find(priority) == commands.cend())
         commands[priority] = command;

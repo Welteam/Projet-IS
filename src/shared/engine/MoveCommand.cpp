@@ -66,7 +66,8 @@ namespace engine {
     void MoveCommand::serialize(Json::Value &root) {
         Json::Value newCmd;
         newCmd["CommandTypeId"] = 1;
-        newCmd["selectedUnit"] = this->selectedUnit.get();
+        newCmd["selectedUnitX"] = this->selectedUnit->getX();
+        newCmd["selectedUnitY"] = this->selectedUnit->getY();
         newCmd["destinationX"] = this->destination.x;
         newCmd["destinationY"] = this->destination.y;
 

@@ -18,6 +18,7 @@ using namespace std;
 using namespace state;
 using namespace ai;
 
+bool clientAITurn = false;
 
 Client::Client(){
 
@@ -54,6 +55,7 @@ void Client::run(){
 
     thread eng([this] {
         while(1){
+            clientAITurn = true;
             ai->run(*engine);
             cout << "about to sleep" << endl;
             usleep(1000000);
@@ -71,7 +73,7 @@ void Client::run(){
         // TODO n°1 : try to handleInputs (if you uncomment the two lines, any event
         //  from mouse or keyboard will create a signal 6: SIGABRT). We Should try to
         //  block AI when new events are coming on TO DO n°2
-        //handleInputs(window, scene, engine);
+        handleInputs(window, scene, engine);
         //engine->runCommands();
     }
     eng.join();
@@ -179,10 +181,13 @@ unsigned int Client::findEnemy(std::map<unsigned int, std::shared_ptr<state::Pla
 /******************************/
 
 void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, shared_ptr<Engine> e){
+
     /****************************/
-/***** GLOBAL VARIABLES *****/
-/****************************/
-    bool iaTurn = false;
+    /***** GLOBAL VARIABLES *****/
+    /****************************/
+
+
+
     int oldMouseEventX = 0;
     int oldMouseEventY = 0;
     int mouseEventX = 0;
@@ -221,7 +226,7 @@ void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, sh
                     e->getGameState().unselectedUnit();
                     shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
                     e->addCommand(newTurnCommand, 1);
-                    iaTurn = true;
+                    // iaTurn = true;
                 }
 
                 /******************************/
@@ -283,7 +288,7 @@ void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, sh
             case sf::Event::KeyReleased:
                 break;
             case sf::Event::MouseButtonPressed:
-                // TODO: Directly show attack if pm = 0
+
 
                 /******************************/
                 /**** LEFT CLICK HANDLING *****/

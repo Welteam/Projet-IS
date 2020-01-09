@@ -11,6 +11,8 @@
 #include "engine/DisplayAttack.cpp"
 #include <cstring>
 #include <thread>
+#include <fstream>
+#include <zconf.h>
 
 using namespace std;
 using namespace state;
@@ -27,6 +29,8 @@ int oldMouseEventX = 0;
 int oldMouseEventY = 0;
 int mouseEventX = 0;
 int mouseEventY = 0;
+
+bool endOfGame = false;
 
 void handleInputs(sf::RenderWindow &window, const unique_ptr<Scene>& scene, const shared_ptr<Engine>& e);
 
@@ -45,8 +49,6 @@ int main(int argc,char* argv[])
         /// 1. Intancier GameState
         GameState gameState{};
         /// 2. Create Window SFML
-        // TODO n°3 : the main class are creating a second window when
-        //  we are launching ./bin/client thread.
         sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM from main.cpp");
         window.setFramerateLimit(60);
         sf::View view(sf::FloatRect(0, 0, 320, 320));
@@ -222,6 +224,123 @@ int main(int argc,char* argv[])
                     iaTurn = false;
                 }
             }
+        }
+
+        /******************************/
+        /*********** RECORD ***********/
+        /******************************/
+
+        else if (strcmp(argv[1], "record") == 0) {
+            cout << "Bienvenue sur record !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
+            cout << "Clic gauche pour selectionner un soldat rouge." << endl;
+            cout << "Déplacer la souris pour voir ces déplacements, puis cliquer sur une des cases pour le déplacer."<< endl << endl;
+            cout << "Double clic pour passer en mode attaque." << endl;
+            cout << "Sinon appuyer sur D pour la demo (mais cela ruinerai votre expérience)." << endl;
+
+            engine = make_shared<Engine>(gameState, true);
+
+            unique_ptr<AI> ai;
+            ai.reset(new HeuristicAI);
+
+            while (window.isOpen()) {
+                if(!iaTurn){
+                    handleInputs(window, scene, engine);
+                    engine->runCommands();
+                } else {
+                    ai->run(*engine);
+                    iaTurn = false;
+                }
+            }
+        }
+
+        /****************************/
+        /*********** PLAY ***********/
+        /****************************/
+
+        if (!strcmp(argv[1], "play")) {
+
+            thread eng([engine] {
+                ifstream ifsMap("replay.txt", ifstream::in);
+                Json::Reader reader;
+                Json::Value obj;
+                if (reader.parse(ifsMap, obj)) {
+                    const Json::Value &cmds = obj["commands"];
+                    for (unsigned int i = 0; i < cmds.size() - 1; i++) {
+                        if (engine->getGameState().getPlayer1().getUnits().size() > 0 &&
+                                engine->getGameState().getPlayer2().getUnits().size() > 0) {
+                            switch ((CommandTypeId) (cmds[i]["CommandTypeId"].asInt())) {
+
+                                case engine::CommandTypeId::ATTACK_CMD: {
+                                    for(const auto& unit : engine->getGameState().getActivePlayer().getUnits()){
+                                        if((unit.getX() == cmds[i]["selectedUnitX"].asInt() && unit.getY() == cmds[i]["selectedUnitY"].asInt())){
+                                            engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                                            engine->addCommand(make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(),
+                                                    cmds[i]["targetX"].asInt(), cmds[i]["targetY"].asInt()), 0);
+                                        }
+                                    }
+                                    break;
+                                }
+
+                                case engine::CommandTypeId::NEW_TURN_CMD: {
+                                    engine->addCommand(make_shared<NewTurnCommand>(), 0);
+                                    usleep(1000000);
+                                    break;
+                                }
+
+                                case engine::CommandTypeId::MOVE_CMD: {
+                                    for(const auto& unit : engine->getGameState().getActivePlayer().getUnits()){
+                                        if((unit.getX() == cmds[i]["selectedUnitX"].asInt() && unit.getY() == cmds[i]["selectedUnitY"].asInt())){
+                                            engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                                            engine->addCommand(make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(),
+                                                                                          cmds[i]["destinationX"].asInt(), cmds[i]["destinationY"].asInt()), 0);
+                                        }
+                                    }
+                                    break;
+                                }
+                                default:
+                                    break;
+                            }
+                            engine->runCommands();
+                            engine->getGameState().unselectedUnit();
+
+                        }
+                    }
+
+                }
+                endOfGame = true;
+                ifsMap.close();
+                return;
+            });
+
+            while (window.isOpen()) {
+                sf::Event event{};
+                while (window.pollEvent(event)) {
+                    switch (event.type) {
+                        case sf::Event::Closed:
+                            window.close();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (endOfGame) {
+                    cout << "the end of the commands recorded" << endl;
+                    window.close();
+                }
+
+            }
+            eng.join();
+        }
+
+        /*****************************/
+        /********** NETWORK **********/
+        /*****************************/
+
+        if (!strcmp(argv[1], "network")) {
+            cout << "network" << endl;
+
+            Client client1;
+            client1.connectNetwork();
         }
 
     }

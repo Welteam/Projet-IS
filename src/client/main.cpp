@@ -5,6 +5,7 @@
 #include <state.h>
 #include "render.h"
 #include "engine.h"
+#include "client.h"
 #include "ai.h"
 #include "engine/Cordinate.cpp"
 #include "engine/DisplayAttack.cpp"
@@ -16,6 +17,7 @@ using namespace state;
 using namespace render;
 using namespace engine;
 using namespace ai;
+using namespace client;
 
 /****************************/
 /***** GLOBAL VARIABLES *****/
@@ -40,7 +42,9 @@ int main(int argc,char* argv[])
     /// 1. Intancier GameState
     GameState gameState{};
     /// 2. Create Window SFML
-    sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM");
+    // TODO n°3 : the main class are creating a second window when
+    //  we are launching ./bin/client thread.
+    sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM from main.cpp");
     window.setFramerateLimit(60);
     sf::View view(sf::FloatRect(0, 0, 320, 320));
     /// 3. Intanciate Scene
@@ -225,9 +229,8 @@ int main(int argc,char* argv[])
 
         else if (!strcmp(argv[1], "thread")) {
             cout << "thread" << endl;
-            //Client client1;
-            //client1.run();
-
+            Client client1;
+            client1.run();
         }
 
 

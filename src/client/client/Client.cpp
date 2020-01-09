@@ -1,4 +1,5 @@
-/*#include "render.h"
+#include "Client.h"
+#include "../render.h"
 #include "state.h"
 #include "ai.h"
 #include "engine.h"
@@ -6,102 +7,77 @@
 #include <thread>
 #include <zconf.h>
 #include <SFML/Network.hpp>
+#include <SFML/Window/Event.hpp>
+#include "engine/Cordinate.cpp"
+#include "engine/DisplayAttack.cpp"
 
+using namespace client;
 using namespace render;
 using namespace engine;
 using namespace std;
 using namespace state;
 using namespace ai;
 
-//unsigned int findEnemy(std::map<unsigned int, std::shared_ptr<state::Player>> &MPlayers, unsigned int &player) {
-//    for (auto p:MPlayers) {
-//        if (p.first != player) {
-//            return p.first;
-//        }
-//    }
-//    new runtime_error("no enemy found");
-//    return -1;
-//}
 
-void client::Client::run()
-{
+Client::Client(){
 
-    // Create some AI players
-    const unsigned int id = 1;
-    unsigned int idPlayer1 = 1;
-    string player = "Alice";
-    const pair<const unsigned int, shared_ptr<Player>> pair1 = make_pair(id, make_shared<Player>(true, player,
-                                                                                                 idPlayer1,
-                                                                                                 make_shared<Bulbizarre>(
-                                                                                                     WEST, 200,
-                                                                                                     Position(3,
-                                                                                                              9))));
-    engine->getState().getPlayers().insert(pair1);
-    const unsigned int id2 = 0;
-    unsigned int idPlayer2 = 0;
-    string player2 = "Bob";
-    const pair<const unsigned int, shared_ptr<Player>> pair2 = make_pair(id2, make_shared<Player>(true, player2,
-                                                                                                  idPlayer2,
-                                                                                                  make_shared<Salameche>(
-                                                                                                      EST, 150,
-                                                                                                      Position(
-                                                                                                          20,
-                                                                                                          20))));
-    engine->getState().getPlayers().insert(pair2);
-    engine->getState().center = Position(7, 7);
+}
 
-    // Set up the render
-    shared_ptr<Scene> scene3;
-    scene3.reset(new Scene(engine, "res/src/tilemap2.png", 0));
-    engine->getState().registerObserver(scene3.get());
+void Client::run(){
 
-    engine->getState().menu = false;
+    /// 1. Intancier GameState
+    GameState gameState{};
+    /// 2. Create Window SFML
+    sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM from Client.cpp");
+    window.setFramerateLimit(60);
+    sf::View view(sf::FloatRect(0, 0, 320, 320));
+    /// 3. Intanciate Scene
+    unique_ptr<Scene> scene(new Scene(window, view));
+    /// 4. Register Scene -> GameState
+    gameState.registerObserver(scene.get());
+    /// 5. Charger la carte World dans GameState
+    gameState.setWorld(World{"../res/map2.txt"});
+    /// 6. Charger players dans GameState
+    gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
+    gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
+    gameState.setActivePlayer(gameState.getPlayer1());
+    /// 7. Create engine
+    this->engine = make_shared<Engine>(gameState);
+
+
 
     // Call our AI computer
     ai->restrictArea = false;
     cerr << "render running" << endl;
-    sf::RenderWindow window(sf::VideoMode(600, 600), "thread window");
     shared_ptr<Engine> enginePtr = engine;
     shared_ptr<AI> aiPtr = ai;
+
     thread eng([this] {
-        while (1)
-        {
-            cerr << "engine running" << endl;
-            unique_ptr<unsigned int> enemyId;
-            //if (!(engine->getState().menu) && !(engine->getCommands().empty())) {
-            for (auto player : engine->getState().getPlayers())
-            {
-                if (player.second && player.second->getIA() && player.second->getPokemon()->getAlive())
-                {
-                    cerr << "run ai" << endl;
-                    unsigned int pId = player.first;
-                    enemyId.reset(new unsigned int(this->findEnemy(engine->getState().getPlayers(), pId)));
-                    ai->run(*engine, player.first, *enemyId);
-                }
-            }
+        while(1){
+            ai->run(*engine);
             cout << "about to sleep" << endl;
             usleep(1000000);
-            engine->runCommands(false);
-            //}
+            engine->runCommands();
             cout << "end commands" << endl;
-            if (engine->getState().isGameFinished())
+
+            // TODO n°2 find a variable to exit the while(1). If you put the variable
+            //  to false, the AI will play versus herself infinitely.
+            if(true)
                 return 0;
         }
-
-        //  }
     });
-    while (window.isOpen())
-    {
 
-        handleInputs(enginePtr, window, 0);
-
-        scene3->draw(window);
+    while (window.isOpen()){
+        // TODO n°1 : try to handleInputs (if you uncomment the two lines, any event
+        //  from mouse or keyboard will create a signal 6: SIGABRT). We Should try to
+        //  block AI when new events are coming on TO DO n°2
+        //handleInputs(window, scene, engine);
+        //engine->runCommands();
     }
     eng.join();
 }
 
-void client::Client::connectNetwork()
-{
+void Client::connectNetwork(){
     this->addPlayer();
     int id = 1;
     int lock = 1;
@@ -112,8 +88,7 @@ void client::Client::connectNetwork()
     this->addPlayer();
 }
 
-void client::Client::deletePlayer(int id)
-{
+void Client::deletePlayer(int id){
     sf::Http http("http://localhost", 8080);
     sf::Http::Response response;
     sf::Http::Request req3;
@@ -125,8 +100,7 @@ void client::Client::deletePlayer(int id)
     response = http.sendRequest(req3);
 }
 
-int client::Client::addPlayer()
-{
+int Client::addPlayer(){
     sf::Http http("http://localhost", 8080);
     sf::Http::Response response;
     sf::Http::Request req3;
@@ -170,8 +144,7 @@ int client::Client::addPlayer()
     }
 }
 
-int client::Client::getPlayer(int id)
-{
+int Client::getPlayer(int id){
     sf::Http http("http://localhost", 8080);
     sf::Http::Response response;
     sf::Http::Request req("/user/"+to_string(id), sf::Http::Request::Get);
@@ -188,147 +161,7 @@ int client::Client::getPlayer(int id)
     }
 }
 
-void client::Client::handleInputs(std::shared_ptr<Engine> engine, sf::Window &window, unsigned int playerTarId)
-{
-
-    if (engine->getState().menu)
-    {
-        sf::Event event1;
-        while (window.pollEvent(event1))
-        {
-            switch (event1.type)
-            {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            default:
-                break;
-            case sf::Event::KeyPressed:
-                sf::Keyboard::Key k1 = event1.key.code;
-                switch (k1)
-                {
-                default:
-                    break;
-                case sf::Keyboard::Return:
-                    engine->getState().menu = false;
-                    break;
-                }
-                break;
-            }
-        }
-    }
-    else if (engine->getState().isGameFinished())
-    {
-        if (engine->getState().gameWon)
-        {
-            sf::Event event;
-            while (window.pollEvent(event))
-            {
-                switch (event.type)
-                {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-                default:
-                    break;
-                case sf::Event::KeyPressed:
-                    sf::Keyboard::Key k1 = event.key.code;
-                    switch (k1)
-                    {
-                    default:
-                        break;
-                    case sf::Keyboard::Return:
-                        window.close();
-                        break;
-                    }
-                    break;
-                }
-            }
-        }
-        else
-        {
-            sf::Event event;
-            while (window.pollEvent(event))
-            {
-                switch (event.type)
-                {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-                default:
-                    break;
-                case sf::Event::KeyPressed:
-                    sf::Keyboard::Key k1 = event.key.code;
-                    switch (k1)
-                    {
-                    default:
-                        break;
-                    case sf::Keyboard::Return:
-                        window.close();
-                        break;
-                    }
-                    break;
-                }
-            }
-        }
-    }
-    else
-    {
-
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            switch (event.type)
-            {
-            default:
-                break;
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::KeyPressed:
-
-                sf::Keyboard::Key k = event.key.code;
-                if (clock1.getElapsedTime().asMilliseconds() > 110)
-                {
-                    switch (k)
-                    {
-                    case sf::Keyboard::Key::Right:
-                        engine->addCommand(make_shared<MoveCommand>(EST, playerTarId), playerTarId);
-                        break;
-                    case sf::Keyboard::Key::Left:
-                        engine->addCommand(make_shared<MoveCommand>(WEST, playerTarId), playerTarId);
-                        break;
-                    case sf::Keyboard::Key::Up:
-                        engine->addCommand(make_shared<MoveCommand>(NORTH, playerTarId), playerTarId);
-                        break;
-                    case sf::Keyboard::Key::Down:
-                        engine->addCommand(make_shared<MoveCommand>(SOUTH, playerTarId), playerTarId);
-                        break;
-                    case sf::Keyboard::Key::A:
-                        engine->addCommand(make_shared<AttackCommand>(playerTarId), playerTarId);
-                        break;
-                    case sf::Keyboard::Key::H:
-                        engine->addCommand(make_shared<HealCommand>(playerTarId), playerTarId);
-                        break;
-                    case sf::Keyboard::Key::R:
-                        engine->undoCommands();
-                        break;
-                    default:
-                        break;
-                    }
-                    clock1.restart();
-                }
-                break;
-            }
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-    }
-}
-
-unsigned int
-client::Client::findEnemy(std::map<unsigned int, std::shared_ptr<state::Player>> &MPlayers, unsigned int &player)
-{
+unsigned int Client::findEnemy(std::map<unsigned int, std::shared_ptr<state::Player>> &MPlayers, unsigned int &player){
     for (auto p : MPlayers)
     {
         if (p.first != player)
@@ -340,7 +173,236 @@ client::Client::findEnemy(std::map<unsigned int, std::shared_ptr<state::Player>>
     return -1;
 }
 
-client::Client::Client()
-{
-    engine = make_shared<Engine>(State(Position(), make_shared<Map>("res/src/etage1.json")));
-}*/
+
+/******************************/
+/** Mouse and keyboard EVENT **/
+/******************************/
+
+void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, shared_ptr<Engine> e){
+    /****************************/
+/***** GLOBAL VARIABLES *****/
+/****************************/
+    bool iaTurn = false;
+    int oldMouseEventX = 0;
+    int oldMouseEventY = 0;
+    int mouseEventX = 0;
+    int mouseEventY = 0;
+    sf::Event event{};
+    while (window.pollEvent(event))
+    {
+        switch (event.type)
+        {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::KeyPressed:
+
+                /*************************************/
+                /** Press R -> Rollback one command **/
+                /*************************************/
+                if (event.key.code == sf::Keyboard::R)
+                {
+                    e->undoCommands();
+                }
+
+                /***************************/
+                /** Press U -> Update all **/
+                /***************************/
+                if (event.key.code == sf::Keyboard::U)
+                {
+                    scene.get()->updateAll();
+                }
+
+                /*****************************/
+                /** Press T -> end the turn **/
+                /*****************************/
+                if (event.key.code == sf::Keyboard::T)
+                {
+                    e->getGameState().unselectedUnit();
+                    shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
+                    e->addCommand(newTurnCommand, 1);
+                    iaTurn = true;
+                }
+
+                /******************************/
+                /** DEMO of different action **/
+                /******************************/
+                if (event.key.code == sf::Keyboard::D)
+                {
+                    std::cout << "Lancement du mode démo ne pas bouger votre souris..." << std::endl;
+                    for(const auto& unit : e->getGameState().getActivePlayer().getUnits()){
+                        if(unit.getX() == 1 && unit.getY() == 4){
+                            e->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                        }
+                    }
+                    if(e->getGameState().getSelectedUnit() != nullptr){
+                        Node depart = {.x =  e->getGameState().getSelectedUnit().get()->getX(), .y = e->getGameState().getSelectedUnit().get()->getY()};
+                        Node destination = {.x = 3, .y = 6};
+                        scene->updateTrajectory(Cordinate::aStar(depart, destination, e->getGameState().getWorld(), e->getGameState().getGameObjects(), e->getGameState().getSelectedUnit().get()->getPm()));
+                        shared_ptr<Command> move = make_shared<MoveCommand>(e->getGameState().getSelectedUnit(), 3, 6);
+                        e->addCommand(move, 1);
+                        e->runCommands();
+                    } else {
+                        cout << "L'unité démo ne peut pas être sélectionée." << endl << "Relancer le jeu s'il vous plaît" << endl;
+                    }
+                    for(const auto& unit : e->getGameState().getActivePlayer().getUnits()){
+                        if(unit.getX() == 3 && unit.getY() == 6){
+                            e->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                        }
+                    }
+                    if(e->getGameState().getSelectedUnit() != nullptr){
+                        for(int i = 0; i < 4; i++){
+                            this_thread::sleep_for(std::chrono::milliseconds(400));
+                            e->getGameState().setAttackMode(true);
+                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(),
+                                                                                 e->getGameState().getWorld(), e->getGameState().getGameObjects());
+                            if(attackField[9+ 5 * e->getGameState().getWorld().getYMax()] == 1){
+                                scene->updateTrajectory(DisplayAttack::createDamageArea(9, 5,
+                                                                                        e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld()));
+                            } else{
+                                scene->updateTrajectory(vector<Node>{});
+                            }
+                            this_thread::sleep_for(std::chrono::milliseconds(600));
+                            shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), 9, 5);
+                            e->addCommand(attack, 1);
+                            e->runCommands();
+                        }
+                    } else {
+                        cout << "L'unité démo ne peut pas être sélectionée." << endl << "Relancer le jeu s'il vous plaît" << endl;
+                    }
+                    for(int i = 0; i < 4; i++){
+                        this_thread::sleep_for(std::chrono::milliseconds(600));
+                        e->getGameState().unselectedUnit();
+                        shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
+                        e->addCommand(newTurnCommand, 1);
+                        e->runCommands();
+                    }
+
+                }
+                break;
+            case sf::Event::KeyReleased:
+                break;
+            case sf::Event::MouseButtonPressed:
+                // TODO: Directly show attack if pm = 0
+
+                /******************************/
+                /**** LEFT CLICK HANDLING *****/
+                /******************************/
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    int x = (event.mouseButton.x - (((1 - window.getView().getViewport().width)*window.getSize().x)/2))/(window.getView().getViewport().width*window.getSize().x)*20; // NOLINT(bugprone-narrowing-conversions)
+                    int y = (event.mouseButton.y - (((1 - window.getView().getViewport().height)*window.getSize().y)/2))/(window.getView().getViewport().height*window.getSize().y)*20;
+                    bool foundNewUnit = false;
+                    if(e->getGameState().getSelectedUnit() != nullptr){
+                        /// UNSELECT UNIT AND SELECT NEW ONE
+                        for(const auto& unit : e->getGameState().getActivePlayer().getUnits()){
+                            if((unit.getX() == x && unit.getY() == y)){
+                                if(x != e->getGameState().getSelectedUnit().get()->getX() || y != e->getGameState().getSelectedUnit().get()->getY()){
+                                    foundNewUnit = true;
+                                    e->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                                    if(e->getGameState().getSelectedUnit()->getPm() == 0){
+                                        if(!e->getGameState().getSelectedUnit()->getHasAttacked()){
+                                            e->getGameState().setAttackMode(true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if(!foundNewUnit){
+                            if(e->getGameState().getAttackMode()){
+                                /// ATTACK WITH SELECTED UNIT
+                                if(x != e->getGameState().getSelectedUnit().get()->getX() || y != e->getGameState().getSelectedUnit().get()->getY()){
+                                    shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), x, y);
+                                    e->addCommand(attack, 1);
+                                    e->getGameState().unselectedUnit();
+                                } else {
+                                    e->getGameState().unselectedUnit();
+                                }
+                            } else{
+                                if(e->getGameState().getSelectedUnit().get()->getX() == x && e->getGameState().getSelectedUnit().get()->getY() == y){
+                                    if(e->getGameState().getSelectedUnit()->getHasAttacked()){
+                                        e->getGameState().unselectedUnit();
+                                    } else {
+                                        /// MAKE UNIT IN ATTACK MODE
+                                        e->getGameState().setAttackMode(true);
+                                    }
+                                } else {
+                                    /// MOVE SELECTED UNIT
+                                    shared_ptr<Command> move = make_shared<MoveCommand>(e->getGameState().getSelectedUnit(), x, y);
+                                    e->addCommand(move, 1);
+                                    e->getGameState().unselectedUnit();
+                                }
+                            }
+                        }
+                    } else {
+                        /// SELECT AN UNIT
+                        for(const auto& unit : e->getGameState().getActivePlayer().getUnits()){
+                            if(unit.getX() == x && unit.getY() == y){
+                                e->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                                if(e->getGameState().getSelectedUnit()->getPm() == 0){
+                                    if(!e->getGameState().getSelectedUnit()->getHasAttacked()){
+                                        e->getGameState().setAttackMode(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                /// UNSELECT UNIT
+                if (event.mouseButton.button == sf::Mouse::Right) {
+                    e->getGameState().unselectedUnit();
+                }
+                break;
+            case sf::Event::MouseButtonReleased:
+                break;
+            case sf::Event::MouseMoved:
+
+                /******************************/
+                /**** MOUSE MOVE HANDLING *****/
+                /******************************/
+                if(e->getGameState().getSelectedUnit() != nullptr){
+                    mouseEventX = (event.mouseMove.x - (((1 - window.getView().getViewport().width)*window.getSize().x)/2))/(window.getView().getViewport().width*window.getSize().x)*20;
+                    mouseEventY = (event.mouseMove.y - (((1 - window.getView().getViewport().height)*window.getSize().y)/2))/(window.getView().getViewport().height*window.getSize().y)*20;
+                    if(oldMouseEventX != mouseEventX || oldMouseEventY != mouseEventY){
+                        if(!e->getGameState().getAttackMode()){
+                            /// DRAW PATTERN OF POSSIBLE MOVEMENT
+                            Node depart = {.x =  e->getGameState().getSelectedUnit().get()->getX(), .y = e->getGameState().getSelectedUnit().get()->getY()};
+                            Node destination = {.x = mouseEventX, .y = mouseEventY};
+                            scene->updateTrajectory(Cordinate::aStar(depart, destination, e->getGameState().getWorld(), e->getGameState().getGameObjects(), e->getGameState().getSelectedUnit().get()->getPm()));
+                        } else if(!e->getGameState().getSelectedUnit().get()->getHasAttacked()) {
+                            /// DRAW PATTERN OF POSSIBLE TARGETS
+                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(),
+                                                                                 e->getGameState().getWorld(), e->getGameState().getGameObjects());
+                            if(attackField[mouseEventX+ mouseEventY * e->getGameState().getWorld().getYMax()] == 1){
+                                scene->updateTrajectory(DisplayAttack::createDamageArea(mouseEventX, mouseEventY, e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld()));
+                            } else{
+                                scene->updateTrajectory(vector<Node>{});
+                            }
+                        }
+                        oldMouseEventX = mouseEventX;
+                        oldMouseEventY = mouseEventY;
+                    }
+
+                }
+                break;
+            case sf::Event::MouseEntered:
+                break;
+            case sf::Event::MouseLeft:
+                if(e->getGameState().getSelectedUnit() == nullptr){
+                    scene->updateTrajectory(vector<Node>{});
+                } else {
+                    if(!e->getGameState().getAttackMode()){
+                        scene->updateTrajectory(vector<Node>{Node{.x = e->getGameState().getSelectedUnit().get()->getX(), .y = e->getGameState().getSelectedUnit().get()->getY()}});
+                    } else {
+                        scene->updateTrajectory(vector<Node>{});
+                    }
+                }
+                break;
+            default:
+                scene.get()->updateAll();
+                break;
+        }
+    }
+}
+
+

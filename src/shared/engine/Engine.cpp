@@ -6,13 +6,16 @@
 using namespace engine;
 using namespace std;
 
+ifstream readF;
+
 Engine::Engine(state::GameState gameState) {
     this->gameState = gameState;
+    readF = ifstream("replay.txt");
 }
 
-Engine::Engine(state::GameState gameState, bool dev) {
+Engine::Engine(state::GameState gameState, bool playingRecord) {
     this->gameState = gameState;
-    this->dev = dev;
+    this->playingRecord = playingRecord;
 }
 
 state::GameState& Engine::getGameState() {
@@ -27,8 +30,7 @@ void engine::Engine::addCommand(const std::shared_ptr<Command>& command, unsigne
     // Block addCommand during commands copy
     commands_mutex->lock();
 
-    if (dev) {
-        ifstream readF;
+    if (!playingRecord) {
         readF.open("replay.txt", ios_base::in);
         Json::Reader reader;
         Json::Value root;

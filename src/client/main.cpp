@@ -226,38 +226,13 @@ int main(int argc,char* argv[])
             }
         }
 
-        /******************************/
-        /*********** RECORD ***********/
-        /******************************/
-
-        else if (strcmp(argv[1], "record") == 0) {
-            cout << "Bienvenue sur record !" << endl << "Appuyer sur T pour changer de tour et laisser votre l'IA jouer." << endl;
-            cout << "Clic gauche pour selectionner un soldat rouge." << endl;
-            cout << "Déplacer la souris pour voir ces déplacements, puis cliquer sur une des cases pour le déplacer."<< endl << endl;
-            cout << "Double clic pour passer en mode attaque." << endl;
-            cout << "Sinon appuyer sur D pour la demo (mais cela ruinerai votre expérience)." << endl;
-
-            engine = make_shared<Engine>(gameState, true);
-
-            unique_ptr<AI> ai;
-            ai.reset(new HeuristicAI);
-
-            while (window.isOpen()) {
-                if(!iaTurn){
-                    handleInputs(window, scene, engine);
-                    engine->runCommands();
-                } else {
-                    ai->run(*engine);
-                    iaTurn = false;
-                }
-            }
-        }
-
         /****************************/
         /*********** PLAY ***********/
         /****************************/
 
-        if (!strcmp(argv[1], "play")) {
+        else if (!strcmp(argv[1], "play")) {
+
+            engine = make_shared<Engine>(gameState, true);
 
             thread eng([engine] {
                 ifstream ifsMap("replay.txt", ifstream::in);
@@ -325,6 +300,7 @@ int main(int argc,char* argv[])
                 }
                 if (endOfGame) {
                     cout << "the end of the commands recorded" << endl;
+                    usleep(3000000);
                     window.close();
                 }
 
@@ -336,7 +312,7 @@ int main(int argc,char* argv[])
         /********** NETWORK **********/
         /*****************************/
 
-        if (!strcmp(argv[1], "network")) {
+        else if (!strcmp(argv[1], "network")) {
             cout << "network" << endl;
 
             Client client1;

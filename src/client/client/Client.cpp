@@ -19,11 +19,9 @@ using namespace std;
 using namespace state;
 using namespace ai;
 
-<<<<<<< Updated upstream
+
 bool clientAITurn = false;
 
-=======
->>>>>>> Stashed changes
 Client::Client(){
 
 }
@@ -56,14 +54,14 @@ void Client::run(){
     cerr << "render running" << endl;
     shared_ptr<Engine> enginePtr = engine;
     shared_ptr<AI> aiPtr = ai;
-    mutex *input_lock = new std::mutex;
+    mutex input_lock{};
 
     thread eng([this, &input_lock] {
         while(1){
             clientAITurn = true;
-            input_lock->lock();
-            ai->run_thread(*engine, input_lock);
-            input_lock->unlock();
+            //input_lock.lock();
+            ai->run_thread(*engine, &input_lock);
+            //input_lock.unlock();
             cout << "about to sleep" << endl;
             usleep(1000000);
             cout << "end commands" << endl;
@@ -77,14 +75,10 @@ void Client::run(){
         // TODO n°1 : try to handleInputs (if you uncomment the two lines, any event
         //  from mouse or keyboard will create a signal 6: SIGABRT). We Should try to
         //  block AI when new events are coming on TO DO n°2
-<<<<<<< Updated upstream
+        input_lock.lock();
         handleInputs(window, scene, engine);
-=======
-        input_lock->lock();
-        handleInputs(window, scene, engine);
-        input_lock->unlock();
->>>>>>> Stashed changes
-        //engine->runCommands();
+        engine->runCommands();
+        input_lock.unlock();
     }
     eng.join();
 }

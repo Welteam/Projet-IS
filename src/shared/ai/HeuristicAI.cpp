@@ -327,8 +327,9 @@ void ai::HeuristicAI::run(Engine &e) {
 
 }
 
-void ai::HeuristicAI::run_thread(engine::Engine &e, std::mutex *input_lock) {
+void ai::HeuristicAI::run_thread(engine::Engine &e, std::mutex &input_lock) {
     bool terminateTurn = false;
+    input_lock.lock();
 
     while(!terminateTurn){
 
@@ -593,4 +594,5 @@ void ai::HeuristicAI::run_thread(engine::Engine &e, std::mutex *input_lock) {
     shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
     e.addCommand(newTurnCommand, 1);
     e.runCommands();
+    input_lock.unlock();
 }

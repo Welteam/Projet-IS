@@ -1,20 +1,20 @@
 #include <iostream>
-#include <cstring>
-#include <unistd.h>
 #include "server.h"
-#include <sstream>
-#include <microhttpd.h>
 #include <string.h>
+#include <microhttpd.h>
 #include "state.h"
-#include "engine.h"
-#include "ai.h"
-#include "server.h"
 
-using namespace ai;
+
 using namespace std;
 using namespace engine;
 using namespace state;
 using namespace server;
+
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
 class Request {
 public:
@@ -49,8 +49,7 @@ static void request_completed (void *cls, struct MHD_Connection *connection,
 }
 
 // Gestionnaire principal
-static int
-main_handler (void *cls,
+static int main_handler (void *cls,
               struct MHD_Connection *connection,
               const char *url, //
               const char *method,

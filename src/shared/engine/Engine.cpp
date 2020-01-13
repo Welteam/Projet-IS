@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Engine.h"
-#include "../../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
 #include <fstream>
 
 using namespace engine;

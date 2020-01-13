@@ -13,6 +13,7 @@
 #include <thread>
 #include <fstream>
 #include <zconf.h>
+#include "json/json.h"
 
 using namespace std;
 using namespace state;

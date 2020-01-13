@@ -15,7 +15,7 @@ include(GenerateDiaHeader)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 # Enable C++11
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable Debug and Release builds
@@ -108,6 +108,7 @@ find_library(
   NAMES microhttpd microhttpd-10 libmicrohttpd libmicrohttpd-dll
   DOC "microhttpd library"
 )
+
 
 # Add source subdirectories
 add_subdirectory(src/shared)

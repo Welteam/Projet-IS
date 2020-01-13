@@ -8,13 +8,6 @@ generate_dia_header("${CMAKE_CURRENT_SOURCE_DIR}/../server.dia")
 file(GLOB_RECURSE server_sources *.cpp)
 list(REMOVE_ITEM server_sources "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
-# Find library libmicrohttpd
-find_library(
-        MHD_LIBRARY
-        NAMES microhttpd microhttpd-10 libmicrohttpd libmicrohttpd-dll
-        DOC "microhttpd library"
-)
-
 # Build the "server" library, add required include and link against dependencies
 add_library(${lib_server_target} STATIC ${server_sources} ${jsoncpp_sources})
 add_dependencies(${lib_server_target} generate-headers)
@@ -26,6 +19,10 @@ target_link_libraries(${lib_server_target} PUBLIC
   ${SFML_LIBRARY}
   $<TARGET_NAME:shared_static>
   )
+target_link_libraries(${lib_server_target} PUBLIC
+        ${MHD_LIBRARY}
+        $<TARGET_NAME:shared_static>
+        )
 
 
 

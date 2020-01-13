@@ -51,33 +51,27 @@ void Client::run(){
 
     // Call our AI computer
     ai->restrictArea = false;
-    cerr << "render running" << endl;
     shared_ptr<Engine> enginePtr = engine;
     shared_ptr<AI> aiPtr = ai;
     mutex input_lock{};
 
     thread eng([this, &input_lock] {
+        clientAITurn = true;
         while(1){
-            clientAITurn = true;
+            if(!clientAITurn)
+                return 0;
             //input_lock.lock();
             ai->run_thread(*engine, &input_lock);
             //input_lock.unlock();
             cout << "about to sleep" << endl;
             usleep(1000000);
             cout << "end commands" << endl;
-
-            // TODO n°2 find a variable to exit the while(1). If you put the variable
-            //  to false, the AI will play versus herself infinitely.
         }
     });
 
     while (window.isOpen()){
-        // TODO n°1 : try to handleInputs (if you uncomment the two lines, any event
-        //  from mouse or keyboard will create a signal 6: SIGABRT). We Should try to
-        //  block AI when new events are coming on TO DO n°2
         input_lock.lock();
         handleInputs(window, scene, engine);
-        engine->runCommands();
         input_lock.unlock();
     }
     eng.join();
@@ -202,6 +196,7 @@ void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, sh
         switch (event.type)
         {
             case sf::Event::Closed:
+                clientAITurn = false;
                 window.close();
                 break;
             case sf::Event::KeyPressed:

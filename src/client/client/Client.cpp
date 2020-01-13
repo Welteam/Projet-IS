@@ -115,30 +115,23 @@ int Client::addPlayer(){
     req3.setField("Content-Type", "application/json");
     req3.setHttpVersion(1, 1);
     response = http.sendRequest(req3);
-    if (response.getStatus() == sf::Http::Response::Created)
-    {
-        //cout<< response.getBody()<<endl;
+
+    if (response.getStatus() == sf::Http::Response::Created) {
         //Get This player Id
         Json::Value root;
         Json::Value players;
         Json::Reader reader;
-        if (!reader.parse(response.getBody(), root, false))
-        {
+        if (!reader.parse(response.getBody(), root, false)){
             cout << reader.getFormattedErrorMessages() << endl;
         }
         int id = root["id"].asInt();
-        if (id == -1)
-        {
+        if (id == -1){
             cout << "No more connections possible" << endl;
             return -1;
-        }
-        else
-        {
+        } else {
             return id;
         }
-    }
-    else
-    {
+    } else {
         cout << "Put Request Failed: " << response.getStatus() << endl;
         return -1;
     }
@@ -150,27 +143,12 @@ int Client::getPlayer(int id){
     sf::Http::Request req("/user/"+to_string(id), sf::Http::Request::Get);
     response = http.sendRequest(req);
 
-    if (response.getStatus() == sf::Http::Response::Ok)
-    {
+    if (response.getStatus() == sf::Http::Response::Ok){
         cout << response.getBody() << endl;
         return 1;
-    }
-    else
-    {
+    } else {
         return 0;
     }
-}
-
-unsigned int Client::findEnemy(std::map<unsigned int, std::shared_ptr<state::Player>> &MPlayers, unsigned int &player){
-    for (auto p : MPlayers)
-    {
-        if (p.first != player)
-        {
-            return p.first;
-        }
-    }
-    new runtime_error("no enemy found");
-    return -1;
 }
 
 

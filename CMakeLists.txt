@@ -15,7 +15,7 @@ include(GenerateDiaHeader)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 # Enable C++11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable Debug and Release builds
@@ -125,6 +125,5 @@ if(BUILD_TESTING)
   # Include tests scripts
   add_subdirectory(test)
 endif()
-
 # vim: set sw=2 sts=2 et:
 

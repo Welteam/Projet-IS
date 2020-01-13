@@ -240,7 +240,7 @@ int main(int argc,char* argv[])
                 Json::Value obj;
                 if (reader.parse(ifsMap, obj)) {
                     const Json::Value &cmds = obj["commands"];
-                    for (unsigned int i = 0; i < cmds.size() - 1; i++) {
+                    for (unsigned int i = 0; i < cmds.size(); i++) {
                         if (engine->getGameState().getPlayer1().getUnits().size() > 0 &&
                                 engine->getGameState().getPlayer2().getUnits().size() > 0) {
                             switch ((CommandTypeId) (cmds[i]["CommandTypeId"].asInt())) {

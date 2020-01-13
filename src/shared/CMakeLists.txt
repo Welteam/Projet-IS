@@ -16,6 +16,7 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/
         ${CMAKE_CURRENT_SOURCE_DIR}/../client/
 )
+
 target_include_directories(${lib_shared_target} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
         ${jsoncpp_include_dir}

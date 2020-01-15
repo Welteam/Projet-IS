@@ -2,6 +2,7 @@
 #include "server.h"
 #include <string.h>
 #include <microhttpd.h>
+#include "engine.h"
 #include "state.h"
 
 
@@ -83,7 +84,6 @@ static int main_handler (void *cls,
     HttpStatus status;
     string response;
     try {
-
         ServicesManager *manager = (ServicesManager*) cls;
         status = manager->queryService(response,request->data,url,method);
     }
@@ -134,8 +134,10 @@ int main(int argc, char *argv[]) {
             servicesManager.registerService(make_unique<VersionService>());
 
             UserDB userDB;
-            userDB.addUser(make_unique<User>(1,1,1,1));
             servicesManager.registerService(make_unique<UserService>(std::ref(userDB)));
+
+            Engine engine(GameState{});
+            servicesManager.registerService(make_unique<CommandService>(engine));
 
             struct MHD_Daemon *d;
             d = MHD_start_daemon(// MHD_USE_SELECT_INTERNALLY | MHD_USE_DEBUG | MHD_USE_POLL,

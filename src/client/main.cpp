@@ -40,7 +40,7 @@ void handleInputs(sf::RenderWindow &window, const unique_ptr<Scene>& scene, cons
 int main(int argc,char* argv[])
 {
 
-    if (argc == 2 && strcmp(argv[1], "thread") != 0) {
+    if (argc == 2 && strcmp(argv[1], "thread") != 0 && strcmp(argv[1], "network") != 0) {
 
         /****************************/
         /*** Local Data GameState ***/
@@ -309,17 +309,6 @@ int main(int argc,char* argv[])
             eng.join();
         }
 
-        /*****************************/
-        /********** NETWORK **********/
-        /*****************************/
-
-        else if (!strcmp(argv[1], "network")) {
-            cout << "network" << endl;
-
-            Client client1;
-            client1.connectNetwork();
-        }
-
     }
 
     /****************************/
@@ -328,9 +317,60 @@ int main(int argc,char* argv[])
 
     else if (!strcmp(argv[1], "thread")) {
         cout << "thread" << endl;
-        Client client1;
-        client1.run();
+        Client client;
+        client.run();
     }
+
+    /*****************************/
+    /********** NETWORK **********/
+    /*****************************/
+
+    else if (!strcmp(argv[1], "network")) {
+        cout << "network" << endl;
+
+        Client client;
+        int playerId = client.connectNetwork();
+        if(playerId == -1)
+            return 0;
+
+        sf::RenderWindow window(sf::VideoMode(640, 640), "ZCOM from network");
+        window.setFramerateLimit(60);
+        sf::View view(sf::FloatRect(0, 0, 320, 320));
+
+        while (window.isOpen()){
+            sf::Event event{};
+            int nbPlayers=0;
+            while(nbPlayers != 2){
+                while (window.pollEvent(event)) {
+                    switch (event.type) {
+                        case sf::Event::Closed:
+                            window.close();
+                            break;
+                        case sf::Event::KeyPressed:
+                            if (event.key.code == sf::Keyboard::D) {
+                                // TODO : Delete player from serer database but can't give you another id
+                                client.deletePlayer(playerId);
+                                cout << "Disconnect from server..." << endl;
+                                return 0;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                nbPlayers=0;
+                sleep(2);
+                cout << "List of the players connected :" << endl;
+                for(int i=1; i<=2; i++){
+                    int response = client.getPlayer(i);
+                    if(response == 1)
+                        nbPlayers++;
+                }
+            }
+            client.runNetwork(window, view);
+        }
+    }
+
     else {
         cout << "I don't understand" << endl << "you can say hello, render, engine, random_ai, heuristic_ai, rollback, deep_ai..." << endl;
     }

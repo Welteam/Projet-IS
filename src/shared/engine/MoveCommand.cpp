@@ -15,8 +15,6 @@ namespace engine {
     }
 
     bool MoveCommand::execute(state::GameState &gameState) {
-
-
         std::cout << "("<< selectedUnit->getX() << ", "<< selectedUnit->getY() <<")" << std::endl;
         engine::Node depart = {.x = selectedUnit->getX(), .y = selectedUnit->getY()};
         vector<Node> nodes = Cordinate::aStar(depart, destination, gameState.getWorld(), gameState.getGameObjects(), selectedUnit.get()->getPm());
@@ -63,9 +61,9 @@ namespace engine {
         return nodes.size() != 1;
     }
 
-    void MoveCommand::serialize(Json::Value &root) {
+    Json::Value MoveCommand::serialize(Json::Value &root) {
         Json::Value newCmd;
-        newCmd["CommandTypeId"] = 1;
+        newCmd["CommandTypeId"] = CommandTypeId::MOVE_CMD;
         newCmd["selectedUnitX"] = this->selectedUnit->getX();
         newCmd["selectedUnitY"] = this->selectedUnit->getY();
         newCmd["destinationX"] = this->destination.x;
@@ -77,5 +75,6 @@ namespace engine {
         else {
             root["commands"][0] = newCmd;
         }
+        return root;
     }
 }

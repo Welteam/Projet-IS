@@ -240,9 +240,9 @@ bool AttackCommand::execute(state::GameState &gameState) {
     return true;
 }
 
-void AttackCommand::serialize(Json::Value &root) {
+Json::Value AttackCommand::serialize(Json::Value &root) {
     Json::Value newCmd;
-    newCmd["CommandTypeId"] = 2;
+    newCmd["CommandTypeId"] = CommandTypeId::ATTACK_CMD;
     newCmd["selectedUnitX"] = this->selectedUnit->getX();
     newCmd["selectedUnitY"] = this->selectedUnit->getY();
     newCmd["targetX"] = this->target.x;
@@ -254,6 +254,7 @@ void AttackCommand::serialize(Json::Value &root) {
     else {
         root["commands"][0] = newCmd;
     }
+    return root;
 }
 
 

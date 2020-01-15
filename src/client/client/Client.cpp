@@ -21,9 +21,56 @@ using namespace ai;
 
 
 bool clientAITurn = false;
+bool forceTo = false;
+
 
 Client::Client(){
 
+}
+
+void Client::runNetwork(sf::RenderWindow& window, sf::View& view){
+
+    /// 1. Intancier GameState
+    GameState gameState{};
+    /// 3. Intanciate Scene
+    unique_ptr<Scene> scene(new Scene(window, view));
+    /// 4. Register Scene -> GameState
+    gameState.registerObserver(scene.get());
+    /// 5. Charger la carte World dans GameState
+    gameState.setWorld(World{"../res/map2.txt"});
+    /// 6. Charger players dans GameState
+    gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
+    gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
+    gameState.setActivePlayer(gameState.getPlayer1());
+    /// 7. Create engine
+    this->engine = make_shared<Engine>(gameState);
+    int enemyId = 0;
+    if(clientId == 1){
+        enemyId = 2;
+    } else {
+        enemyId = 1;
+    }
+
+    while (window.isOpen()){
+        if(engine->getGameState().getActivePlayer().getId() == clientId || !forceTo){
+            handleInputs(window, scene, engine);
+            engine->runCommands();
+        } else {
+            sf::Event event{};
+            forceTo = false;
+            this->getServerCommands(enemyId);
+            cout << "about to sleep" << endl;
+            usleep(1000000);
+            cout << "end reading commands" << endl;
+            while (window.pollEvent(event)) {
+                switch (event.type) {
+                    case sf::Event::Closed:
+                        window.close();
+                        break;default:break;
+                }
+            }
+        }
+    }
 }
 
 void Client::run(){
@@ -60,9 +107,10 @@ void Client::run(){
         while(1){
             if(!clientAITurn)
                 return 0;
-            //input_lock.lock();
+            input_lock.lock();
             ai->run_thread(*engine, &input_lock);
-            //input_lock.unlock();
+            input_lock.unlock();
+
             cout << "about to sleep" << endl;
             usleep(1000000);
             cout << "end commands" << endl;
@@ -77,15 +125,16 @@ void Client::run(){
     eng.join();
 }
 
-void Client::connectNetwork(){
-    this->addPlayer();
+int Client::connectNetwork(){
     int id = 1;
     int lock = 1;
     while(lock == 1){
         lock = this->getPlayer(id);
         id+=1;
     }
-    this->addPlayer();
+    this->clientId =this->addPlayer();
+    cout << "Your player ID is " << this->clientId << endl;
+    return this->clientId;
 }
 
 void Client::deletePlayer(int id){
@@ -151,6 +200,95 @@ int Client::getPlayer(int id){
     }
 }
 
+bool Client::getServerCommands(int enemyId){
+
+    sf::Http http("http://localhost", 8080);
+    sf::Http::Response response;
+
+    sf::Http::Request req("/command/"+to_string(enemyId), sf::Http::Request::Get);
+    response = http.sendRequest(req);
+    Json::Reader jsonReader;
+    Json::Value cmds;
+    if (response.getStatus() == sf::Http::Response::Ok){
+        cout << "Commands recu avec succés" << endl;
+        cout << response.getBody() << endl;
+        Json::Value obj;
+        jsonReader.parse(response.getBody(),obj);
+        const Json::Value &cmds = obj["commands"];
+
+        for (unsigned int i = 0; i < cmds.size(); i++) {
+            if (engine->getGameState().getPlayer1().getUnits().size() > 0 &&
+                engine->getGameState().getPlayer2().getUnits().size() > 0) {
+                switch ((CommandTypeId) (cmds[i]["CommandTypeId"].asInt())) {
+                    case engine::CommandTypeId::ATTACK_CMD: {
+                        cout << "received attack cmd" << endl;
+                        for (const auto &unit : engine->getGameState().getActivePlayer().getUnits()) {
+                            if ((unit.getX() == cmds[i]["selectedUnitX"].asInt() &&
+                                 unit.getY() == cmds[i]["selectedUnitY"].asInt())) {
+                                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                                engine->addCommand(make_shared<AttackCommand>(engine->getGameState().getSelectedUnit(),
+                                                                              cmds[i]["targetX"].asInt(),
+                                                                              cmds[i]["targetY"].asInt()), 0);
+                                engine->runCommands();
+                                engine->getGameState().unselectedUnit();
+                            }
+                        }
+                        break;
+                    }
+                    case engine::CommandTypeId::NEW_TURN_CMD: {
+                        cout << "received new turn cmd" << endl;
+                        engine->addCommand(make_shared<NewTurnCommand>(), 0);
+                        engine->runCommands();
+                        engine->getGameState().unselectedUnit();
+                        break;
+                    }
+                    case engine::CommandTypeId::MOVE_CMD: {
+                        cout << "received move cmd" << endl;
+                        for (const auto &unit : engine->getGameState().getActivePlayer().getUnits()) {
+                            if ((unit.getX() == cmds[i]["selectedUnitX"].asInt() &&
+                                 unit.getY() == cmds[i]["selectedUnitY"].asInt())) {
+                                engine->getGameState().setSelectedUnit(make_shared<Character>(unit));
+                                engine->addCommand(make_shared<MoveCommand>(engine->getGameState().getSelectedUnit(),
+                                                                            cmds[i]["destinationX"].asInt(),
+                                                                            cmds[i]["destinationY"].asInt()), 0);
+                                engine->runCommands();
+                                engine->getGameState().unselectedUnit();
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                        cout << "La commande " << i << " est inconnue" << endl;
+                        break;
+                }
+            }
+        }
+        cout << "finish read commands" << endl;
+        return 1;
+    } else {
+        cout << "cannot read commands" << endl;
+        return 0;
+    }
+}
+
+void Client::putServerCommand (shared_ptr<Command> command){
+    sf::Http http("http://localhost", 8080);
+    sf::Http::Response response;
+    sf::Http::Request request1;
+    request1.setUri("/command");
+    request1.setMethod(sf::Http::Request::Put);
+    Json::Value root;
+    request1.setBody(command->serialize(root).toStyledString());
+    request1.setField("Content-Type", "application/json");
+    request1.setHttpVersion(1, 1);
+    response = http.sendRequest(request1);
+    if (response.getStatus() == sf::Http::Response::Created) {
+        cout << "Put Request Succed: " << response.getStatus() << endl;
+    } else {
+        cout << "Put Request Failed: " << response.getStatus() << endl;
+    }
+}
+
 
 /******************************/
 /** Mouse and keyboard EVENT **/
@@ -202,64 +340,8 @@ void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, sh
                 {
                     e->getGameState().unselectedUnit();
                     shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
-                    e->addCommand(newTurnCommand, 1);
-                    // iaTurn = true;
-                }
-
-                /******************************/
-                /** DEMO of different action **/
-                /******************************/
-                if (event.key.code == sf::Keyboard::D)
-                {
-                    std::cout << "Lancement du mode démo ne pas bouger votre souris..." << std::endl;
-                    for(const auto& unit : e->getGameState().getActivePlayer().getUnits()){
-                        if(unit.getX() == 1 && unit.getY() == 4){
-                            e->getGameState().setSelectedUnit(make_shared<Character>(unit));
-                        }
-                    }
-                    if(e->getGameState().getSelectedUnit() != nullptr){
-                        Node depart = {.x =  e->getGameState().getSelectedUnit().get()->getX(), .y = e->getGameState().getSelectedUnit().get()->getY()};
-                        Node destination = {.x = 3, .y = 6};
-                        scene->updateTrajectory(Cordinate::aStar(depart, destination, e->getGameState().getWorld(), e->getGameState().getGameObjects(), e->getGameState().getSelectedUnit().get()->getPm()));
-                        shared_ptr<Command> move = make_shared<MoveCommand>(e->getGameState().getSelectedUnit(), 3, 6);
-                        e->addCommand(move, 1);
-                        e->runCommands();
-                    } else {
-                        cout << "L'unité démo ne peut pas être sélectionée." << endl << "Relancer le jeu s'il vous plaît" << endl;
-                    }
-                    for(const auto& unit : e->getGameState().getActivePlayer().getUnits()){
-                        if(unit.getX() == 3 && unit.getY() == 6){
-                            e->getGameState().setSelectedUnit(make_shared<Character>(unit));
-                        }
-                    }
-                    if(e->getGameState().getSelectedUnit() != nullptr){
-                        for(int i = 0; i < 4; i++){
-                            this_thread::sleep_for(std::chrono::milliseconds(400));
-                            e->getGameState().setAttackMode(true);
-                            vector<int> attackField = DisplayAttack::createField(e->getGameState().getSelectedUnit().get(),
-                                                                                 e->getGameState().getWorld(), e->getGameState().getGameObjects());
-                            if(attackField[9+ 5 * e->getGameState().getWorld().getYMax()] == 1){
-                                scene->updateTrajectory(DisplayAttack::createDamageArea(9, 5,
-                                                                                        e->getGameState().getSelectedUnit().get(), e->getGameState().getWorld()));
-                            } else{
-                                scene->updateTrajectory(vector<Node>{});
-                            }
-                            this_thread::sleep_for(std::chrono::milliseconds(600));
-                            shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), 9, 5);
-                            e->addCommand(attack, 1);
-                            e->runCommands();
-                        }
-                    } else {
-                        cout << "L'unité démo ne peut pas être sélectionée." << endl << "Relancer le jeu s'il vous plaît" << endl;
-                    }
-                    for(int i = 0; i < 4; i++){
-                        this_thread::sleep_for(std::chrono::milliseconds(600));
-                        e->getGameState().unselectedUnit();
-                        shared_ptr<Command> newTurnCommand = make_shared<NewTurnCommand>();
-                        e->addCommand(newTurnCommand, 1);
-                        e->runCommands();
-                    }
-
+                    putServerCommand(newTurnCommand);
+                    forceTo = true;
                 }
                 break;
             case sf::Event::KeyReleased:
@@ -296,6 +378,7 @@ void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, sh
                                 if(x != e->getGameState().getSelectedUnit().get()->getX() || y != e->getGameState().getSelectedUnit().get()->getY()){
                                     shared_ptr<Command> attack = make_shared<AttackCommand>(e->getGameState().getSelectedUnit(), x, y);
                                     e->addCommand(attack, 1);
+                                    putServerCommand(attack);
                                     e->getGameState().unselectedUnit();
                                 } else {
                                     e->getGameState().unselectedUnit();
@@ -312,6 +395,7 @@ void Client::handleInputs(sf::RenderWindow& window, unique_ptr<Scene>& scene, sh
                                     /// MOVE SELECTED UNIT
                                     shared_ptr<Command> move = make_shared<MoveCommand>(e->getGameState().getSelectedUnit(), x, y);
                                     e->addCommand(move, 1);
+                                    putServerCommand(move);
                                     e->getGameState().unselectedUnit();
                                 }
                             }

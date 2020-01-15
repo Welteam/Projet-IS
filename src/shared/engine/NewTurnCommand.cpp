@@ -103,9 +103,9 @@ bool NewTurnCommand::execute(GameState &gameState) {
     return true;
 }
 
-void NewTurnCommand::serialize(Json::Value &root) {
+Json::Value NewTurnCommand::serialize(Json::Value &root) {
     Json::Value newCmd;
-    newCmd["CommandTypeId"] = 0;
+    newCmd["CommandTypeId"] = CommandTypeId::NEW_TURN_CMD;
 
     if(!(root["commands"].empty())) {
         root["commands"][root["commands"].size()] = newCmd;
@@ -113,5 +113,5 @@ void NewTurnCommand::serialize(Json::Value &root) {
     else {
         root["commands"][0] = newCmd;
     }
-
+    return root;
 }

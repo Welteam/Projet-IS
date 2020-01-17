@@ -16,12 +16,6 @@ HttpStatus CommandService::get (Json::Value& out, int id) const{
 
 HttpStatus CommandService::put(Json::Value& out,const Json::Value& in){
     listCommand = in;
-    /*if(!(listCommand["commands"].empty())) {
-        listCommand["commands"][listCommand["commands"].size()] = in;
-    }
-    else {
-        listCommand["commands"][0] = in;
-    }*/
     return HttpStatus::CREATED;
 }
 

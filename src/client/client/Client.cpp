@@ -52,7 +52,9 @@ void Client::runNetwork(sf::RenderWindow& window, sf::View& view){
     }
 
     while (window.isOpen()){
-        if(engine->getGameState().getActivePlayer().getId() == clientId || !forceTo){
+        if(engine->getGameState().getActivePlayer().getId() == clientId && !forceTo){
+            cout << engine->getGameState().getActivePlayer().getId() << clientId << "force to "<< forceTo << endl;
+            usleep(1000000);
             handleInputs(window, scene, engine);
             engine->runCommands();
         } else {
@@ -66,7 +68,9 @@ void Client::runNetwork(sf::RenderWindow& window, sf::View& view){
                 switch (event.type) {
                     case sf::Event::Closed:
                         window.close();
-                        break;default:break;
+                        break;
+                        default:
+                            break;
                 }
             }
         }

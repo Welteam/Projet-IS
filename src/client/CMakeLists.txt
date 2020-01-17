@@ -12,6 +12,11 @@ list(REMOVE_ITEM client_sources "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 # Build the "client" library, add required include and link against dependencies
 add_library(${lib_client_target} STATIC ${client_sources} ${jsoncpp_sources})
 add_dependencies(${lib_client_target} generate-headers)
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/
+        ${CMAKE_CURRENT_SOURCE_DIR}/../client/
+)
+
 target_include_directories(${lib_client_target} INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${jsoncpp_include_dir}

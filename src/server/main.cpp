@@ -26,17 +26,7 @@ public:
     }
 };
 
-// Fonction pour gérer les données imporantes en upload (non implanté ici)
-static int post_iterator(void *cls,
-                         enum MHD_ValueKind kind,
-                         const char *key,
-                         const char *filename,
-                         const char *content_type,
-                         const char *transfer_encoding,
-                         const char *data, uint64_t off, size_t size)
-{
-    return MHD_NO;
-}
+
 
 // Détruit les données d'une requête
 static void request_completed (void *cls, struct MHD_Connection *connection,
@@ -47,6 +37,18 @@ static void request_completed (void *cls, struct MHD_Connection *connection,
         delete request;
         *con_cls = nullptr;
     }
+}
+
+// Fonction pour gérer les données imporantes en upload (non implanté ici)
+static int post_iterator(void *cls,
+                         enum MHD_ValueKind kind,
+                         const char *key,
+                         const char *filename,
+                         const char *content_type,
+                         const char *transfer_encoding,
+                         const char *data, uint64_t off, size_t size)
+{
+    return MHD_NO;
 }
 
 // Gestionnaire principal

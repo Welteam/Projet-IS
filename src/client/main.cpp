@@ -58,7 +58,7 @@ int main(int argc,char* argv[])
         /// 4. Register Scene -> GameState
         gameState.registerObserver(scene.get());
         /// 5. Charger la carte World dans GameState
-        gameState.setWorld(World{"../res/map2.txt"});
+        gameState.setWorld(World{"../res/map.txt"});
         /// 6. Charger players dans GameState
         gameState.setPlayer1(Player{1, gameState.getWorld().getSpawnUnits1(), gameState.getWorld().getSpawnTowers1(), gameState.getWorld().getSpawnApparitionAreas1()});
         gameState.setPlayer2(Player{2, gameState.getWorld().getSpawnUnits2(), gameState.getWorld().getSpawnTowers2(), gameState.getWorld().getSpawnApparitionAreas2()});
